@@ -90,10 +90,10 @@ footer:
 defaults:
   # _posts
   - scope:
-      path: "/home/"
+      path: ""
       type: posts
     values:
-      layout: splash
+      layout: single
       author_profile: true
       read_time: true
       comments: true
