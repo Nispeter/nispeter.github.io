@@ -54,6 +54,13 @@ feature_row4:
     url: "#test-link"
     btn_label: "Read More"
     btn_class: "btn--primary"
+    
+# You don't need to edit this file, it's empty on purpose.
+# Edit theme's home layout instead if you wanna make some changes
+# See: https://jekyllrb.com/docs/themes/#overriding-theme-defaults
+# layout: home
+# author_profile: false
+
 ---
 
 {% include feature_row id="intro" type="center" %}
@@ -66,10 +73,3 @@ feature_row4:
 
 {% include feature_row id="feature_row4" type="center" %}
 
-# ---
-# You don't need to edit this file, it's empty on purpose.
-# Edit theme's home layout instead if you wanna make some changes
-# See: https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-# layout: home
-# author_profile: false
-# ---
