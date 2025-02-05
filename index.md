@@ -69,6 +69,9 @@
 
 {% include feature_row %}
 
+![alt]({{ site.url }}{{ site.baseurl }}/assets/images/bio-photo.jpg)
+{: .full}
+
 {% include feature_row id="feature_row2" type="left" %}
 
 {% include feature_row id="feature_row3" type="right" %}
