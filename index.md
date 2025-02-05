@@ -57,6 +57,18 @@
      btn_label: "Read More"
      btn_class: "btn--primary"
      
+ gallery2:
+  - url: https://flic.kr/p/8a6Ven
+    image_path: /assets/images/bio-photo.jpg
+    alt: "Black and grays with a hint of green"
+  - url: https://flic.kr/p/8a738X
+    image_path: /assets/images/bio-photo.jpg
+    alt: "Made for open text placement"
+  - url: https://flic.kr/p/8a6VXP
+    image_path: https://farm5.staticflickr.com/4046/4697502929_72c612c636_q.jpg
+    alt: "Fog in the trees"
+
+     
  # You don't need to edit this file, it's empty on purpose.
  # Edit theme's home layout instead if you wanna make some changes
  # See: https://jekyllrb.com/docs/themes/#overriding-theme-defaults
@@ -68,9 +80,6 @@
 {% include feature_row id="intro" type="center" %}
 
 {% include feature_row %}
-
-![alt]({{ site.url }}{{ site.baseurl }}/assets/images/bio-photo.jpg)
-{: .full}
 
 {% include feature_row id="feature_row2" type="left" %}
 
