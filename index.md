@@ -81,8 +81,6 @@ header:
  # author_profile: false
 
 ---
-{% include video id="212731897" provider="vimeo" %}
-
 {% include feature_row id="intro" type="center" %}
 
 {% include feature_row %}
@@ -94,3 +92,5 @@ header:
 {% include feature_row id="feature_row3" type="right" %}
 
 {% include feature_row id="feature_row4" type="center" %}
+
+{% include video id="-PVofD2A9t8" provider="youtube" %}
