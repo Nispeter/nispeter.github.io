@@ -81,6 +81,8 @@
 
 {% include feature_row %}
 
+{% include gallery id="gallery2" caption="This is a second gallery example with images hosted externally." %}
+
 {% include feature_row id="feature_row2" type="left" %}
 
 {% include feature_row id="feature_row3" type="right" %}
