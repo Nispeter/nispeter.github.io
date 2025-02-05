@@ -68,6 +68,11 @@
     image_path: https://farm5.staticflickr.com/4046/4697502929_72c612c636_q.jpg
     alt: "Fog in the trees"
 
+header:
+  video:
+    id: -PVofD2A9t8
+    provider: youtube
+
      
  # You don't need to edit this file, it's empty on purpose.
  # Edit theme's home layout instead if you wanna make some changes
@@ -76,6 +81,7 @@
  # author_profile: false
 
 ---
+{% include video id="212731897" provider="vimeo" %}
 
 {% include feature_row id="intro" type="center" %}
 
