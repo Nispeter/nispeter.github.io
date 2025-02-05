@@ -81,9 +81,6 @@ footer:
     - label: "Linkedin"
       icon: "fab fa fa-linkedin"
       url: "https://www.linkedin.com/public-profile/settings?trk=d_flagship3_profile_self_view_public_profile"
-    - label: "Email"
-      icon: "fab email"
-      url: "nispeter2@gmail.com"
 
 defaults:
   # _posts
