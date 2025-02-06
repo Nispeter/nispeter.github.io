@@ -11,7 +11,7 @@
   actions:
     - label: "About"
       url: "https://nispeter.github.io/about"
- excerpt: "Passionate Systems and gameplay developer, These are all of the projects I've worked on! "
+ excerpt: "Welcome to my portfolio! I'm a passionate systems and gameplay developer, these are all of the projects I've worked on! "
  intro: 
    - excerpt: 'Nullam suscipit et nam, tellus velit pellentesque at malesuada, enim eaque. Quis nulla, netus tempor in diam gravida tincidunt, *proin faucibus* voluptate felis id sollicitudin. Centered with `type="center"`'
 
