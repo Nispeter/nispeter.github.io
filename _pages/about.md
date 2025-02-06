@@ -4,8 +4,16 @@ title: "About"
 author_profile: true
 ---
 
-Tempor velit sint sunt ipsum tempor enim ad qui ullamco. Est dolore anim ad velit duis dolore minim sunt aliquip amet commodo labore. Ut eu pariatur aute ea aute excepteur laborum. Esse ea esse excepteur minim mollit qui cillum excepteur ex dolore magna. Labore deserunt fugiat incididunt incididunt sint ea. Consequat dolore aute laboris quis proident quis non et est consectetur ex eiusmod sit culpa.
+Systems and gameplay game developer. Passionate and motivated, with a Bachelor's in Engineering, Software Engineering, and a Master's in Computer Science. A hobbyist, indie, and solo developer. Believer that games are works of art that create great experiences.  
 
-Cupidatat ea do et in excepteur in. Ad nostrud ut est esse eu duis ea sunt eiusmod. Aliquip tempor veniam sint elit fugiat. Velit incididunt laboris amet incididunt labore dolore irure velit excepteur commodo deserunt laborum. Consectetur eu fugiat veniam veniam Lorem labore magna eiusmod. Ea occaecat reprehenderit pariatur consectetur minim labore ut aliquip.
+**Favorite Games:** Outer Wilds, Civilization VI, Dark Souls, Monster Hunter, and Warframe.  
 
-<iframe src="https://docs.google.com/document/d/e/2PACX-1vR2xzus4VkSjkzC9c_Ctrbw21tAuxaiphsPbv_cIkmPeun5Sg-EfWvQUKr6IoBWzWTGDz5iaiNLlsoA/pub?embedded=true" width="820" height="640" display="block" ></iframe>
+<iframe src="https://docs.google.com/document/d/e/2PACX-1vR2xzus4VkSjkzC9c_Ctrbw21tAuxaiphsPbv_cIkmPeun5Sg-EfWvQUKr6IoBWzWTGDz5iaiNLlsoA/pub?embedded=true" width="820" height="640" display="block"></iframe>  
+
+<p style="text-align: center; margin-top: 10px;">
+    <a href="https://docs.google.com/document/d/e/2PACX-1vR2xzus4VkSjkzC9c_Ctrbw21tAuxaiphsPbv_cIkmPeun5Sg-EfWvQUKr6IoBWzWTGDz5iaiNLlsoA/pub?format=pdf" download>
+        <button style="padding: 10px 20px; font-size: 16px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Download PDF
+        </button>
+    </a>
+</p>
