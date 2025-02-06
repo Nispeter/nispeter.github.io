@@ -58,17 +58,24 @@
      btn_class: "btn--primary"
      
  gallery2:
-  - url: https://flic.kr/p/8a6Ven
-    image_path: /assets/images/bio-photo.jpg
-    alt: "Black and grays with a hint of green"
-    title: "Placeholder Image Center Aligned"
-    excerpt: 'This is some sample content that goes here with **Markdown** formatting. Centered with `type="center"`'
-  - url: https://flic.kr/p/8a738X
-    image_path: /assets/images/bio-photo.jpg
-    alt: "Made for open text placement"
-  - url: https://flic.kr/p/8a6VXP
-    image_path: https://farm5.staticflickr.com/4046/4697502929_72c612c636_q.jpg
-    alt: "Fog in the trees"
+  - url: https://nispeter.github.io/rhythm_tetris
+    image_path: /assets/images/tetris_front.png
+    alt: "AAA"
+  - url: https://nispeter.github.io/fleeting_whales
+    image_path: /assets/images/fleeting_front.png
+    alt: "AAA"
+  - url: https://nispeter.github.io/choriexpress
+    image_path: /assets/images/chori_front.png
+    alt: "AAA"
+  - url: https://nispeter.github.io/blitz_drift
+    image_path: /assets/images/blitz_front.png
+    alt: "AAA"
+  - url: https://nispeter.github.io/vault_hunter
+    image_path: /assets/images/vault_front.png
+    alt: "AAA"
+  - url: https://nispeter.github.io/hoara_loux
+    image_path: /assets/images/hoara_front.png
+    alt: "AAA"
 
 header:
   video:
@@ -83,16 +90,5 @@ header:
  # author_profile: false
 
 ---
-{% include feature_row id="intro" type="center" %}
 
-{% include feature_row %}
-
-{% include gallery id="gallery2" caption="This is a second gallery example with images hosted externally." %}
-
-{% include feature_row id="feature_row2" type="left" %}
-
-{% include feature_row id="feature_row3" type="right" %}
-
-{% include feature_row id="feature_row4" type="center" %}
-
-{% include video id="-PVofD2A9t8" provider="youtube" %}
+{% include gallery id="gallery2" %}
