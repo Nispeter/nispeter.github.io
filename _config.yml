@@ -19,7 +19,7 @@ description: >- # this means to ignore newlines until "baseurl:"
   I am a passionate game developer who believes video games are the greatest form of art. Through immersive storytelling, engaging mechanics, and deep emotional connections, I strive to craft experiences that leave a lasting impact on players. My goal is to convey meaning, spark imagination, and push the boundaries of interactive entertainment, making every project a step toward artistic excellence.
 twitter_username: Nispeter2
 github_username: Nispeter
-minimal_mistakes_skin: dark
+minimal_mistakes_skin: mint
 search: true
 
 # Build settings
