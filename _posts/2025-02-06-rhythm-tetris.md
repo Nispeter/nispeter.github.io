@@ -8,7 +8,7 @@ tags:
   - Post Formats
 
 feature_row:
-   - image_path: /assets/images/tetris_front.jpg
+   - image_path: /assets/images/tetris_front.png
      alt: "placeholder image 2"
      title: "Placeholder Image Left Aligned"
      excerpt: 'This is some sample content that goes here with **Markdown** formatting. Left aligned with `type="left"`'
