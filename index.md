@@ -61,6 +61,8 @@
   - url: https://flic.kr/p/8a6Ven
     image_path: /assets/images/bio-photo.jpg
     alt: "Black and grays with a hint of green"
+    title: "Placeholder Image Center Aligned"
+    excerpt: 'This is some sample content that goes here with **Markdown** formatting. Centered with `type="center"`'
   - url: https://flic.kr/p/8a738X
     image_path: /assets/images/bio-photo.jpg
     alt: "Made for open text placement"
@@ -83,7 +85,7 @@ header:
 ---
 {% include feature_row id="intro" type="center" %}
 
-{% include feature_row type="center" %}
+{% include feature_row %}
 
 {% include gallery id="gallery2" caption="This is a second gallery example with images hosted externally." %}
 
