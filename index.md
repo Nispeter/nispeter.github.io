@@ -70,7 +70,7 @@
   - url: https://nispeter.github.io/blitz_drift
     image_path: /assets/images/blitz_front.png
     alt: "AAA"
-  - url: https://nispeter.github.io/vault_hunter
+  - url: https://nispeter.github.io/vault_2_hunter
     image_path: /assets/images/vault_front.png
     alt: "AAA"
   - url: https://nispeter.github.io/hoara_loux
