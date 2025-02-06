@@ -68,10 +68,10 @@
     image_path: /assets/images/chori_front.png
     alt: "AAA"
   - url: https://nispeter.github.io/blitz_drift
-    image_path: /assets/images/blitz_front.png
+    image_path: /assets/images/bltirz_front.png
     alt: "AAA"
-  - url: https://nispeter.github.io/vault_2_hunter
-    image_path: /assets/images/vault_front.png
+  - url: https://nispeter.github.io/vault_hunter
+    image_path: /assets/images/vault_2_front.png
     alt: "AAA"
   - url: https://nispeter.github.io/hoara_loux
     image_path: /assets/images/hoara_front.png
