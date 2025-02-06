@@ -89,6 +89,5 @@ header:
  # author_profile: false
 
 ---
-{% include feature_row %}
 
 {% include gallery id="gallery2" %}
