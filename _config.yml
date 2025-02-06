@@ -13,7 +13,7 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: House of Wynvus
+title: Nicolás Parra
 email: nispeter2@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   I am a passionate game developer who believes video games are the greatest form of art. Through immersive storytelling, engaging mechanics, and deep emotional connections, I strive to craft experiences that leave a lasting impact on players. My goal is to convey meaning, spark imagination, and push the boundaries of interactive entertainment, making every project a step toward artistic excellence.
