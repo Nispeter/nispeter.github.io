@@ -56,6 +56,20 @@
      url: "#test-link"
      btn_label: "Read More"
      btn_class: "btn--primary"
+   - image_path: /assets/images/bio-photo.jpg
+     alt: "placeholder image 2"
+     title: "Placeholder Image Center Aligned"
+     excerpt: 'This is some sample content that goes here with **Markdown** formatting. Centered with `type="center"`'
+     url: "#test-link"
+     btn_label: "Read More"
+     btn_class: "btn--primary"
+   - image_path: /assets/images/bio-photo.jpg
+     alt: "placeholder image 2"
+     title: "Placeholder Image Center Aligned"
+     excerpt: 'This is some sample content that goes here with **Markdown** formatting. Centered with `type="center"`'
+     url: "#test-link"
+     btn_label: "Read More"
+     btn_class: "btn--primary"
      
  gallery2:
   - url: https://flic.kr/p/8a6Ven
