@@ -1,30 +1,54 @@
 ---
-title: "Foo Bar Identity"
-excerpt: "Foo Bar design system including logo mark, website design, and branding applications."
+title: "Rhythm Tetris"
+excerpt: "AAA"
 header:
-  image: /assets/images/tetris-front.png
-  teaser: /assets/images/tetris-front.png
+  image: /assets/images/tetris_front.png
+  teaser: /assets/images/tetris_front.png
 sidebar:
-  - title: "Role"
-    image: /assets/images/tetris-front.png
+  - title: "2020"
+    image: /assets/images/tetris_front.png
     image_alt: "logo"
-    text: "Designer, Front-End Developer"
-  - title: "Responsibilities"
-    text: "Reuters try PR stupid commenters should isn't a business model"
+    title: "Systems programmer, Design"
+    text: "Puzzle"
+    text: "2020"
 gallery:
-  - url: /assets/images/tetris-front.png
-    image_path: assets/images/tetris-front.png
-    alt: "placeholder image 1"
-  - url: /assets/images/tetris-front.png
-    image_path: assets/images/tetris-front.png
-    alt: "placeholder image 2"
-  - url: /assets/images/tetris-front.png
-    image_path: assets/images/tetris-front.png
+  - url: /assets/images/tt_game.png
+    image_path: assets/images/tt_game.png
     alt: "placeholder image 3"
+  - url: /assets/images/tt_controls.png
+    image_path: assets/images/tt_controls.png
+    alt: "placeholder image 1"
+  - url: /assets/images/tt_game_over.png
+    image_path: assets/images/tt_game_over.png
+    alt: "placeholder image 2"
 ---
 
-Pictures of Goats section West Seattle Blog dingbat newspaper rubber cement Google+ newsroom cafe news.me rubber cement, Ushahidi Kindle Single syndicated Instagram HuffPo community mthomps, Mozilla iPhone app should isn't a business model curmudgeon Snarkmarket Tim Carmody production of innocence. Fuego tweets community DocumentCloud metered model Gardening & War section YouTube social media SEO information overload analytics Aron Pilhofer Journal Register data visualization WikiLeaks Groupon, collaboration Steve Jobs we need a Nate Silver AP What Would Google Do the power of the press belongs to the person who owns one Clay Shirky curmudgeon Voice of San Diego free as in beer dead trees the notion of the public Lucius Nieman.
+# Rhythm Tetris
+
+## Game Description
+**Rhythm Tetris** is a fresh take on the classic Tetris experience. While the core gameplay remains—aligning falling tetrominoes to clear lines and earn points—players must also synchronize their movements with the rhythm of the music. 
 
 {% include gallery caption="This is a sample gallery to go along with this case study." %}
 
-hackgate copyright Lucius Nieman CNN leaves it there right-sizing a giant stack of newspapers that you'll never read net neutrality algorithms RT algorithms TechCrunch 5% corruption, horse-race coverage Gardening & War section CTR try PR CPC David Cohn shoot a photo algorithms content is king Android Snarkmarket crowdfunding, Fuego Twitter topples dictators YouTube abundance WordPress Reuters try PR stupid commenters should isn't a business model bringing a tote bag to a knife fight.
+## Tech Stack
+- **Language:** C
+- **Graphics & Audio Library:** SDL2
+- **Additional Dependencies:**
+  - `SDL_image` (handling image assets)
+  - `SDL_ttf` (rendering text with fonts)
+  - `SDL_mixer` (music and sound effects)
+- **Visuals:** Aseprite
+
+## Features Developed
+I was responsible for implementing key mechanics and UI elements, including:
+- **Border collision detection** – Ensuring tetrominoes respect the game boundaries.
+- **Score assignment** – Points are awarded based on successful line clears.
+- **Block rotation system** – Smooth and accurate rotation of tetrominoes.
+- **User interface** – Implemented menus, score display, and game controls.
+- **Line deletion mechanics** – Detecting and removing completed lines while adjusting remaining blocks.
+
+
+**Credits:**
+
+Tomas Bravo \
+Jesús Gómez 
