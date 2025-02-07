@@ -4,7 +4,9 @@ title: "About"
 author_profile: true
 ---
 
-Systems and gameplay game developer. Passionate and motivated, with a Bachelor's in Engineering, Software Engineering, and a Master's in Computer Science. A hobbyist, indie, and solo developer. Believer that games are works of art that create great experiences.  
+I'm a systems and gameplay game developer, passionate and highly motivated, with a Bachelor's in Engineering (Software Engineering) and a Master's in Computer Science. As a hobbyist, indie, and solo developer, I believe that games are works of art capable of crafting unforgettable experiences.
+
+I have a strong interest in good coding practices and optimization, always striving to develop efficient and scalable systems. My focus lies in designing experiences, mechanics, and immersive ambiences that engage players deeply. I am particularly drawn to environmental storytelling and creating games that encourage players to think and explore.
 
 **Favorite Games:** Outer Wilds, Civilization VI, Dark Souls, Monster Hunter, and Warframe.  
 
