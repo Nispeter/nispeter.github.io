@@ -4,10 +4,10 @@ excerpt: "A fresh take on the classic Tetris experience."
 header:
   teaser: /assets/images/tetris_front.png
 sidebar:
-  - title: "Role: Systems programmer, Design"
+  - title: "Role: Systems programmer, Design.   "
     image: /assets/images/tetris_front.png
     image_alt: "logo"
-    text: "Genres: Puzzle \n Year: 2020 \n Studio: Caleuche Studios"
+    text: "Genres: Puzzle.    Year: 2020.    Studio: Caleuche Studios."
 gallery:
   - url: /assets/images/tt_game.png
     image_path: assets/images/tt_game.png
@@ -43,8 +43,7 @@ I was responsible for implementing key mechanics and UI elements, including:
 - **User interface** – Implemented menus, score display, and game controls.
 - **Line deletion mechanics** – Detecting and removing completed lines while adjusting remaining blocks.
 
-<iframe src="https://www.youtube.com/embed/ssAJCIUWsxs&t" width="560" height="315" frameborder="0" allow="autoplay;"> </iframe>
-
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ssAJCIUWsxs?si=iWQgT9do4eURuu35" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 **Credits:**
 
