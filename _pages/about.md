@@ -12,7 +12,7 @@ Systems and gameplay game developer. Passionate and motivated, with a Bachelor's
 
 <p style="text-align: center; margin-top: 10px;">
     <a href="https://docs.google.com/document/d/e/2PACX-1vR2xzus4VkSjkzC9c_Ctrbw21tAuxaiphsPbv_cIkmPeun5Sg-EfWvQUKr6IoBWzWTGDz5iaiNLlsoA/pub?format=pdf" download>
-        <button style="padding: 10px 20px; font-size: 16px; background-color: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        <button style="padding: 10px 20px; font-size: 16px; background-color:rgb(0, 145, 133); color: white; border: none; border-radius: 5px; cursor: pointer;">
             Download PDF
         </button>
     </a>

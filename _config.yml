@@ -110,9 +110,11 @@ defaults:
       layout: single
       author_profile: false
 
-portfolio:
-  output: true
-  permalink: /:collection/:path/
+collections:
+  portfolio:
+    output: true
+    permalink: /:collection/:path/
+
 category_archive:
   type: liquid
   path: /categories/
