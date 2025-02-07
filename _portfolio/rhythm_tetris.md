@@ -3,12 +3,11 @@ title: "Rhythm Tetris"
 excerpt: "AAA"
 header:
   image: /assets/images/tetris_front.png
-  teaser: /assets/images/tetris_front.png
+  teaser: /assets/images/tt_game.png
 sidebar:
-  - title: "2020"
+  - title: "Systems programmer, Design"
     image: /assets/images/tetris_front.png
     image_alt: "logo"
-    title: "Systems programmer, Design"
     text: "Puzzle"
     text: "2020"
 gallery:
@@ -21,6 +20,7 @@ gallery:
   - url: /assets/images/tt_game_over.png
     image_path: assets/images/tt_game_over.png
     alt: "placeholder image 2"
+
 ---
 
 # Rhythm Tetris
@@ -47,6 +47,7 @@ I was responsible for implementing key mechanics and UI elements, including:
 - **User interface** – Implemented menus, score display, and game controls.
 - **Line deletion mechanics** – Detecting and removing completed lines while adjusting remaining blocks.
 
+{% include video id="ssAJCIUWsxs&t" provider="youtube" %}
 
 **Credits:**
 

@@ -5,10 +5,9 @@ header:
   image: /assets/images/.png
   teaser: /assets/images/.png
 sidebar:
-  - title: "2020"
+  - title: "RESPONSABILITIES"
     image: /assets/images/.png
     image_alt: "logo"
-    title: "RESPONSABILITIES"
     text: "GENRES"
     text: "YEAR"
 gallery:
@@ -21,6 +20,10 @@ gallery:
   - url: /assets/images/.png
     image_path: assets/images/.png
     alt: "placeholder image 2"
+header:
+  video:
+    id: -PVofD2A9t8
+    provider: youtube
 ---
 
 # GAME NAME 
