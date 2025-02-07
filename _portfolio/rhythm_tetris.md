@@ -4,10 +4,12 @@ excerpt: "A fresh take on the classic Tetris experience."
 header:
   teaser: /assets/images/tetris_front.png
 sidebar:
-  - title: "Role: Systems programmer, Design.   "
+  - title: "Role: Systems programmer, Design."
     image: /assets/images/tetris_front.png
     image_alt: "logo"
-    text: "Genres: Puzzle.    Year: 2020.    Studio: Caleuche Studios."
+  - text: "Genres: Puzzle."
+  - text: "Year: 2020."
+  - text: "Studio: Caleuche Studios."
 gallery:
   - url: /assets/images/tt_game.png
     image_path: assets/images/tt_game.png
