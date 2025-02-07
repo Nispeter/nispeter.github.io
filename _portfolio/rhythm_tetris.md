@@ -45,8 +45,8 @@ I was responsible for implementing key mechanics and UI elements, including:
 - **User interface** – Implemented menus, score display, and game controls.
 - **Line deletion mechanics** – Detecting and removing completed lines while adjusting remaining blocks.
 
-{% include video id="ssAJCIUWsxs&t" provider="youtube" %}
-<iframe src="https://www.youtube.com/watch?v=ssAJCIUWsxs&t" allow="autoplay;"></iframe>
+
+<iframe src="https://www.youtube.com/embed/MU9sobaVx6I" width="560" height="315" frameborder="0" allow="autoplay;"> </iframe>
 
 **Credits:**
 
