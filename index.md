@@ -57,22 +57,22 @@
      btn_class: "btn--primary"
      
  gallery2:
-  - url: https://nispeter.github.io/rhythm_tetris
+  - url: https://nispeter.github.io/portfolio/rhythm_tetris
     image_path: /assets/images/tetris_front.png
     alt: "AAA"
-  - url: https://nispeter.github.io/fleeting_whales
+  - url: https://nispeter.github.io/portfolio/fleeting_whales
     image_path: /assets/images/fleeting_front.png
     alt: "AAA"
-  - url: https://nispeter.github.io/choriexpress
+  - url: https://nispeter.github.io/portfolio/choriexpress
     image_path: /assets/images/chori_front.png
     alt: "AAA"
-  - url: https://nispeter.github.io/blitz_drift
+  - url: https://nispeter.github.io/portfolio/blitz_drift
     image_path: /assets/images/bltirz_front.png
     alt: "AAA"
-  - url: https://nispeter.github.io/vault_hunter
+  - url: https://nispeter.github.io/portfolio/vault_hunter
     image_path: /assets/images/vault_2_front.png
     alt: "AAA"
-  - url: https://nispeter.github.io/hoara_loux
+  - url: https://nispeter.github.io/portfolio/hoara_loux
     image_path: /assets/images/hoara_front.png
     alt: "AAA"
 
