@@ -1,9 +1,9 @@
 ---
 title: "Rhythm Tetris"
-excerpt: "AAA"
+excerpt: "A fresh take on the classic Tetris experience."
 header:
-  image: /assets/images/tetris_front.png
-  teaser: /assets/images/tt_game.png
+  image: /assets/images/tt_game.png
+  teaser: /assets/images/tetris_front.png
 sidebar:
   - title: "Systems programmer, Design"
     image: /assets/images/tetris_front.png
