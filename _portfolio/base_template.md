@@ -20,18 +20,12 @@ gallery:
   - url: /assets/images/.png
     image_path: assets/images/.png
     alt: "placeholder image 2"
-header:
-  video:
-    id: -PVofD2A9t8
-    provider: youtube
 ---
-
-# GAME NAME 
 
 ## Game Description
 **GAME NAME**  GAME DESCRIPTION 
 
-{% include gallery caption="This is a sample gallery to go along with this case study." %}
+{% include gallery %}
 
 ## Tech Stack
 - **Language:** X

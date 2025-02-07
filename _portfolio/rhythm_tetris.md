@@ -23,12 +23,10 @@ gallery:
 
 ---
 
-# Rhythm Tetris
-
 ## Game Description
 **Rhythm Tetris** is a fresh take on the classic Tetris experience. While the core gameplay remains—aligning falling tetrominoes to clear lines and earn points—players must also synchronize their movements with the rhythm of the music. 
 
-{% include gallery caption="This is a sample gallery to go along with this case study." %}
+{% include gallery %}
 
 ## Tech Stack
 - **Language:** C
@@ -48,6 +46,7 @@ I was responsible for implementing key mechanics and UI elements, including:
 - **Line deletion mechanics** – Detecting and removing completed lines while adjusting remaining blocks.
 
 {% include video id="ssAJCIUWsxs&t" provider="youtube" %}
+<iframe src="https://www.youtube.com/watch?v=ssAJCIUWsxs&t" allow="autoplay;"></iframe>
 
 **Credits:**
 
