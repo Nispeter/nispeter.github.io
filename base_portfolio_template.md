@@ -5,11 +5,12 @@ header:
   image: /assets/images/.png
   teaser: /assets/images/.png
 sidebar:
-  - title: "RESPONSABILITIES"
+  - title: "Role: XX"
     image: /assets/images/.png
     image_alt: "logo"
-    text: "GENRES"
-    text: "YEAR"
+  - text: "Genres: XX"
+  - text: "Year: XX"
+  - text: "Studio: XX"
 gallery:
   - url: /assets/images/.png
     image_path: assets/images/.png
