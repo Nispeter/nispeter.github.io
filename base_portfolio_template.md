@@ -22,7 +22,7 @@ gallery:
     image_path: assets/images/.png
     alt: "placeholder image 2"
 ---
-
+[TEXT](#LINK){: .btn .btn--primary}
 ## Game Description
 **GAME NAME**  GAME DESCRIPTION 
 

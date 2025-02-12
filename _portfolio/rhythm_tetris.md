@@ -25,7 +25,7 @@ gallery:
     alt: "placeholder image 2"
 
 ---
-[Github Repo](#https://github.com/Nispeter/Rhythm_tetris){: .btn .btn--success}
+[Github Repo](https://github.com/Nispeter/Rhythm_tetris){: .btn .btn--primary}
 ## Game Description
 **Rhythm Tetris** is a fresh take on the classic Tetris experience. While the core gameplay remains—aligning falling tetrominoes to clear lines and earn points—players must also synchronize their movements with the rhythm of the music. 
 
