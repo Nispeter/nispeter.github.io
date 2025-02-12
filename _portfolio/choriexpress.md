@@ -1,12 +1,12 @@
 ---
 title: "Choriexpress"
-excerpt: "AAA"
+excerpt: "First-person typing game made for a gamejam."
 header:
-  image: /assets/images/chori_front.png
+  image: /assets/images/ce_1.png
   teaser: /assets/images/chori_front.png
 sidebar:
   - title: "Role: Lead Developer"
-    image: /assets/images/ce_1.png
+    image: /assets/images/chori_front.png
     image_alt: "logo"
   - text: "Genres: First person, Puzzle and Horror"
   - text: "Year: 2023"

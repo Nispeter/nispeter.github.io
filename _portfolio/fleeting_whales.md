@@ -1,12 +1,12 @@
 ---
 title: "Fleeting Whales"
-excerpt: "Cultural RPG with a focus on NPC conversation using LLMs for enchancing player experience"
+excerpt: "Cultural RPG using LLMs for enchancing player experience."
 header:
   image: /assets/images/fw_hub.png
-  teaser: /assets/images/fw_hub.png
+  teaser: /assets/images/fleeting_front.png
 sidebar:
   - title: "Role: Solo Dev"
-    image: /assets/images/fleeting_front.png
+    image: /assets/images/fw_hub.png
     image_alt: "logo"
   - text: "Genres: FPS, RPG "
   - text: "Year: 2023"
