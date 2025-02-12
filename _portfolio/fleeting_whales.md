@@ -1,6 +1,6 @@
 ---
 title: "Fleeting Whales"
-excerpt: "AAA"
+excerpt: "Cultural RPG with a focus on NPC conversation using LLMs for enchancing player experience"
 header:
   image: /assets/images/fw_hub.png
   teaser: /assets/images/fw_hub.png
@@ -27,7 +27,7 @@ gallery:
 ## Game Description  
 **Fleeting Whales** is an immersive RPG and exploration game where NPC interactions shape your experience. Dive into a world full of challenges and discover how different types of NPCs can influence your adventure.  
 
-This game was developed as part of my cornerstone project at Universidad de Concepción, serving as a proof of concept for an alternative approach to traditional NPC interactions. While conventional NPC dialogue systems are typically constrained by pre-scripted dialogue trees, this project explores the integration of Natural Language Processing models to enable dynamic and context-aware conversations between players and NPCs. 
+This game was developed as part of my cornerstone project and study at Universidad de Concepción, serving as a proof of concept for an alternative approach to traditional NPC interactions. While conventional NPC dialogue systems are typically constrained by pre-scripted dialogue trees, this project explores the integration of Natural Language Processing models to enable dynamic and context-aware conversations between players and NPCs. 
 
 By integrating Retrieval-Augmented Generation and structured dialogue trees, the system allows NPCs to adapt their responses based on in-game situations and prior interactions. This approach enhances immersion and provides a more engaging and fluid narrative experience. Additionally, the project addresses the growing demand for innovation and efficiency in game development, especially considering the industry's current employment challenges.  
 
