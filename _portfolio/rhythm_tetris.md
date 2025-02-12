@@ -10,6 +10,9 @@ sidebar:
   - text: "Genres: Puzzle."
   - text: "Year: 2020."
   - text: "Studio: Caleuche Studios."
+  - label: "GitHub"
+    icon: "fab fa-fw fa-github"
+    url: "https://github.com/Nispeter"
 gallery:
   - url: /assets/images/tt_game.png
     image_path: assets/images/tt_game.png
