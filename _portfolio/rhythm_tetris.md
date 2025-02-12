@@ -25,15 +25,17 @@ gallery:
     alt: "placeholder image 2"
 
 ---
-[Github Repo](https://github.com/Nispeter/Rhythm_tetris){: .btn .btn--primary}
+[GitHub Repo](https://github.com/Nispeter/Rhythm_tetris){: .btn .btn--primary}
 ## Game Description
 **Rhythm Tetris** is a fresh take on the classic Tetris experience. While the core gameplay remains—aligning falling tetrominoes to clear lines and earn points—players must also synchronize their movements with the rhythm of the music. 
+
+This projct was made with the intention of learing about low level programming and rendeirng, making use of memory allocation and file management.
 
 {% include gallery %}
 
 ## Tech Stack
 - **Language:** C
-- **Graphics & Audio Library:** SDL2
+- **Graphics:** SDL2
 - **Additional Dependencies:**
   - `SDL_image` (handling image assets)
   - `SDL_ttf` (rendering text with fonts)
