@@ -12,38 +12,45 @@ sidebar:
   - text: "Year: 2024"
   - text: "Studio: Caleuche Studios"
 gallery:
-  - url: /assets/images/.png
-    image_path: assets/images/.png
+  - url: /assets/images/vh_1.png
+    image_path: assets/images/vh_1.png
     alt: "placeholder image 3"
-  - url: /assets/images/.png
-    image_path: assets/images/.png
+  - url: /assets/images/vh_2.png
+    image_path: assets/images/vh_2.png
     alt: "placeholder image 1"
-  - url: /assets/images/.png
-    image_path: assets/images/.png
+  - url: /assets/images/vh_3.png
+    image_path: assets/images/vh_3.png
     alt: "placeholder image 2"
 ---
 [GitHub Repo](https://github.com/Nispeter/VaultHunter_CGS){: .btn .btn--primary}
 [Itch.io Demo](https://nisp.itch.io/vaulthunter){: .btn .btn--primary}
 
-## Game Description
-**GAME NAME**  GAME DESCRIPTION 
+## Game Description  
+**Vault Runner**  
+A challenging **platformer** where the player takes on the role of a treasure hunter, akin to Indiana Jones in the future. Navigating a labyrinth of traps and shifting platforms, the goal is to decipher movement patterns and reach the core of the zone to uncover the secrets left by the Ancients.  
+Skilled players can complete rooms in a single flow without stopping, while others must constantly adapt to the changing environment.  
 
-## Tech Stack
-- **Language:** X
-- **Graphics & Audio Library:** XXX
-- **Additional Dependencies:**
-  - `A` XX
-  - `B` XX
-  - `C` XX
-- **Visuals:** XX
+{% include gallery %}
 
-## Features Developed
-I was responsible for implementing key mechanics, including:
-- **A** – A1.
-- **B** – B1.
-- **C** – C1.
-- **D** – D1.
-- **E** – E1.
+## Tech Stack  
+- **Language:** GDScript  
+- **Engine:** Godot  
+- **Additional Dependencies:**  
+  - Post-processing effects  
+- **Visuals:** Pixel Art inspired by Indiana Jones and sci-fi aesthetics  
+
+## Features Developed  
+I was responsible for implementing key mechanics, including:  
+
+- **Advanced movement system** – Implemented mechanics such as **dash, jump, coyote jump, wall drag, double jump, aerial dash, and air control** for fluid and responsive mobility.  
+- **Interactables** – Developed various interactive elements:  
+  - **Boosters**: hook, speed, size changes, extra jumps.  
+  - **Damage dealers**: spikes, moving hazards.  
+- **Game Loop** – Designed the respawn logic, with instant resets upon death (Celeste-style).  
+- **Speedrun Timer** – Added an internal timer to track runs and encourage speedrunning.  
+- **Dynamic platforms** – Created a system where platforms move in specific patterns, affecting character inertia and modifying level routes in real time.  
+- **Post-processing** – Integrated visual effects to enhance aesthetics and immersion.  
+
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/2tGu62xPqaU?si=_or6A01xlL2xCBlG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
