@@ -2,7 +2,6 @@
 title: "Hoara Loux"
 excerpt: "A fast-paced mobile endless runner and shooter set in the depths of space!"
 header:
-  image: /assets/images/.png
   teaser: /assets/images/hoara_front.png
 sidebar:
   - title: "Role: Solo Dev"

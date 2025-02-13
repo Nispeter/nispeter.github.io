@@ -2,7 +2,6 @@
 title: "Blitz Drift"
 excerpt: "A fast-paced multiplayer tank racing game with explosive combat, chaotic power-ups, and both online and couch co-op action."
 header:
-  image: /assets/images/.png
   teaser: /assets/images/bltirz_front.png
 sidebar:
   - title: "Role: Lead Developer"

@@ -2,7 +2,6 @@
 title: "Vault Hunter"
 excerpt: "A high-speed mobility platformer built for the Game Off game jam, where precision and momentum are key! Master fluid movement, overcome challenging obstacles."
 header:
-  image: /assets/images/.png
   teaser: /assets/images/vault_2_front.png
 sidebar:
   - title: "Role: Lead Developer"
