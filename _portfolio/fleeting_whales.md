@@ -23,6 +23,7 @@ gallery:
     alt: "placeholder image 2"
 ---
 [GitHub Repo](https://github.com/Nispeter/FloorClearer_v2){: .btn .btn--primary}
+[Itch.io Demo](https://nisp.itch.io/fleeting-whales){: .btn .btn--primary}
 
 ## Game Description  
 **Fleeting Whales** is an immersive RPG and exploration game where NPC interactions shape your experience. Dive into a world full of challenges and discover how different types of NPCs can influence your adventure.  
@@ -61,6 +62,7 @@ The world of **Fleeting Whales** is inspired by Mapuche culture, telling the sto
 
 This culturally rich environment serves as a demonstration of NPCs designed with authentic elements to create meaningful player connections.  
 
+itch.io password: whales
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/mPapwbrV82I?si=959S_J3LIrhmZJsZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
