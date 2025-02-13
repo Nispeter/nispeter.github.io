@@ -5,24 +5,25 @@ header:
   image: /assets/images/.png
   teaser: /assets/images/hoara_front.png
 sidebar:
-  - title: "Role: XX"
-    image: /assets/images/.png
+  - title: "Role: Solo Dev"
+    image: /assets/images/hoara_front.png
     image_alt: "logo"
-  - text: "Genres: XX"
-  - text: "Year: XX"
-  - text: "Studio: XX"
+  - text: "Genres: endless-runner, sci-fi"
+  - text: "Year: 2021"
+  - text: "Studio: Indie"
 gallery:
-  - url: /assets/images/.png
-    image_path: assets/images/.png
+  - url: /assets/images/hl_1.png
+    image_path: assets/images/hl_1.png
     alt: "placeholder image 3"
-  - url: /assets/images/.png
-    image_path: assets/images/.png
+  - url: /assets/images/hl_2.png
+    image_path: assets/images/hl_2.png
     alt: "placeholder image 1"
-  - url: /assets/images/.png
-    image_path: assets/images/.png
+  - url: /assets/images/hl_3.png
+    image_path: assets/images/hl_3.png
     alt: "placeholder image 2"
 ---
-[GitHub Repo](#LINK){: .btn .btn--primary}
+[GitHub Repo](https://github.com/Nispeter/Hoara-Loux){: .btn .btn--primary}
+
 ## Game Description
 **GAME NAME**  GAME DESCRIPTION 
 

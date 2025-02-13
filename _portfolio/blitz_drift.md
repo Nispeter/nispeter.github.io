@@ -3,14 +3,14 @@ title: "Blitz Drift"
 excerpt: "A fast-paced multiplayer tank racing game with explosive combat, chaotic power-ups, and both online and couch co-op action."
 header:
   image: /assets/images/.png
-  teaser: /assets/images/blitz_front.png
+  teaser: /assets/images/bltirz_front.png
 sidebar:
-  - title: "Role: XX"
-    image: /assets/images/.png
+  - title: "Role: Lead Developer"
+    image: /assets/images/bltirz_front.png
     image_alt: "logo"
-  - text: "Genres: XX"
-  - text: "Year: XX"
-  - text: "Studio: XX"
+  - text: "Genres: Racing, online-multiplayer, shooter, local-coop"
+  - text: "Year: WIP"
+  - text: "Studio: Caleuche Studios"
 gallery:
   - url: /assets/images/.png
     image_path: assets/images/.png
@@ -22,11 +22,9 @@ gallery:
     image_path: assets/images/.png
     alt: "placeholder image 2"
 ---
-[GitHub Repo](#LINK){: .btn .btn--primary}
+[GitHub Repo](https://github.com/Nispeter/BlitzDrift_Client_CGS){: .btn .btn--primary}
 ## Game Description
 **GAME NAME**  GAME DESCRIPTION 
-
-{% include gallery %}
 
 ## Tech Stack
 - **Language:** X

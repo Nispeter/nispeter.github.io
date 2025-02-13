@@ -9,7 +9,7 @@ sidebar:
     image_alt: "logo"
   - text: "Genres: Puzzle."
   - text: "Year: 2020."
-  - text: "Studio: Caleuche Studios."
+  - text: "Studio: Indie"
   - label: "GitHub"
     icon: "fab fa-fw fa-github"
     url: "https://github.com/Nispeter"
