@@ -90,4 +90,6 @@ header:
 
 ---
 
+## My Works 
+{: style="text-align: center;"}
 {% include gallery id="gallery2" %}

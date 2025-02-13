@@ -47,4 +47,3 @@ I was responsible for implementing key mechanics, including:
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/2tGu62xPqaU?si=_or6A01xlL2xCBlG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-**Credits:**
