@@ -29,6 +29,8 @@ A fast-paced mobile endless runner and shooter set in the depths of space!
 
 Dodge incoming asteroids, evade deadly traps, and blast your way through infinite waves of obstacles in this high-speed endless shooter. Move seamlessly across a 6-way lane system or mirror your position to the other side of the screen for quick evasive maneuvers. Collect points, upgrade your firepower, and test your reflexes to survive as long as possible. Can you set a new high score and conquer the cosmic chaos?  
 
+This game was developed to learn about android development and deploy, one of the first full projects i´ve ever completed alone.
+
 {% include gallery %}  
 
 ## Tech Stack  

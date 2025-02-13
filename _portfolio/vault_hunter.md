@@ -30,6 +30,8 @@ gallery:
 A challenging **platformer** where the player takes on the role of a treasure hunter, akin to Indiana Jones in the future. Navigating a labyrinth of traps and shifting platforms, the goal is to decipher movement patterns and reach the core of the zone to uncover the secrets left by the Ancients.  
 Skilled players can complete rooms in a single flow without stopping, while others must constantly adapt to the changing environment.  
 
+This project whas created as a part of the GameOff gamejam but could not finish on time, it worked as a base for team collaboration of Caleuche Studios.
+
 {% include gallery %}
 
 ## Tech Stack  

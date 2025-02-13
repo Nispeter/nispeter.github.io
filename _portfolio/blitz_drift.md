@@ -22,9 +22,10 @@ gallery:
 ---
 [GitHub Repo](https://github.com/Nispeter/BlitzDrift_Client_CGS){: .btn .btn--primary}
 ## Game Description  
-**Blitz Tanks**  
-A fast-paced **multiplayer tank racing game** with explosive combat, chaotic power-ups, and both online and couch co-op action.  
+**Blitz Drift**  A fast-paced **multiplayer tank racing game** with explosive combat, chaotic power-ups, and both online and couch co-op action.  
 You and your team form a blitz squad, tasked with destroying a city as quickly as possible—while competing against each other. Wreak havoc on the environment or take down your teammates to secure victory. 
+
+This projct was made with the intention of learing about high level networking and local coop multiplayer, using the new Godot4 input system.
 
 {% include gallery %}
 
