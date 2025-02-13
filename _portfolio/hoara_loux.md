@@ -13,19 +13,19 @@ sidebar:
   - text: "Studio: Indie"
 gallery:
   - url: /assets/images/hl_1.png
-    image_path: assets/images/hl_1.png
+    image_path: assets/images/hl_1.jpg
     alt: "placeholder image 3"
   - url: /assets/images/hl_2.png
-    image_path: assets/images/hl_2.png
+    image_path: assets/images/hl_2.jpg
     alt: "placeholder image 1"
   - url: /assets/images/hl_3.png
-    image_path: assets/images/hl_3.png
+    image_path: assets/images/hl_3.jpg
     alt: "placeholder image 2"
 ---
 [GitHub Repo](https://github.com/Nispeter/Hoara-Loux){: .btn .btn--primary}
 
 ## Game Description  
-A fast-paced mobile endless runner and shooter set in the depths of space!  
+**Hoara Loux** is a fast-paced mobile endless runner and shooter set in the depths of space!  
 
 Dodge incoming asteroids, evade deadly traps, and blast your way through infinite waves of obstacles in this high-speed endless shooter. Move seamlessly across a 6-way lane system or mirror your position to the other side of the screen for quick evasive maneuvers. Collect points, upgrade your firepower, and test your reflexes to survive as long as possible. Can you set a new high score and conquer the cosmic chaos?  
 
