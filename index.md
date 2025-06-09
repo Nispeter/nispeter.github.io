@@ -76,7 +76,7 @@
     image_path: /assets/images/hoara_front.png
     alt: "AAA"
   - url: https://nispeter.github.io/portfolio/animal_search_ar
-    image_path: /assets/images/hoara_front.png
+    image_path: /assets/images/animal_search_ar.png
     alt: "AAA"
 
 header:
