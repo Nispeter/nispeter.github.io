@@ -23,9 +23,6 @@ gallery:
   - url: /assets/images/as_4.png
     image_path: assets/images/as_4.png
     alt: "placeholder image 1"
-  - url: /assets/images/as_5.png
-    image_path: assets/images/as_5.png
-    alt: "placeholder image 1"
   - url: /assets/images/as_6.png
     image_path: assets/images/as_6.png
     alt: "placeholder image 1"
@@ -60,4 +57,6 @@ I was responsible for implementing key mechanics, including:
 - **Progress checklist system** – Created a visual UI tracker for users to monitor which animals they've discovered.  
 - **Multi-platform UI adaptation** – Built responsive UI for both tablets and smartphones.  
 - **Offline compatibility & app packaging** – Ensured the experience runs smoothly without internet, and prepared builds for APK distribution.  
+
+<iframe width="490" height="871" src="https://www.youtube.com/embed/6AU2drb2Bno" title="AnimalSearchAR" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
