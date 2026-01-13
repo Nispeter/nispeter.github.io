@@ -56,6 +56,11 @@
      btn_label: "Read More"
      btn_class: "btn--primary"
      
+  gallery1:
+  - url: https://nispeter.github.io/portfolio/hibring
+    image_path: /assets/images/nyo.png
+    alt: "AAA"
+     
  gallery2:
   - url: https://nispeter.github.io/portfolio/rhythm_tetris
     image_path: /assets/images/tetris_front.png
@@ -93,6 +98,14 @@ header:
 
 ---
 
-## My Works 
+## My Works
+
+### WebDev
+
+{: style="text-align: center;"}
+{% include gallery id="gallery1" %}
+
+### Videogames
+
 {: style="text-align: center;"}
 {% include gallery id="gallery2" %}

@@ -14,8 +14,14 @@ header:
 excerpt: "Bacon ipsum dolor sit amet salami ham hock ham, hamburger corned beef short ribs kielbasa biltong t-bone drumstick tri-tip tail sirloin pork chop."
 intro: 
   - excerpt: 'Nullam suscipit et nam, tellus velit pellentesque at malesuada, enim eaque. Quis nulla, netus tempor in diam gravida tincidunt, *proin faucibus* voluptate felis id sollicitudin. Centered with `type="center"`'
-feature_row:
+feature_row_wd_1:
   - image_path: /assets/images/bio-photo.jpg
+    alt: "placeholder image 1"
+    title: "Placeholder 1"
+    excerpt: "This is some sample content that goes here with **Markdown** formatting."
+
+feature_row:
+  - image_path: /assets/images/nyo.png
     alt: "placeholder image 1"
     title: "Placeholder 1"
     excerpt: "This is some sample content that goes here with **Markdown** formatting."
@@ -57,6 +63,8 @@ feature_row4:
 ---
 
 {% include feature_row id="intro" type="center" %}
+
+{% include feature_row_wd_1 %}
 
 {% include feature_row %}
 
