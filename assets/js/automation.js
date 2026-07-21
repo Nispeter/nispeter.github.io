@@ -577,4 +577,13 @@
   if (S.started) panel.hidden = false;  // start collapsed (handle only); asteroid click opens it
   refresh();
   setInterval(refresh, 220);
+
+  // Debug: press "]" to grant a huge pile of ore (test upgrades / progression).
+  window.addEventListener("keydown", function (e) {
+    if (e.key !== "]") return;
+    if (!S.started) { S.started = true; openPanel(); }
+    S.ore += 1e12;
+    if (S.ore > S.maxOre) S.maxOre = S.ore;
+    refresh(); scheduleSave();
+  });
 })();
