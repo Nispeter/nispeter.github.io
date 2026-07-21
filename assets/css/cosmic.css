@@ -606,6 +606,7 @@ body.theme-cs .section-hero__planet::after {
 }
 .irow__buy:hover:not(:disabled), .irow__upt:hover:not(:disabled) { background: var(--bg-elev-2); }
 .irow__buy:disabled, .irow__upt:disabled { opacity: 0.4; cursor: default; }
+.irow__bot .irow__buy { flex: 1; text-align: center; }
 
 /* Research — grid of upgrade tiles (available + acquired) */
 .idle__list--grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; align-content: start; }
@@ -623,6 +624,7 @@ body.theme-cs .section-hero__planet::after {
 .rtile__c { font-family: var(--font-display); font-size: 0.72rem; color: var(--sun); margin-top: 0.25rem; }
 .rtile.done { border-color: color-mix(in srgb, var(--web) 55%, var(--border-2)); background: color-mix(in srgb, var(--web) 12%, var(--bg-2)); }
 .rtile.done .rtile__c { color: var(--web); }
+.rtile--up { border-left: 3px solid var(--accent-2); }   /* per-building upgrades vs global research */
 
 .idle__foot { padding: 0.4rem 0.75rem; border-top: 1px solid var(--border); text-align: right; }
 .idle__reset { background: none; border: 0; color: var(--text-dim); font-size: 0.68rem; cursor: pointer; text-decoration: underline; }
