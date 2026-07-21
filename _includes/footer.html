@@ -1,0 +1,12 @@
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__name">{{ site.author.name }}</p>
+    {% if site.author.bio %}<p class="site-footer__bio">{{ site.author.bio }}</p>{% endif %}
+    <nav class="site-footer__links" aria-label="Social">
+      {% for link in site.footer.links %}
+        <a href="{{ link.url }}" rel="me noopener" target="_blank">{{ link.label }}</a>
+      {% endfor %}
+    </nav>
+    <p class="site-footer__copy">© {{ site.time | date: '%Y' }} {{ site.author.name }} · built among the stars ✦</p>
+  </div>
+</footer>
