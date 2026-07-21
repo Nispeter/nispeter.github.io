@@ -5,9 +5,9 @@ layout: default
 
 <header class="section-hero">
   <div class="section-hero__planet" aria-hidden="true"></div>
-  <p class="section-hero__count">{{ items.size }} project{% if items.size != 1 %}s{% endif %} in orbit</p>
-  <h1>{{ page.title }}</h1>
-  {% if page.blurb %}<p class="section-hero__blurb">{{ page.blurb }}</p>{% endif %}
+  <p class="section-hero__count" data-es="{{ items.size }} proyecto{% if items.size != 1 %}s{% endif %} en órbita">{{ items.size }} project{% if items.size != 1 %}s{% endif %} in orbit</p>
+  <h1{% if page.title_es %} data-es="{{ page.title_es }}"{% endif %}>{{ page.title }}</h1>
+  {% if page.blurb %}<p class="section-hero__blurb"{% if page.blurb_es %} data-es="{{ page.blurb_es }}"{% endif %}>{{ page.blurb }}</p>{% endif %}
 </header>
 
 {% if content != '' %}<div class="section-intro">{{ content }}</div>{% endif %}

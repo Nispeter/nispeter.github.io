@@ -42,6 +42,21 @@ It then appears automatically on the right planet(s) and on `/portfolio/`, order
 - Edit `sections:` to move a project between planets (a project can live on several).
 - Edit `year:` to reorder within a section (higher year = shown first).
 
+## Translations (English / Spanish)
+
+The site is written in English with a **language toggle** (the `ES`/`EN` button in the top
+bar; the choice is remembered). To translate any piece of text, add a `data-es="…"`
+attribute to its element — English stays as the element's normal content, Spanish lives in
+`data-es`. Add `data-html` as well when the value contains markup. Central spots:
+
+- **Nav labels** → `_data/navigation.yml` (`title_es`)
+- **Section titles / blurbs** → `_pages/section-*.md` (`title_es`, `blurb_es`)
+- **Achievements** → `_data/achievements.yml` (`title_es`, `detail_es`)
+- **Page titles** → front-matter `title_es`
+- **Anything else** → inline `data-es` on the element
+
+Project titles and descriptions stay in English.
+
 ## Run locally
 
 Requires Ruby. From the repo folder:

@@ -17,11 +17,11 @@ layout: default
 
   <div class="observatory__intro">
     <h1>{{ site.title }}</h1>
-    <p>{{ page.tagline | default: "Systems &amp; gameplay developer — exploring games, the web, and the machinery underneath." }}</p>
+    <p data-es="Desarrollador de sistemas y gameplay — explorando juegos, la web y la maquinaria detrás.">{{ page.tagline | default: "Systems &amp; gameplay developer — exploring games, the web, and the machinery underneath." }}</p>
   </div>
 
   <div class="planet-label" id="planet-label" role="status" aria-live="polite"></div>
-  <p class="observatory__hint" id="observatory-hint">Drag to rotate · click a planet — or the star for About ✦</p>
+  <p class="observatory__hint" id="observatory-hint" data-es="Arrastra para rotar · clic en un planeta — o la estrella para Sobre mí ✦">Drag to rotate · click a planet — or the star for About ✦</p>
 
   <!-- Accessible / no-JS / no-WebGL fallback (shown while .no3d is present) -->
   <div class="observatory__fallback" id="observatory-fallback">

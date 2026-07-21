@@ -1,11 +1,16 @@
 main:
   - title: "Home"
+    title_es: "Inicio"
     url: /
   - title: "Gamedev"
+    title_es: "Gamedev"
     url: /gamedev/
   - title: "Web & Tools"
+    title_es: "Web y Tools"
     url: /web/
   - title: "CS"
+    title_es: "CC"
     url: /cs/
   - title: "About"
+    title_es: "Sobre mí"
     url: /about/
