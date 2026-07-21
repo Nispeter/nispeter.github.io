@@ -1,18 +1,16 @@
 ---
-
-title: "Hibring – Software Development Internship"
+title: "Hibring"
 excerpt: "Pre-professional internship focused on front-end and mobile software development for geotechnical and mining applications."
+sections: [web]
 header:
-teaser: /assets/images/terra.png
+  teaser: /assets/images/terra.png
 sidebar:
-
-* title: "Role: Front-end / Mobile Developer"
-  image: /assets/images/terra.png
-  image_alt: "Hibring"
-* text: "Company: Hibring"
-* text: "Period: Jun 2023 – Dec 2023"
-* text: "Technologies: React, React Native, TypeScript"
-
+  - title: "Role: Front-end / Mobile Developer"
+    image: /assets/images/terra.png
+    image_alt: "Hibring"
+  - text: "Company: Hibring"
+  - text: "Period: Jun 2023 – Dec 2023"
+  - text: "Technologies: React, React Native, TypeScript"
 ---
 
 ## Internship Overview

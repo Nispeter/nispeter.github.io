@@ -12,13 +12,13 @@ sidebar:
   - text: "Year: 2021"
   - text: "Studio: Indie"
 gallery:
-  - url: /assets/images/hl_1.png
+  - url: /assets/images/hl_1.jpg
     image_path: assets/images/hl_1.jpg
     alt: "placeholder image 3"
-  - url: /assets/images/hl_2.png
+  - url: /assets/images/hl_2.jpg
     image_path: assets/images/hl_2.jpg
     alt: "placeholder image 1"
-  - url: /assets/images/hl_3.png
+  - url: /assets/images/hl_3.jpg
     image_path: assets/images/hl_3.jpg
     alt: "placeholder image 2"
 ---
