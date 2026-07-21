@@ -19,15 +19,15 @@
   // ---------- Buildings (cheap → expensive) ----------
   // per = units per spawned model (rarity ratio), cap = max models of that type.
   var BUILDINGS = [
-    { id: "miner",       ic: "🛰️", name: "Asteroid Miner Ship",      desc: "Mines ore from the belt.",           baseCost: 15,       growth: 1.15, ore: 0.5,   eOut: 0,    eUse: 0,   per: 50, cap: 40, motion: "asteroid",  color: 0xcfd3e0 },
+    { id: "miner",       ic: "🛰️", name: "Asteroid Miner Ship",      desc: "Mines ore from the belt.",           baseCost: 15,       growth: 1.15, ore: 0.5,   eOut: 0,    eUse: 0,   per: 50, cap: 40, motion: "asteroid",  color: 0xffd24a },
     { id: "solar",       ic: "☀️", name: "Solar Floating Panel",      desc: "Generates energy.",                  baseCost: 50,       growth: 1.16, ore: 0,     eOut: 2,    eUse: 0,   per: 40, cap: 30, motion: "sun",       radius: 2.7, color: 0x2ec4b6 },
-    { id: "drone",       ic: "🛩️", name: "Cargo Drone",              desc: "Light ore hauler. Sips energy.",     baseCost: 220,      growth: 1.16, ore: 2,     eOut: 0,    eUse: 0.5, per: 45, cap: 30, motion: "belt",      color: 0xbfe3ff },
+    { id: "drone",       ic: "🛩️", name: "Cargo Drone",              desc: "Light ore hauler. Sips energy.",     baseCost: 220,      growth: 1.16, ore: 2,     eOut: 0,    eUse: 0.5, per: 45, cap: 30, motion: "asteroid",  color: 0xbfe3ff },
     { id: "transport",   ic: "🚀", name: "Planet Transport Ship",    desc: "Hauls ore between planets.",         baseCost: 900,      growth: 1.17, ore: 7,     eOut: 0,    eUse: 2,   per: 30, cap: 24, motion: "transport", color: 0xffb060 },
     { id: "tether",      ic: "🪢", name: "Space Tether",             desc: "Cheap launches, big throughput.",    baseCost: 4000,     growth: 1.17, ore: 24,    eOut: 0,    eUse: 5,   per: 24, cap: 20, motion: "ring",      radius: 8.6, color: 0x9b8cff },
     { id: "station",     ic: "🛸", name: "Space Station",            desc: "Orbital ore hub.",                   baseCost: 18000,    growth: 1.18, ore: 70,    eOut: 0,    eUse: 12,  per: 18, cap: 18, motion: "ring",      radius: 3.6, color: 0xe8eaf2 },
     { id: "reactor",     ic: "⚛️", name: "Fusion Reactor",           desc: "Serious energy output.",             baseCost: 65000,    growth: 1.18, ore: 0,     eOut: 60,   eUse: 0,   per: 16, cap: 16, motion: "ring",      radius: 5.0, color: 0xffd27d },
-    { id: "facility",    ic: "🏭", name: "Planetary Mining Facility", desc: "Strip-mines whole worlds.",         baseCost: 220000,   growth: 1.19, ore: 320,   eOut: 0,    eUse: 45,  per: 12, cap: 14, motion: "belt",      color: 0xff8c69 },
-    { id: "shipyard",    ic: "🏗️", name: "Orbital Shipyard",         desc: "Fleets that build ore.",             baseCost: 900000,   growth: 1.19, ore: 1000,  eOut: 0,    eUse: 120, per: 10, cap: 12, motion: "belt",      color: 0x9fb0c8 },
+    { id: "facility",    ic: "🏭", name: "Planetary Mining Facility", desc: "Strip-mines whole worlds.",         baseCost: 220000,   growth: 1.19, ore: 320,   eOut: 0,    eUse: 45,  per: 12, cap: 14, motion: "asteroid",  color: 0xff8c69 },
+    { id: "shipyard",    ic: "🏗️", name: "Orbital Shipyard",         desc: "Fleets that build ore.",             baseCost: 900000,   growth: 1.19, ore: 1000,  eOut: 0,    eUse: 120, per: 10, cap: 12, motion: "asteroid",  color: 0x9fb0c8 },
     { id: "satellite",   ic: "📡", name: "Deep Space Satellite",     desc: "Beams down ore and energy.",         baseCost: 3500000,  growth: 1.20, ore: 2600,  eOut: 120,  eUse: 0,   per: 9,  cap: 12, motion: "far",       color: 0x8fd3ff },
     { id: "dyson",       ic: "🌐", name: "Dyson Swarm Node",         desc: "Drinks the star's light.",           baseCost: 14000000, growth: 1.20, ore: 0,     eOut: 1500, eUse: 0,   per: 8,  cap: 10, motion: "sun",       radius: 2.1, color: 0xffe6a6 },
     { id: "exploration", ic: "🧭", name: "Space Exploration Team",   desc: "Finds rich new belts.",              baseCost: 60000000, growth: 1.22, ore: 12000, eOut: 0,    eUse: 400, per: 6,  cap: 10, motion: "transport", color: 0x6ff2e4 }
@@ -63,8 +63,10 @@
   function upCost(b) { return Math.round(b.baseCost * 15 * Math.pow(8, upTier(b.id))); }
 
   function fmt(n) {
-    n = Math.floor(n);
-    if (n < 1000) return "" + n;
+    n = +n || 0;
+    if (n < 0) return "−" + fmt(-n);
+    if (n < 1) return n === 0 ? "0" : (+n.toFixed(2)) + "";   // keep small per-unit decimals (0.5, 0.05)
+    if (n < 1000) return (+n.toFixed(n < 10 ? 1 : 0)) + "";
     var u = ["K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc"], i = -1;
     while (n >= 1000 && i < u.length - 1) { n /= 1000; i++; }
     return (n < 10 ? n.toFixed(2) : n < 100 ? n.toFixed(1) : Math.floor(n)) + u[i];
@@ -111,7 +113,7 @@
       case "satellite":   g = new THREE.BoxGeometry(0.11, 0.11, 0.11); break;
       case "dyson":       g = new THREE.OctahedronGeometry(0.26, 0); break;
       case "exploration": g = new THREE.ConeGeometry(0.1, 0.34, 5); g.rotateX(-Math.PI / 2); break;
-      default:            g = new THREE.ConeGeometry(0.12, 0.34, 4); g.rotateX(-Math.PI / 2); // miner = pyramid ship facing its rock
+      default:            g = new THREE.ConeGeometry(0.08, 0.22, 4); g.rotateX(-Math.PI / 2); // miner = small pyramid ship facing its rock
     }
     b._geo = g; return g;
   }
@@ -323,7 +325,7 @@
     row.innerHTML =
       '<div class="irow__top"><span class="irow__ic">' + b.ic + '</span>' +
       '<span class="irow__nm">' + b.name + '</span><span class="irow__ct">×0</span></div>' +
-      '<div class="irow__stats"><span class="irow__pr"></span><span class="irow__nrg"></span></div>' +
+      '<div class="irow__stats"><span class="irow__each"></span><span class="irow__all"></span></div>' +
       '<div class="irow__bot"><button class="irow__upt" title="upgrade">Mk</button>' +
       '<button class="irow__buy"></button></div>';
     row.querySelector(".irow__buy").addEventListener("click", function () { buy(b.id); });
@@ -331,8 +333,8 @@
     buildList.appendChild(row);
     b._row = row;
     b._ct = row.querySelector(".irow__ct");
-    b._pr = row.querySelector(".irow__pr");
-    b._nrg = row.querySelector(".irow__nrg");
+    b._each = row.querySelector(".irow__each");
+    b._all = row.querySelector(".irow__all");
     b._buy = row.querySelector(".irow__buy");
     b._upt = row.querySelector(".irow__upt");
   });
@@ -351,6 +353,14 @@
     var o = owned(b.id); if (!o || !b.ore) return 0;
     var p = b.ore * o * (mods.bld[b.id] || 1) * mods.all; if (b.eUse > 0) p *= rate.ratio; return p;
   }
+  // "+ore/s · ±energy" for a given ore & energy rate (energy>0 produces, <0 consumes)
+  function statStr(ore, e) {
+    var s = [];
+    if (ore > 0) s.push("+" + fmt(ore) + "/s");
+    if (e > 0) s.push("+" + fmt(e) + "⚡");
+    else if (e < 0) s.push("−" + fmt(-e) + "⚡");
+    return s.length ? s.join(" · ") : "—";
+  }
 
   function refresh() {
     oreEl.textContent = fmt(S.ore);
@@ -366,12 +376,12 @@
       var visible = o > 0 || S.maxOre >= b.baseCost * 0.5;
       b._row.hidden = !visible; if (!visible) return;
       b._ct.textContent = "×" + o;
-      // ore contribution (or per-unit "ea" before you own any)
-      b._pr.textContent = b.ore > 0 ? ("+" + fmt(o > 0 ? lineRate(b) : b.ore) + "/s" + (o > 0 ? "" : " ea")) : "";
-      // energy: producers +, consumers −  (shows the requirement of each before buying)
-      if (b.eOut > 0) { b._nrg.textContent = "+" + fmt(o > 0 ? b.eOut * o * mods.eOut : b.eOut) + "⚡" + (o > 0 ? "" : " ea"); b._nrg.className = "irow__nrg pos"; }
-      else if (b.eUse > 0) { b._nrg.textContent = "−" + fmt(o > 0 ? b.eUse * o * mods.eUse : b.eUse) + "⚡" + (o > 0 ? "" : " ea"); b._nrg.className = "irow__nrg neg"; }
-      else { b._nrg.textContent = ""; b._nrg.className = "irow__nrg"; }
+      // per-unit and total, so "one" vs "all" is explicit
+      var mult = (mods.bld[b.id] || 1) * mods.all;
+      var perOre = b.ore > 0 ? b.ore * mult * (b.eUse > 0 ? rate.ratio : 1) : 0;
+      var perE = b.eOut > 0 ? b.eOut * mods.eOut : (b.eUse > 0 ? -b.eUse * mods.eUse : 0);
+      b._each.innerHTML = '<em>each</em>' + statStr(perOre, perE);
+      b._all.innerHTML = o > 0 ? ('<em>all</em>' + statStr(perOre * o, perE * o)) : '';
       var c = cost(b);
       b._buy.textContent = "Buy · " + fmt(c);
       b._buy.disabled = S.ore < c;
