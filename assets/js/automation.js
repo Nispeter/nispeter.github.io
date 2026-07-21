@@ -307,7 +307,12 @@
   var buildList = panel.querySelector('[data-panel="build"]');
   var researchList = panel.querySelector('[data-panel="research"]');
 
-  function openPanel() { panel.hidden = false; panel.classList.add("idle--open"); }
+  function openPanel() {
+    panel.hidden = false;
+    panel.classList.add("idle--reveal");
+    void panel.offsetWidth;              // reflow so the closed state paints first → it slides + fades in
+    panel.classList.add("idle--open");
+  }
   panel.querySelector(".idle__handle").addEventListener("click", function () { panel.classList.toggle("idle--open"); });
   panel.querySelector(".idle__reset").addEventListener("click", doReset);
   panel.querySelectorAll(".idle__tabs button").forEach(function (btn) {
