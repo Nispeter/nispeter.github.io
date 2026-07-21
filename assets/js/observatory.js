@@ -57,6 +57,13 @@
   var targetYaw = yaw, targetPitch = pitch;
   var AUTO_SPIN = 0.05; // rad/sec when idle
 
+  // Zoom (a little): wheel on desktop, two-finger pinch on touch — clamped near the base distance
+  var RADIUS_BASE = radius;
+  var RADIUS_MIN = RADIUS_BASE * 0.6;    // closest (zoom in)
+  var RADIUS_MAX = RADIUS_BASE * 1.12;   // farthest (slight zoom out)
+  var targetRadius = radius;
+  function clamp(v, lo, hi) { return v < lo ? lo : (v > hi ? hi : v); }
+
   // --- Lights --------------------------------------------------------------
   scene.add(new THREE.AmbientLight(0x8899cc, 0.55));
   scene.add(new THREE.PointLight(0xffe4a8, 2.2, 80));
@@ -281,13 +288,49 @@
     pointer.y = -((e.clientY - r.top) / r.height) * 2 + 1;
   }
 
+  // Track every active pointer so touch (Android) works: 1 = orbit/tap, 2 = pinch-zoom.
+  var activePointers = {}; // pointerId -> {x, y}
+  var pinching = false, pinchStartDist = 0, pinchStartRadius = 0;
+
+  function pointerList() {
+    var a = [];
+    for (var k in activePointers) if (activePointers.hasOwnProperty(k)) a.push(activePointers[k]);
+    return a;
+  }
+  function pinchDist() {
+    var a = pointerList();
+    if (a.length < 2) return 0;
+    var dx = a[0].x - a[1].x, dy = a[0].y - a[1].y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
   function onDown(e) {
-    setPointer(e);
-    dragging = true; dragged = false;
-    downX = lastX = e.clientX; downY = lastY = e.clientY;
-    canvas.style.cursor = "grabbing";
+    activePointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+    if (canvas.setPointerCapture) { try { canvas.setPointerCapture(e.pointerId); } catch (err) {} }
+    var n = pointerList().length;
+    if (n === 1) {
+      setPointer(e);
+      dragging = true; dragged = false;
+      downX = lastX = e.clientX; downY = lastY = e.clientY;
+      canvas.style.cursor = "grabbing";
+    } else if (n === 2) {
+      // second finger down → pinch-zoom; cancel the in-progress orbit/tap
+      dragging = false; dragged = true;
+      pinching = true;
+      pinchStartDist = pinchDist();
+      pinchStartRadius = targetRadius;
+    }
   }
   function onMove(e) {
+    var p = activePointers[e.pointerId];
+    if (p) { p.x = e.clientX; p.y = e.clientY; }
+    if (pinching) {
+      var d = pinchDist();
+      if (d > 0 && pinchStartDist > 0) {
+        targetRadius = clamp(pinchStartRadius * (pinchStartDist / d), RADIUS_MIN, RADIUS_MAX);
+      }
+      return;
+    }
     setPointer(e);
     if (!dragging) return;
     var dx = e.clientX - lastX, dy = e.clientY - lastY;
@@ -296,19 +339,46 @@
     targetPitch = Math.max(0.06, Math.min(1.28, targetPitch + dy * 0.005));
     lastX = e.clientX; lastY = e.clientY;
   }
-  function onUp() {
-    if (dragging && !dragged) {
-      if (hovered) go(hovered);
-      else if (asteroidCbs.length) {
-        raycaster.setFromCamera(pointer, camera);
-        var ah = raycaster.intersectObjects(belt.children, false);
-        if (ah.length) { for (var k = 0; k < asteroidCbs.length; k++) asteroidCbs[k](ah[0].object, ah[0].point); }
-      }
+  // Tap/click: raycast at the released point (works on touch, where there is no hover).
+  function handleTap() {
+    raycaster.setFromCamera(pointer, camera);
+    var hits = raycaster.intersectObjects(bodies, false);
+    if (hits.length) { go(hits[0].object); return; }
+    if (asteroidCbs.length) {
+      var ah = raycaster.intersectObjects(belt.children, false);
+      if (ah.length) { for (var k = 0; k < asteroidCbs.length; k++) asteroidCbs[k](ah[0].object, ah[0].point); }
     }
-    dragging = false;
-    canvas.style.cursor = hovered ? "pointer" : "grab";
   }
-  function onLeave() { pointer.set(-2, -2); dragging = false; canvas.style.cursor = "grab"; }
+  function onUp(e) {
+    var wasTap = dragging && !dragged;
+    delete activePointers[e.pointerId];
+    if (canvas.releasePointerCapture) { try { canvas.releasePointerCapture(e.pointerId); } catch (err) {} }
+    var n = pointerList().length;
+    if (pinching) {
+      if (n < 2) pinching = false;
+      if (n === 1) { // one finger remains → resume orbit from it, no accidental tap
+        var rem = pointerList()[0];
+        dragging = true; dragged = true;
+        downX = lastX = rem.x; downY = lastY = rem.y;
+      }
+      canvas.style.cursor = hovered ? "pointer" : "grab";
+      return;
+    }
+    if (n === 0) {
+      if (wasTap) handleTap();
+      dragging = false;
+      canvas.style.cursor = hovered ? "pointer" : "grab";
+    }
+  }
+  function onLeave(e) {
+    if (e && e.pointerType && e.pointerType !== "mouse") return; // keep touch/pinch state intact
+    pointer.set(-2, -2);
+    if (!dragging) canvas.style.cursor = "grab";
+  }
+  function onWheel(e) {
+    e.preventDefault();
+    targetRadius = clamp(targetRadius + e.deltaY * 0.01, RADIUS_MIN, RADIUS_MAX);
+  }
 
   function go(body) {
     if (warping || !body) return;
@@ -327,7 +397,9 @@
   canvas.addEventListener("pointerdown", onDown);
   canvas.addEventListener("pointermove", onMove);
   window.addEventListener("pointerup", onUp);
+  window.addEventListener("pointercancel", onUp);
   canvas.addEventListener("pointerleave", onLeave);
+  canvas.addEventListener("wheel", onWheel, { passive: false });
   window.addEventListener("keydown", onKey);
 
   // --- Resize / pause ------------------------------------------------------
@@ -420,6 +492,7 @@
       if (!dragging && !reduceMotion) targetYaw += AUTO_SPIN * dt;
       yaw += (targetYaw - yaw) * 0.08;
       pitch += (targetPitch - pitch) * 0.08;
+      radius += (targetRadius - radius) * 0.1;
       var cp = Math.cos(pitch);
       camera.position.set(radius * cp * Math.sin(yaw), radius * Math.sin(pitch), radius * cp * Math.cos(yaw));
       camera.lookAt(0, 0, 0);
