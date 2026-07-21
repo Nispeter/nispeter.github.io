@@ -20,9 +20,9 @@ I have a strong interest in good coding practices and optimization, always striv
 ## Achievements
 
 <div class="awards">
-  <div class="award"><span class="award__medal">🏆</span><div><b>1st place — Hack the Challenge 2023</b><span>Cybersecurity &amp; AI hackathon · NTT Data</span></div></div>
-  <div class="award"><span class="award__medal">🥈</span><div><b>2nd place — Chile Chori Jam 2023</b><span>Game jam hosted on itch.io</span></div></div>
-  <div class="award"><span class="award__medal">🏅</span><div><b>Honorable Mention — ICPC Latin America</b><span>Competitive Programming · 2020 &amp; 2021</span></div></div>
+  {%- for a in site.data.achievements -%}
+  <div class="award"><span class="award__medal">{{ a.icon }}</span><div><b data-es="{{ a.title_es }}">{{ a.title }}</b><span data-es="{{ a.detail_es }}">{{ a.detail }}</span></div></div>
+  {%- endfor -%}
 </div>
 
 ## Skills
