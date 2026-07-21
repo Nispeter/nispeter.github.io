@@ -157,7 +157,7 @@
       u.rx = 0.3 + Math.random() * 0.6; u.ry = 0.3 + Math.random() * 0.6;
     } else if (b.motion === "dronehop") {
       // hop from miner to miner
-      u.mt = "dronehop"; u.target = null; u.wait = Math.random() * 2;
+      u.mt = "dronehop"; u.target = null; u.st = null; u.wait = Math.random() * 2;
       mesh.position.set(Math.cos(i) * 11, (Math.random() - 0.5) * 0.6, Math.sin(i) * 11);
     } else if (b.motion === "planet") {
       // sit on a planet's surface, facing outward
@@ -180,7 +180,35 @@
     while (arr.length < target) { var m = makeMesh(b); initMotion(m, b, arr.length); unitsGroup.add(m); arr.push(m); }
     while (arr.length > target) { unitsGroup.remove(arr.pop()); }
   }
+  // Warp flash effect (shared texture, per-flash material for independent fade)
+  var _flashTex = null, fx = [];
+  function flashTex() {
+    if (_flashTex) return _flashTex;
+    var cv = document.createElement("canvas"); cv.width = cv.height = 64;
+    var c = cv.getContext("2d");
+    var g = c.createRadialGradient(32, 32, 0, 32, 32, 32);
+    g.addColorStop(0, "rgba(210,200,255,0.95)");
+    g.addColorStop(0.4, "rgba(155,140,255,0.5)");
+    g.addColorStop(1, "rgba(155,140,255,0)");
+    c.fillStyle = g; c.fillRect(0, 0, 64, 64);
+    _flashTex = new THREE.CanvasTexture(cv); return _flashTex;
+  }
+  function flash(pos) {
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: flashTex(), blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+    sp.position.copy(pos); sp.scale.set(0.3, 0.3, 1);
+    scene.add(sp); fx.push({ sp: sp, life: 0, ttl: 0.4 });
+  }
+  function updateFx(dt) {
+    for (var i = fx.length - 1; i >= 0; i--) {
+      var f = fx[i]; f.life += dt; var k = f.life / f.ttl;
+      var s = 0.3 + k * 1.7; f.sp.scale.set(s, s, 1);
+      f.sp.material.opacity = Math.max(0, 1 - k);
+      if (f.life >= f.ttl) { scene.remove(f.sp); f.sp.material.dispose(); fx.splice(i, 1); }
+    }
+  }
+
   function updateModels(dt) {
+    updateFx(dt);
     for (var id in models) {
       var arr = models[id];
       for (var i = 0; i < arr.length; i++) {
@@ -210,13 +238,44 @@
         } else if (u.mt === "dronehop") {
           var miners = models.miner;
           if (miners && miners.length) {
-            if (u.wait > 0) { u.wait -= dt; }
-            else {
-              if (!u.target || !u.target.parent) u.target = miners[(Math.random() * miners.length) | 0];
-              var tp = u.target.position;
-              mesh.position.lerp(tp, Math.min(1, dt * 0.9));
-              mesh.lookAt(tp.x, tp.y, tp.z);
-              if (mesh.position.distanceTo(tp) < 0.3) { u.wait = 0.5 + Math.random() * 1.4; u.target = null; }
+            if (u.wait > 0) {
+              u.wait -= dt;
+            } else if (u.st === "toTether") {
+              // fly to the warp station, aiming at the far miner
+              var wt = (u.tether && u.tether.parent) ? u.tether.position : null;
+              var dv = (u.target && u.target.parent) ? u.target.position : null;
+              if (!wt || !dv) { u.st = null; u.target = null; }
+              else {
+                mesh.position.lerp(wt, Math.min(1, dt * 0.9));
+                mesh.lookAt(dv.x, dv.y, dv.z);
+                if (mesh.position.distanceTo(wt) < 0.5) { u.st = "warp"; u.warpT = 0.35; }
+              }
+            } else if (u.st === "warp") {
+              // brief hold, then jump to the far miner with a flash at both ends
+              u.warpT -= dt;
+              if (u.warpT <= 0) {
+                var d2 = (u.target && u.target.parent) ? u.target.position : null;
+                flash(mesh.position);
+                if (d2) { mesh.position.set(d2.x + 0.2, d2.y, d2.z + 0.2); flash(mesh.position); }
+                u.wait = 0.5 + Math.random() * 1.2; u.target = null; u.st = null;
+              }
+            } else {
+              // pick a miner; if it's far and a warp station exists, route via the nearest one
+              if (!u.target || !u.target.parent) {
+                u.target = miners[(Math.random() * miners.length) | 0];
+                var stns = models.tether;
+                if (stns && stns.length && mesh.position.distanceTo(u.target.position) > 8) {
+                  var best = null, bd = Infinity;
+                  for (var w = 0; w < stns.length; w++) { var dd = mesh.position.distanceTo(stns[w].position); if (dd < bd) { bd = dd; best = stns[w]; } }
+                  u.tether = best; u.st = "toTether";
+                }
+              }
+              if (u.st !== "toTether") {
+                var tp = u.target.position;
+                mesh.position.lerp(tp, Math.min(1, dt * 0.9));
+                mesh.lookAt(tp.x, tp.y, tp.z);
+                if (mesh.position.distanceTo(tp) < 0.3) { u.wait = 0.5 + Math.random() * 1.4; u.target = null; }
+              }
             }
           }
         } else if (u.mt === "planet") {
