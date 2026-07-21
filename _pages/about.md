@@ -1,22 +1,39 @@
 ---
 permalink: /about/
 title: "About"
-author_profile: true
 ---
+
+<div class="about-header">
+  <img class="about-photo" src="/assets/images/yo.jpeg" alt="Nicolás Parra">
+  <div>
+    <h2 class="about-name">Nicolás Parra</h2>
+    <p class="about-role">Systems &amp; gameplay developer · MSc Computer Science</p>
+  </div>
+</div>
 
 I'm a systems and gameplay game developer, passionate and highly motivated, with a Bachelor's in Engineering (Software Engineering) and a Master's in Computer Science. As a hobbyist, indie, and solo developer, I believe that games are works of art capable of crafting unforgettable experiences.
 
 I have a strong interest in good coding practices and optimization, always striving to develop efficient and scalable systems. My focus lies in designing experiences, mechanics, and immersive ambiences that engage players deeply. I am particularly drawn to environmental storytelling and creating games that encourage players to think and explore.
 
-**Favorite Games:** Outer Wilds, Civilization VI, Divinity original sin 2, Dark Souls, Monster Hunter, and Warframe.  
+**Favorite Games:** Outer Wilds, Civilization VI, Divinity original sin 2, Dark Souls, Monster Hunter, and Warframe.
 
-<iframe src="https://docs.google.com/document/d/e/2PACX-1vRaqxc43aFnXIaLACKF-0f65IDfwb4Y9r3C6rHV6YzVhamt74eE8Fbh54CaIX6DhZIZCMV15DfWDJIu/pub?embedded=true" width="820" height="640" display="block"></iframe>  
+## Curriculum
 
-<p style="text-align: center; margin-top: 10px;">
-    <a href="https://docs.google.com/document/d/e/2PACX-1vRaqxc43aFnXIaLACKF-0f65IDfwb4Y9r3C6rHV6YzVhamt74eE8Fbh54CaIX6DhZIZCMV15DfWDJIu/pub?embedded=true" download>
-        <button style="padding: 10px 20px; font-size: 16px; background-color:rgb(0, 145, 133); color: white; border: none; border-radius: 5px; cursor: pointer;">
-            Download PDF
-        </button>
-    </a>
-</p>
+<div class="cv">
+  <div class="cv__tabs">
+    <input type="radio" name="cv" id="cv-en" checked>
+    <label for="cv-en">English</label>
+    <input type="radio" name="cv" id="cv-es">
+    <label for="cv-es">Español</label>
 
+    <div class="cv__panel cv__panel--en">
+      <iframe src="https://docs.google.com/document/d/e/2PACX-1vQh6DtrRrtHB31702Sd-ItwbeIFkLCK42J0tDHwRUUv_9-PfgcNvo2QT6yylUizad4zJPhzHET2nGe0/pub?embedded=true" title="CV — English" loading="lazy"></iframe>
+      <p><a class="btn btn--primary" href="https://docs.google.com/document/d/e/2PACX-1vQh6DtrRrtHB31702Sd-ItwbeIFkLCK42J0tDHwRUUv_9-PfgcNvo2QT6yylUizad4zJPhzHET2nGe0/pub" target="_blank" rel="noopener">Open full CV (English) ↗</a></p>
+    </div>
+
+    <div class="cv__panel cv__panel--es">
+      <iframe src="https://docs.google.com/document/d/e/2PACX-1vS2_igAUlqYozGRwNnq8mu5rx1pE34CV8eF51dco-8kVAMI0HbuLjKFy3iz4qCYWE0ZLnjdLw1_bNDB/pub?embedded=true" title="CV — Español" loading="lazy"></iframe>
+      <p><a class="btn btn--primary" href="https://docs.google.com/document/d/e/2PACX-1vS2_igAUlqYozGRwNnq8mu5rx1pE34CV8eF51dco-8kVAMI0HbuLjKFy3iz4qCYWE0ZLnjdLw1_bNDB/pub" target="_blank" rel="noopener">Abrir CV completo (Español) ↗</a></p>
+    </div>
+  </div>
+</div>

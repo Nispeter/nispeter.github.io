@@ -194,6 +194,37 @@ iframe { max-width: 100%; border: 0; border-radius: var(--radius); }
 .post-list a { font-family: var(--font-display); font-size: 1.1rem; }
 .post-list time { color: var(--text-dim); font-size: 0.85rem; white-space: nowrap; }
 
+/* About page */
+.about-header { display: flex; align-items: center; gap: 1.4rem; margin-bottom: 1.8rem; }
+.about-photo {
+  width: 128px; height: 128px; border-radius: 50%; object-fit: cover; flex: 0 0 auto;
+  border: 2px solid var(--accent);
+  box-shadow: 0 0 34px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.about-name { margin: 0; }
+.about-role { color: var(--text-dim); margin: 0.25rem 0 0; }
+@media (max-width: 520px) { .about-header { flex-direction: column; text-align: center; gap: 0.9rem; } }
+
+/* CV language tabs (CSS-only) */
+.cv { margin-top: 1rem; }
+.cv__tabs input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+.cv__tabs label {
+  display: inline-block; cursor: pointer; font-family: var(--font-display);
+  color: var(--text-dim); padding: 0.5rem 1.15rem; border-radius: 999px;
+  border: 1px solid var(--border-2); margin: 0 0.4rem 1rem 0; transition: color 0.2s, background 0.2s;
+}
+.cv__tabs label:hover { color: #fff; }
+#cv-en:checked ~ label[for="cv-en"],
+#cv-es:checked ~ label[for="cv-es"] { color: #06121f; background: var(--accent); border-color: transparent; }
+.cv__panel { display: none; }
+#cv-en:checked ~ .cv__panel--en,
+#cv-es:checked ~ .cv__panel--es { display: block; }
+.cv iframe {
+  width: 100%; height: 80vh; min-height: 560px; border: 0;
+  border-radius: var(--radius); background: #fff; box-shadow: var(--shadow);
+}
+.cv__panel p { margin-top: 1rem; text-align: center; }
+
 /* ---------- Buttons ---------- */
 .btn {
   display: inline-block;
