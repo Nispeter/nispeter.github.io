@@ -1,6 +1,7 @@
 ---
 title: "Choriexpress"
 excerpt: "First-person horror typing game made for a gamejam."
+sections: [gamedev]
 header:
   image: /assets/images/ce_1.png
   teaser: /assets/images/chori_front.png

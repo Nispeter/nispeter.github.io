@@ -1,6 +1,7 @@
 ---
 title: "Rhythm Tetris"
 excerpt: "A fresh take on the classic Tetris experience."
+sections: [gamedev, cs]
 header:
   teaser: /assets/images/tetris_front.png
 sidebar:

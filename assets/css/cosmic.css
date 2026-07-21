@@ -274,6 +274,7 @@ iframe { max-width: 100%; border: 0; border-radius: var(--radius); }
 }
 .section-hero__blurb { color: var(--text-dim); max-width: 56ch; margin: 0 auto; font-size: 1.1rem; }
 .section-hero__count { color: var(--accent-2); font-family: var(--font-display); font-size: 0.9rem; letter-spacing: 0.08em; text-transform: uppercase; }
+.section-intro { max-width: 62ch; margin: 0 auto 2.4rem; text-align: center; color: var(--text-dim); }
 
 .card-grid {
   display: grid; gap: 1.4rem;

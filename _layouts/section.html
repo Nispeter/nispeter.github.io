@@ -1,0 +1,22 @@
+---
+layout: default
+---
+{%- assign items = site.portfolio | where_exp: "p", "p.sections contains page.section" -%}
+{%- if page.order == 'title' -%}{%- assign items = items | sort: "title" -%}{%- endif -%}
+
+<header class="section-hero">
+  <div class="section-hero__planet" aria-hidden="true"></div>
+  <p class="section-hero__count">{{ items.size }} project{% if items.size != 1 %}s{% endif %} in orbit</p>
+  <h1>{{ page.title }}</h1>
+  {% if page.blurb %}<p class="section-hero__blurb">{{ page.blurb }}</p>{% endif %}
+</header>
+
+{% if content != '' %}<div class="section-intro">{{ content }}</div>{% endif %}
+
+{% if items.size > 0 %}
+<div class="card-grid">
+  {% for item in items %}{% include project-card.html item=item %}{% endfor %}
+</div>
+{% else %}
+<p style="text-align:center;color:var(--text-dim)">Nothing in orbit here yet — check back soon. ✦</p>
+{% endif %}
