@@ -23,7 +23,7 @@
     { id: "solar",       ic: "☀️", name: "Solar Floating Panel",      desc: "Generates energy.",                     baseCost: 50,       growth: 1.16, ore: 0,     eOut: 2,    eUse: 0,   per: 2,  cap: 60, motion: "sun",       radius: 2.4, color: 0x8fdcff },
     { id: "drone",       ic: "🛩️", name: "Cargo Drone",              desc: "Hops between miners hauling ore.",      baseCost: 220,      growth: 1.16, ore: 2,     eOut: 0,    eUse: 0.5, per: 2,  cap: 40, motion: "dronehop",  color: 0x4dd6c4 },
     { id: "transport",   ic: "🚀", name: "Planet Transport Ship",    desc: "Hauls ore between planets & stations.", baseCost: 900,      growth: 1.17, ore: 7,     eOut: 0,    eUse: 2,   per: 2,  cap: 30, motion: "transport", color: 0x74a8ff },
-    { id: "tether",      ic: "🌀", name: "Warp Station",             desc: "Warps distant cargo drones across the belt.", baseCost: 4000, growth: 1.17, ore: 24, eOut: 0, eUse: 5, per: 2,  cap: 24, motion: "warp",      radius: 7.9, color: 0xc9a3ff },
+    { id: "tether",      ic: "🌀", name: "Warp Station",             desc: "Warps distant cargo drones across the belt.", baseCost: 30000, growth: 1.18, ore: 130, eOut: 0, eUse: 8, per: 2,  cap: 24, motion: "warp",      radius: 7.9, color: 0xc9a3ff },
     { id: "station",     ic: "🛸", name: "Space Station",            desc: "Orbital ore hub.",                      baseCost: 18000,    growth: 1.18, ore: 70,    eOut: 0,    eUse: 12,  per: 2,  cap: 24, motion: "ring",      radius: 3.0, color: 0xe6f4ff },
     { id: "reactor",     ic: "⚛️", name: "Fusion Reactor",           desc: "Studs the sun. Big energy output.",     baseCost: 65000,    growth: 1.18, ore: 0,     eOut: 60,   eUse: 0,   per: 2,  cap: 40, motion: "sun",       radius: 1.4, color: 0xffcf6a },
     { id: "facility",    ic: "🏭", name: "Planetary Mining Facility", desc: "Sits on a planet, strip-mining it.",   baseCost: 220000,   growth: 1.19, ore: 320,   eOut: 0,    eUse: 45,  per: 2,  cap: 24, motion: "planet",    color: 0x66c9e0 },
@@ -181,6 +181,8 @@
       var dl = Math.floor(i / 2), dside = (i % 2 === 0) ? 1 : -1;
       u.y = dside * (1.5 + dl * 0.32);
       u.rad = 0.5 + dl * 0.4;
+      mesh.geometry = new THREE.TorusGeometry(u.rad, 0.02, 6, 44);   // per-ring size, uniform tube thickness
+      mesh.geometry.rotateX(Math.PI / 2);
     } else {
       u.mt = "orbit";
       u.r = (b.motion === "ring") ? b.radius : (b.motion === "far" ? 14 : (11.2 + (Math.random() - 0.5) * 1.6));
@@ -273,6 +275,7 @@
               if (!wt || !dv) { u.st = null; u.target = null; }
               else {
                 u.tt = (u.tt || 0) + dt;
+                u.tether.userData.aimPos.copy(dv); u.tether.userData.aimT = 0.3;  // station tracks the target while the drone approaches
                 mesh.position.lerp(wt, Math.min(1, dt * 2.5));
                 mesh.lookAt(dv.x, dv.y, dv.z);
                 if (mesh.position.distanceTo(wt) < 0.6 || u.tt > 2.5) { u.st = "aim"; u.aimT = 0.5; u.tt = 0; }
@@ -302,7 +305,7 @@
               if (!u.target || !u.target.parent) {
                 u.target = miners[(Math.random() * miners.length) | 0];
                 var stns = models.tether;
-                if (stns && stns.length && mesh.position.distanceTo(u.target.position) > 8) {
+                if (stns && stns.length && mesh.position.distanceTo(u.target.position) > 6) {
                   var best = null, bd = Infinity;
                   for (var w = 0; w < stns.length; w++) { var dd = mesh.position.distanceTo(stns[w].position); if (dd < bd) { bd = dd; best = stns[w]; } }
                   u.tether = best; u.st = "toTether"; u.tt = 0;
@@ -329,7 +332,6 @@
           else { mesh.lookAt(mesh.position.x - Math.sin(u.ang), mesh.position.y, mesh.position.z + Math.cos(u.ang)); }
         } else if (u.mt === "dysonring") {
           mesh.position.set(0, u.y, 0);
-          mesh.scale.setScalar(u.rad);
         } else {
           u.ang += u.sp * dt;
           mesh.position.set(Math.cos(u.ang) * u.r, u.y, Math.sin(u.ang) * u.r);
