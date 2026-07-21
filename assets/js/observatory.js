@@ -77,6 +77,26 @@
     return s;
   }
 
+  // Procedural star surface: warm gradient (limb darkening) + granulation
+  function sunTexture() {
+    var S = 256, cv = document.createElement("canvas"); cv.width = cv.height = S;
+    var ctx = cv.getContext("2d");
+    var g = ctx.createRadialGradient(S * 0.42, S * 0.4, S * 0.04, S * 0.5, S * 0.5, S * 0.62);
+    g.addColorStop(0.0, "#fff7df");
+    g.addColorStop(0.35, "#ffe6a6");
+    g.addColorStop(0.7, "#ffb653");
+    g.addColorStop(1.0, "#e2731c");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, S, S);
+    for (var i = 0; i < 240; i++) {
+      var x = Math.random() * S, y = Math.random() * S, r = 2 + Math.random() * 11;
+      ctx.globalAlpha = 0.04 + Math.random() * 0.12;
+      ctx.fillStyle = Math.random() > 0.5 ? "#fff2c4" : "#d8641a";
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    return new THREE.CanvasTexture(cv);
+  }
+
   function orbitRing(r) {
     var seg = 128, pts = [];
     for (var i = 0; i <= seg; i++) {
@@ -91,11 +111,20 @@
 
   // --- Sun (the author) ----------------------------------------------------
   var sun = new THREE.Mesh(
-    new THREE.IcosahedronGeometry(1.5, 2),
-    new THREE.MeshBasicMaterial({ color: 0xffd27d })
+    new THREE.SphereGeometry(1.5, 48, 48),
+    new THREE.MeshBasicMaterial({ map: sunTexture() })
   );
-  sun.add(glowSprite("255,210,125", 9));
   scene.add(sun);
+  // corona shell (soft additive halo hugging the limb)
+  var corona = new THREE.Mesh(
+    new THREE.SphereGeometry(1.78, 32, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffb84d, transparent: true, opacity: 0.22, side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false })
+  );
+  sun.add(corona);
+  // layered glow: a tight bright core + a big soft bloom
+  sun.add(glowSprite("255,228,150", 6.5));
+  var sunBloom = glowSprite("255,176,84", 12);
+  sun.add(sunBloom);
 
   // --- Planets (each is a group with body + extras) ------------------------
   var planets = [];
@@ -298,7 +327,12 @@
       var target = (pl.body === hovered) ? 1.32 : 1;
       pl.group.scale.lerp(tmpS.set(target, target, target), 0.15);
     });
-    if (!reduceMotion) sun.rotation.y += dt * 0.12;
+    if (!reduceMotion) {
+      sun.rotation.y += dt * 0.12;
+      var pb = 12 * (1 + Math.sin(t * 1.1) * 0.06);
+      sunBloom.scale.set(pb, pb, 1);
+      corona.material.opacity = 0.2 + Math.sin(t * 0.9) * 0.06;
+    }
     var sunPulse = reduceMotion ? 1 : (1 + Math.sin(t * 1.4) * 0.02);
     var sunHover = (hovered === sun) ? 1.12 : 1;
     sun.scale.lerp(tmpS.set(sunPulse * sunHover, sunPulse * sunHover, sunPulse * sunHover), 0.2);
