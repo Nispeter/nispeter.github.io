@@ -27,27 +27,14 @@ I have a strong interest in good coding practices and optimization, always striv
 
 ## Skills
 
-<div class="skills">
-  <div class="skill-group">
-    <h3>Languages</h3>
-    <div class="chips"><span class="chip">C</span><span class="chip">C++</span><span class="chip">C#</span><span class="chip">Java</span><span class="chip">Python</span><span class="chip">GDScript</span><span class="chip">TypeScript</span><span class="chip">JavaScript</span><span class="chip">SQL</span><span class="chip">Dart</span></div>
-  </div>
-  <div class="skill-group">
-    <h3>Game dev</h3>
-    <div class="chips"><span class="chip">Unity</span><span class="chip">Godot</span><span class="chip">Unreal</span><span class="chip">Blender</span><span class="chip">Aseprite</span><span class="chip">ShaderGraph</span><span class="chip">LDtk</span><span class="chip">OpenGL / WebGL</span></div>
-  </div>
-  <div class="skill-group">
-    <h3>Web &amp; Backend</h3>
-    <div class="chips"><span class="chip">React</span><span class="chip">React Native</span><span class="chip">Node</span><span class="chip">Fastify</span><span class="chip">FastAPI</span><span class="chip">Flask</span><span class="chip">.NET</span><span class="chip">Spring Boot</span></div>
-  </div>
-  <div class="skill-group">
-    <h3>Data &amp; ML</h3>
-    <div class="chips"><span class="chip">PostgreSQL</span><span class="chip">QuestDB</span><span class="chip">ClickHouse</span><span class="chip">Redis</span><span class="chip">PyTorch</span><span class="chip">TensorFlow</span><span class="chip">LangChain</span><span class="chip">RAG</span><span class="chip">LoRA / QLoRA</span></div>
-  </div>
-  <div class="skill-group">
-    <h3>DevOps &amp; Tools</h3>
-    <div class="chips"><span class="chip">Docker</span><span class="chip">Git</span><span class="chip">Linux</span><span class="chip">AWS</span><span class="chip">Azure</span><span class="chip">CI/CD</span><span class="chip">Playwright</span><span class="chip">Pytest</span><span class="chip">Auth0</span><span class="chip">JWT</span></div>
-  </div>
+<p class="skills-note" data-i18n="about.skills_note">Pulled automatically from every project's tech stack — a living map of what I've actually shipped with.</p>
+
+<div class="chips skills-cloud">
+{%- assign tech_str = "" -%}
+{%- for p in site.portfolio -%}{%- for t in p.tech -%}{%- assign tech_str = tech_str | append: t | append: "||" -%}{%- endfor -%}{%- endfor -%}
+{%- assign tech_full = tech_str | split: "||" -%}
+{%- assign tech_uniq = tech_full | uniq | sort_natural -%}
+{%- for t in tech_uniq -%}{%- unless t == "" -%}<span class="chip">{{ t }}</span>{%- endunless -%}{%- endfor -%}
 </div>
 
 ## Curriculum

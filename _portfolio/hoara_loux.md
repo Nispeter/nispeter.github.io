@@ -3,6 +3,7 @@ title: "Hoara Loux"
 excerpt: "A fast-paced mobile endless runner and shooter set in the depths of space!"
 sections: [gamedev]
 year: 2021
+tech: [C#, Unity]
 header:
   teaser: /assets/images/hoara_front.png
 sidebar:

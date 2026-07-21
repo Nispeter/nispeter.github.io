@@ -3,6 +3,7 @@ title: "Arcane Dice Roller"
 excerpt: "A dark-fantasy tabletop-RPG companion: dice roller, initiative tracker, oracle deck and more — all in the browser."
 sections: [web]
 year: 2024
+tech: [JavaScript]
 header:
   teaser:   # add /assets/images/arcane_dice_roller/cover.png when you have one
 sidebar:

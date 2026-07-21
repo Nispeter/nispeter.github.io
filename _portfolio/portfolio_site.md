@@ -3,6 +3,7 @@ title: "This Portfolio"
 excerpt: "The site you're on: a custom Jekyll theme with an interactive 3D 'cosmic observatory' home built in Three.js."
 sections: [web]
 year: 2025
+tech: [Jekyll, Three.js, JavaScript, CSS]
 header:
   teaser:   # no image — shows the themed placeholder
 sidebar:

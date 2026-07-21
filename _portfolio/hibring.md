@@ -3,6 +3,7 @@ title: "Hibring"
 excerpt: "Pre-professional internship focused on front-end and mobile software development for geotechnical and mining applications."
 sections: [web]
 year: 2023
+tech: [React, React Native, TypeScript]
 header:
   teaser: /assets/images/terra.png
 sidebar:

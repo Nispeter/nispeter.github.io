@@ -3,6 +3,7 @@ title: "Fleeting Whales"
 excerpt: "Cultural RPG using LLMs for enchancing player experience."
 sections: [gamedev, cs]
 year: 2023
+tech: [C#, Unity, OpenAI API, RAG, Blender]
 header:
   image: /assets/images/fw_hub.png
   teaser: /assets/images/fleeting_front.png

@@ -3,6 +3,7 @@ title: "Krunchbox"
 excerpt: "Back-end engineer for a cloud-based retail analytics & business-intelligence platform."
 sections: [web, cs]
 year: 2026
+tech: [Python, FastAPI, ClickHouse, SQL Server]
 header:
   teaser:   # add /assets/images/krunchbox/cover.png when you have one
 sidebar:

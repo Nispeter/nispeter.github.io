@@ -3,6 +3,7 @@ title: "Rhythm Tetris"
 excerpt: "A fresh take on the classic Tetris experience."
 sections: [gamedev, cs]
 year: 2020
+tech: [C, SDL2]
 header:
   teaser: /assets/images/tetris_front.png
 sidebar:

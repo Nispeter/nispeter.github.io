@@ -3,6 +3,7 @@ title: "Vault Hunter"
 excerpt: "A high-speed mobility platformer built for the Game Off game jam, where precision and momentum are key! Master fluid movement, overcome challenging obstacles."
 sections: [gamedev]
 year: 2024
+tech: [GDScript, Godot]
 header:
   teaser: /assets/images/vault_2_front.png
 sidebar:

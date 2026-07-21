@@ -26,6 +26,11 @@ interactive **3D "cosmic observatory"** (Three.js); each planet is a discipline:
 
 It then appears automatically on the right planet(s) and on `/portfolio/`, ordered by `year`.
 
+> **Skills are automatic.** Add a `tech: [Unity, "C#", …]` list to the front matter — it
+> renders as chips on the project page **and** feeds the Skills cloud on `/about/`
+> automatically. That's the single source of truth; there is no separate skills list to keep
+> in sync.
+
 ## Add photos
 
 - Put images in **`assets/images/<slug>/`** (e.g. `assets/images/my-game/cover.png`).

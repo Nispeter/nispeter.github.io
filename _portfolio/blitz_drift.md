@@ -3,6 +3,7 @@ title: "Blitz Drift"
 excerpt: "A fast-paced multiplayer tank racing game with explosive combat, chaotic power-ups, and both online and couch co-op action."
 sections: [gamedev]
 year: 2025
+tech: [GDScript, Godot]
 header:
   teaser: /assets/images/bltirz_front.png
 sidebar:

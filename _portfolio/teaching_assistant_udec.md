@@ -3,6 +3,7 @@ title: "Teaching Assistant — UdeC"
 excerpt: "Teaching assistant for programming, software development and data structures at University of Concepción."
 sections: [cs]
 year: 2023
+tech: [C, Python]
 header:
   teaser:   # add /assets/images/teaching_assistant_udec/cover.png when you have one
 sidebar:

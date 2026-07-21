@@ -3,6 +3,7 @@ title: "Sentinel Care"
 excerpt: "Real-time sensor-monitoring web app with low-latency dashboards and historical analysis."
 sections: [web, cs]
 year: 2025
+tech: [React, Vite, Node, Fastify, QuestDB, PostgreSQL, Azure]
 header:
   teaser:   # add /assets/images/sentinel_care/cover.png when you have one
 sidebar:
