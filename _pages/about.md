@@ -47,13 +47,13 @@ I have a strong interest in good coding practices and optimization, always striv
     <label for="cv-es">Español</label>
 
     <div class="cv__panel cv__panel--en">
-      <iframe src="https://docs.google.com/document/d/e/2PACX-1vQh6DtrRrtHB31702Sd-ItwbeIFkLCK42J0tDHwRUUv_9-PfgcNvo2QT6yylUizad4zJPhzHET2nGe0/pub?embedded=true" title="CV — English" loading="lazy"></iframe>
-      <p><a class="btn btn--primary" href="https://docs.google.com/document/d/e/2PACX-1vQh6DtrRrtHB31702Sd-ItwbeIFkLCK42J0tDHwRUUv_9-PfgcNvo2QT6yylUizad4zJPhzHET2nGe0/pub" target="_blank" rel="noopener">Open full CV (English) ↗</a></p>
+      <iframe src="https://docs.google.com/document/d/e/2PACX-1vS2_igAUlqYozGRwNnq8mu5rx1pE34CV8eF51dco-8kVAMI0HbuLjKFy3iz4qCYWE0ZLnjdLw1_bNDB/pub?embedded=true" title="CV — English" loading="lazy"></iframe>
+      <p><a class="btn btn--primary" href="https://docs.google.com/document/d/e/2PACX-1vS2_igAUlqYozGRwNnq8mu5rx1pE34CV8eF51dco-8kVAMI0HbuLjKFy3iz4qCYWE0ZLnjdLw1_bNDB/pub" target="_blank" rel="noopener">Open full CV (English) ↗</a></p>
     </div>
 
     <div class="cv__panel cv__panel--es">
-      <iframe src="https://docs.google.com/document/d/e/2PACX-1vS2_igAUlqYozGRwNnq8mu5rx1pE34CV8eF51dco-8kVAMI0HbuLjKFy3iz4qCYWE0ZLnjdLw1_bNDB/pub?embedded=true" title="CV — Español" loading="lazy"></iframe>
-      <p><a class="btn btn--primary" href="https://docs.google.com/document/d/e/2PACX-1vS2_igAUlqYozGRwNnq8mu5rx1pE34CV8eF51dco-8kVAMI0HbuLjKFy3iz4qCYWE0ZLnjdLw1_bNDB/pub" target="_blank" rel="noopener">Abrir CV completo (Español) ↗</a></p>
+      <iframe src="https://docs.google.com/document/d/e/2PACX-1vQh6DtrRrtHB31702Sd-ItwbeIFkLCK42J0tDHwRUUv_9-PfgcNvo2QT6yylUizad4zJPhzHET2nGe0/pub?embedded=true" title="CV — Español" loading="lazy"></iframe>
+      <p><a class="btn btn--primary" href="https://docs.google.com/document/d/e/2PACX-1vQh6DtrRrtHB31702Sd-ItwbeIFkLCK42J0tDHwRUUv_9-PfgcNvo2QT6yylUizad4zJPhzHET2nGe0/pub" target="_blank" rel="noopener">Abrir CV completo (Español) ↗</a></p>
     </div>
   </div>
 </div>
