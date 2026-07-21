@@ -38,6 +38,8 @@
       detail: "ring",  url: root.getAttribute("data-cs") || "/cs/" }
   ];
 
+  var aboutUrl = root.getAttribute("data-about") || "/about/";
+
   // --- Renderer / scene / camera -------------------------------------------
   var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
   renderer.setClearColor(0x05070f, 1);
@@ -162,6 +164,10 @@
     bodies.push(body);
   });
 
+  // The sun is the author — clicking it opens the About page
+  sun.userData = { name: "About", blurb: "Who I am — bio & CV", url: aboutUrl };
+  bodies.push(sun);
+
   // --- Starfield -----------------------------------------------------------
   (function stars() {
     var N = 1700, pos = new Float32Array(N * 3);
@@ -230,6 +236,7 @@
     if (e.key === "1") go(planets[0].body);
     else if (e.key === "2") go(planets[1].body);
     else if (e.key === "3") go(planets[2].body);
+    else if (e.key === "0") go(sun);
   }
 
   canvas.addEventListener("pointerdown", onDown);
@@ -291,10 +298,10 @@
       var target = (pl.body === hovered) ? 1.32 : 1;
       pl.group.scale.lerp(tmpS.set(target, target, target), 0.15);
     });
-    if (!reduceMotion) {
-      sun.rotation.y += dt * 0.12;
-      sun.scale.setScalar(1 + Math.sin(t * 1.4) * 0.02);
-    }
+    if (!reduceMotion) sun.rotation.y += dt * 0.12;
+    var sunPulse = reduceMotion ? 1 : (1 + Math.sin(t * 1.4) * 0.02);
+    var sunHover = (hovered === sun) ? 1.12 : 1;
+    sun.scale.lerp(tmpS.set(sunPulse * sunHover, sunPulse * sunHover, sunPulse * sunHover), 0.2);
 
     // Hover detection (not while dragging or warping)
     if (!warping && !dragging) {
