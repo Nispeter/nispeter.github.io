@@ -344,9 +344,7 @@
 
   // ---------- Economy ----------
   var rate = { ore: 0, eOut: 0, eUse: 0, ratio: 1 };
-  OBS.onFrame(function (dt) {
-    updateModels(dt);
-    if (!S.started) return;
+  function computeRate() {
     var eOut = 0, eUse = 0, i, b, o;
     for (i = 0; i < BUILDINGS.length; i++) { b = BUILDINGS[i]; o = owned(b.id); if (!o) continue; eOut += b.eOut * o; eUse += b.eUse * o; }
     eOut *= mods.eOut; eUse *= mods.eUse;
@@ -362,9 +360,21 @@
       ore += p;
     }
     rate.ore = ore; rate.eOut = eOut; rate.eUse = eUse; rate.ratio = ratio;
-    S.ore += ore * dt;
+  }
+  // Wall-clock accrual so production keeps running in a backgrounded tab (that's the "idle").
+  var lastAccrue = Date.now();
+  function accrue() {
+    var now = Date.now(), dtSec = (now - lastAccrue) / 1000;
+    lastAccrue = now;
+    if (!S.started || dtSec <= 0) return;
+    if (dtSec > 3600) dtSec = 3600;                 // cap catch-up to 1 hour
+    computeRate();
+    S.ore += rate.ore * dtSec;
     if (S.ore > S.maxOre) S.maxOre = S.ore;
-  });
+  }
+  OBS.onFrame(function (dt) { updateModels(dt); accrue(); });
+  setInterval(accrue, 1000);                         // keeps ticking (throttled ~1/s) while the tab is hidden
+  document.addEventListener("visibilitychange", accrue);
 
   // ---------- Asteroid click ----------
   OBS.onAsteroidClick(function (obj, point) {
