@@ -11,5 +11,6 @@ body_class: theme-web
 </p>
 
 <div class="card-grid">
-  {% for item in site.portfolio %}{% include project-card.html item=item %}{% endfor %}
+  {% assign all_projects = site.portfolio | sort: "year" | reverse %}
+  {% for item in all_projects %}{% include project-card.html item=item %}{% endfor %}
 </div>

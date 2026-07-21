@@ -2,6 +2,7 @@
 title: "Animal Search AR"
 excerpt: "AR Unity Game made for Fondecyt No. 13220040"
 sections: [gamedev]
+year: 2025
 header:
   teaser: /assets/images/animal_search_front.png
 sidebar:

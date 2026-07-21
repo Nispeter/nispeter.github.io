@@ -1,8 +1,7 @@
 ---
 layout: default
 ---
-{%- assign items = site.portfolio | where_exp: "p", "p.sections contains page.section" -%}
-{%- if page.order == 'title' -%}{%- assign items = items | sort: "title" -%}{%- endif -%}
+{%- assign items = site.portfolio | where_exp: "p", "p.sections contains page.section" | sort: "year" | reverse -%}
 
 <header class="section-hero">
   <div class="section-hero__planet" aria-hidden="true"></div>
