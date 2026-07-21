@@ -29,13 +29,13 @@
   var PLANETS = [
     { key: "gamedev", name: "Gamedev",          blurb: "Games as art you can play",
       color: 0xff8c69, glow: "255,140,105", size: 0.9,  orbit: 4.6, speed: 0.16, angle: 0.4,
-      detail: "moon",  url: root.getAttribute("data-gamedev") || "/gamedev/" },
+      detail: "moon",  url: root.getAttribute("data-gamedev") || "/gamedev/", count: root.getAttribute("data-count-gamedev") },
     { key: "web",     name: "Web & Tools",      blurb: "Interfaces & the tools behind them",
       color: 0x2ec4b6, glow: "46,196,182",  size: 0.72, orbit: 6.8, speed: 0.11, angle: 2.4,
-      detail: "wire",  url: root.getAttribute("data-web") || "/web/" },
+      detail: "wire",  url: root.getAttribute("data-web") || "/web/", count: root.getAttribute("data-count-web") },
     { key: "cs",      name: "Computer Science", blurb: "Low-level systems, rendering & AI",
       color: 0x9b8cff, glow: "155,140,255", size: 0.82, orbit: 9.0, speed: 0.08, angle: 4.5,
-      detail: "ring",  url: root.getAttribute("data-cs") || "/cs/" }
+      detail: "ring",  url: root.getAttribute("data-cs") || "/cs/", count: root.getAttribute("data-count-cs") }
   ];
 
   var aboutUrl = root.getAttribute("data-about") || "/about/";
@@ -212,6 +212,53 @@
     scene.add(new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.5, sizeAttenuation: true, transparent: true, opacity: 0.85 })));
   })();
 
+  // --- Asteroid belt (a ring of low-poly rocks past the CS planet) ---------
+  var belt = new THREE.Group();
+  (function asteroids() {
+    var mat = new THREE.MeshStandardMaterial({ color: 0x7a819c, flatShading: true, roughness: 1 });
+    for (var i = 0; i < 70; i++) {
+      var rock = new THREE.Mesh(new THREE.IcosahedronGeometry(0.05 + Math.random() * 0.1, 0), mat);
+      var a = Math.random() * Math.PI * 2, r = 11.6 + (Math.random() - 0.5) * 1.4;
+      rock.position.set(Math.cos(a) * r, (Math.random() - 0.5) * 0.7, Math.sin(a) * r);
+      rock.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
+      belt.add(rock);
+    }
+    scene.add(belt);
+  })();
+
+  // --- Shooting stars ------------------------------------------------------
+  var meteors = [];
+  var meteorTimer = 2 + Math.random() * 3;
+  var METEOR_DIR = new THREE.Vector3();
+  function spawnMeteor() {
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(6), 3));
+    var line = new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false }));
+    line.userData = {
+      pos: new THREE.Vector3((Math.random() * 2 - 1) * 45, 15 + Math.random() * 22, -25 - Math.random() * 25),
+      vel: new THREE.Vector3(-1 - Math.random() * 1.2, -0.5 - Math.random() * 0.5, 0.2 + Math.random() * 0.4).normalize().multiplyScalar(34 + Math.random() * 26),
+      life: 0, ttl: 1.1 + Math.random() * 0.9, len: 2.4 + Math.random() * 3
+    };
+    scene.add(line);
+    meteors.push(line);
+  }
+  function updateMeteors(dt) {
+    meteorTimer -= dt;
+    if (meteorTimer <= 0 && !reduceMotion) { spawnMeteor(); meteorTimer = 2.5 + Math.random() * 4; }
+    for (var i = meteors.length - 1; i >= 0; i--) {
+      var m = meteors[i], u = m.userData;
+      u.life += dt;
+      u.pos.addScaledVector(u.vel, dt);
+      METEOR_DIR.copy(u.vel).normalize();
+      var arr = m.geometry.attributes.position.array;
+      arr[0] = u.pos.x; arr[1] = u.pos.y; arr[2] = u.pos.z;
+      arr[3] = u.pos.x - METEOR_DIR.x * u.len; arr[4] = u.pos.y - METEOR_DIR.y * u.len; arr[5] = u.pos.z - METEOR_DIR.z * u.len;
+      m.geometry.attributes.position.needsUpdate = true;
+      m.material.opacity = Math.max(0, 0.9 * (1 - u.life / u.ttl));
+      if (u.life >= u.ttl) { scene.remove(m); m.geometry.dispose(); m.material.dispose(); meteors.splice(i, 1); }
+    }
+  }
+
   // --- Interaction ---------------------------------------------------------
   var raycaster = new THREE.Raycaster();
   var pointer = new THREE.Vector2(-2, -2);
@@ -299,7 +346,9 @@
     var r = canvas.getBoundingClientRect();
     label.style.left = ((tmpV.x * 0.5 + 0.5) * r.width + r.left) + "px";
     label.style.top = ((-tmpV.y * 0.5 + 0.5) * r.height + r.top) + "px";
-    label.innerHTML = "<b>" + hovered.userData.name + "</b><span>" + hovered.userData.blurb + "</span>";
+    var meta = hovered.userData.blurb;
+    if (hovered.userData.count) meta += " · " + hovered.userData.count + " projects";
+    label.innerHTML = "<b>" + hovered.userData.name + "</b><span>" + meta + "</span>";
     label.classList.add("show");
   }
 
@@ -311,6 +360,9 @@
     requestAnimationFrame(loop);
     var dt = Math.min(clock.getDelta(), 0.05);
     var t = clock.elapsedTime;
+
+    if (!reduceMotion) belt.rotation.y += dt * 0.02;
+    updateMeteors(dt);
 
     // Planets: orbit, spin, satellites
     planets.forEach(function (pl) {

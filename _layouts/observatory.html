@@ -1,11 +1,17 @@
 ---
 layout: default
 ---
+{% assign n_game = site.portfolio | where_exp: "p", "p.sections contains 'gamedev'" | size %}
+{% assign n_web = site.portfolio | where_exp: "p", "p.sections contains 'web'" | size %}
+{% assign n_cs = site.portfolio | where_exp: "p", "p.sections contains 'cs'" | size %}
 <div class="observatory no3d"
      data-gamedev="{{ '/gamedev/' | relative_url }}"
      data-web="{{ '/web/' | relative_url }}"
      data-cs="{{ '/cs/' | relative_url }}"
-     data-about="{{ '/about/' | relative_url }}">
+     data-about="{{ '/about/' | relative_url }}"
+     data-count-gamedev="{{ n_game }}"
+     data-count-web="{{ n_web }}"
+     data-count-cs="{{ n_cs }}">
 
   <canvas id="observatory-canvas"></canvas>
 
