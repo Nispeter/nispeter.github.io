@@ -36,13 +36,6 @@ This project whas created as a part of the GameOff gamejam but could not finish 
 
 {% include gallery %}
 
-## Tech Stack  
-- **Language:** GDScript  
-- **Engine:** Godot  
-- **Additional Dependencies:**  
-  - Post-processing effects  
-- **Visuals:** Pixel Art inspired by Indiana Jones and sci-fi aesthetics  
-
 ## Features Developed  
 I was responsible for implementing key mechanics, including:  
 
@@ -57,4 +50,3 @@ I was responsible for implementing key mechanics, including:
 
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/2tGu62xPqaU?si=_or6A01xlL2xCBlG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-

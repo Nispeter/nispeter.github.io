@@ -45,12 +45,6 @@ Symbolic animals include:
 
 {% include gallery %}
 
-## Tech Stack  
-- **Language:** C#  
-- **Engine:** Unity  
-- **AR Framework:** AR Foundation (ARCore/ARKit)  
-- **Visuals:** Stylized 3D Animals with Educational UI  
-
 ## Features Developed  
 I was responsible for implementing key mechanics, including:  
 
@@ -62,4 +56,3 @@ I was responsible for implementing key mechanics, including:
 - **Offline compatibility & app packaging** – Ensured the experience runs smoothly without internet, and prepared builds for APK distribution.  
 
 <iframe width="490" height="871" src="https://www.youtube.com/embed/6AU2drb2Bno" title="AnimalSearchAR" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-

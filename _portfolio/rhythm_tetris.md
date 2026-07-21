@@ -36,15 +36,6 @@ This projct was made with the intention of learing about low level programming a
 
 {% include gallery %}
 
-## Tech Stack
-- **Language:** C
-- **Graphics:** SDL2
-- **Additional Dependencies:**
-  - `SDL_image` (handling image assets)
-  - `SDL_ttf` (rendering text with fonts)
-  - `SDL_mixer` (music and sound effects)
-- **Visuals:** Aseprite
-
 ## Features Developed
 I was responsible for implementing key mechanics and UI elements, including:
 - **Border collision detection** – Ensuring tetrominoes respect the game boundaries.

@@ -31,12 +31,6 @@ This projct was made with the intention of learing about high level networking a
 
 {% include gallery %}
 
-## Tech Stack  
-- **Language:** GDScript  
-- **Engine:** Godot 3D  
-- **Networking:** Godot Networking  
-- **Visuals:** Low-poly 3D  
-
 ## Features Developed  
 I was responsible for implementing key mechanics, including:  
 
@@ -46,4 +40,3 @@ I was responsible for implementing key mechanics, including:
 - **Tank customization system** – Created a system for players to modify tank appearance and loadouts.  
 - **Main menu and UI style** – Designed the main menu aesthetics for an immersive experience.  
 - **Screen manager system** – Built a system to manage screen transitions and different game states.  
-

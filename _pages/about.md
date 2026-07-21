@@ -1,34 +1,33 @@
 ---
 permalink: /about/
 title: "About"
-title_es: "Sobre mí"
 ---
 
 <div class="about-header">
   <img class="about-photo" src="/assets/images/yo.jpeg" alt="Nicolás Parra">
   <div>
     <h2 class="about-name">Nicolás Parra</h2>
-    <p class="about-role" data-es="Desarrollador de sistemas y gameplay · Magíster en Ciencias de la Computación">Systems &amp; gameplay developer · MSc Computer Science</p>
+    <p class="about-role">Systems &amp; gameplay developer · MSc Computer Science</p>
   </div>
 </div>
 
-<p data-es="Soy desarrollador de videojuegos enfocado en sistemas y gameplay, apasionado y muy motivado, con un Bachillerato en Ingeniería (Ingeniería de Software) y un Magíster en Ciencias de la Computación. Como desarrollador hobbyista, indie y solitario, creo que los videojuegos son obras de arte capaces de crear experiencias inolvidables.">I'm a systems and gameplay game developer, passionate and highly motivated, with a Bachelor's in Engineering (Software Engineering) and a Master's in Computer Science. As a hobbyist, indie, and solo developer, I believe that games are works of art capable of crafting unforgettable experiences.</p>
+I'm a systems and gameplay game developer, passionate and highly motivated, with a Bachelor's in Engineering (Software Engineering) and a Master's in Computer Science. As a hobbyist, indie, and solo developer, I believe that games are works of art capable of crafting unforgettable experiences.
 
-<p data-es="Tengo un fuerte interés en las buenas prácticas de programación y la optimización, buscando siempre desarrollar sistemas eficientes y escalables. Me enfoco en diseñar experiencias, mecánicas y ambientes inmersivos que involucren profundamente a los jugadores. Me atrae especialmente la narrativa ambiental y crear juegos que inviten a pensar y explorar.">I have a strong interest in good coding practices and optimization, always striving to develop efficient and scalable systems. My focus lies in designing experiences, mechanics, and immersive ambiences that engage players deeply. I am particularly drawn to environmental storytelling and creating games that encourage players to think and explore.</p>
+I have a strong interest in good coding practices and optimization, always striving to develop efficient and scalable systems. My focus lies in designing experiences, mechanics, and immersive ambiences that engage players deeply. I am particularly drawn to environmental storytelling and creating games that encourage players to think and explore.
 
-<p data-html data-es="<strong>Juegos favoritos:</strong> Outer Wilds, Civilization VI, Divinity Original Sin 2, Dark Souls, Monster Hunter y Warframe."><strong>Favorite Games:</strong> Outer Wilds, Civilization VI, Divinity original sin 2, Dark Souls, Monster Hunter, and Warframe.</p>
+**Favorite Games:** Outer Wilds, Civilization VI, Divinity original sin 2, Dark Souls, Monster Hunter, and Warframe.
 
-<h2 data-es="Logros">Achievements</h2>
+## Achievements
 
 <div class="awards">
   {%- for a in site.data.achievements -%}
-  <div class="award"><span class="award__medal">{{ a.icon }}</span><div><b data-es="{{ a.title_es }}">{{ a.title }}</b><span data-es="{{ a.detail_es }}">{{ a.detail }}</span></div></div>
+  <div class="award"><span class="award__medal">{{ a.icon }}</span><div><b>{{ a.title }}</b><span>{{ a.detail }}</span></div></div>
   {%- endfor -%}
 </div>
 
-<h2 data-es="Habilidades">Skills</h2>
+## Skills
 
-<p class="skills-note" data-es="Se genera automáticamente desde el tech de cada proyecto — un mapa vivo de con qué he trabajado de verdad.">Pulled automatically from every project's tech stack — a living map of what I've actually shipped with.</p>
+<p class="skills-note">Pulled automatically from every project's tech stack — a living map of what I've actually shipped with.</p>
 
 <div class="chips skills-cloud">
 {%- assign tech_str = "" -%}
@@ -38,7 +37,7 @@ title_es: "Sobre mí"
 {%- for t in tech_uniq -%}{%- unless t == "" -%}<span class="chip">{{ t }}</span>{%- endunless -%}{%- endfor -%}
 </div>
 
-<h2 data-es="Currículum">Curriculum</h2>
+## Curriculum
 
 <div class="cv">
   <div class="cv__tabs">

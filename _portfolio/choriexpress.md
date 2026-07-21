@@ -34,15 +34,6 @@ This project was made as a part of the first Chile ChoriJam, a game jam hosted o
 
 {% include gallery %}  
 
-## Tech Stack  
-- **Language:** C#  
-- **Game Engine:** Unity  
-- **Graphics & Audio Library:** Unity Engine  
-- **Additional Dependencies:**  
-  - `TextMeshPro` – UI text rendering  
-  - `Unity Input System` – Modern input handling  
-  - `Post Processing Stack` – Visual enhancements  
-
 ## Features Developed  
 I was responsible for implementing key mechanics, including:  
 - **Controls and Movement** – Smooth and responsive player interaction.  
@@ -52,4 +43,3 @@ I was responsible for implementing key mechanics, including:
 - **Instructions System** – Guidance for players on mechanics.  
 - **Interaction** – Handling package interactions and typing mechanics.  
 - **Publishing on Time** – Ensuring a complete and polished release within the deadline.  
-

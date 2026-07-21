@@ -35,11 +35,6 @@ This game was developed to learn about android development and deploy, one of th
 
 {% include gallery %}  
 
-## Tech Stack  
-- **Language:** C#  
-- **Graphics & Audio Library:** Unity Engine  
-- **Visuals:** By hand and from the internet,  not really proud of that... 
-
 ## Features Developed  
 I was responsible for implementing key mechanics, including:  
 - **UI & Screen Management System** – Designed and implemented a responsive UI with intuitive navigation.  
@@ -48,4 +43,3 @@ I was responsible for implementing key mechanics, including:
 - **Damage Dealers & Traps** – Designed an interactive system for enemy attacks, environmental hazards, and player damage tracking.  
 - **Endless Spawning & Game Loop** – Created a procedural spawning system for obstacles and enemies, ensuring a smooth and challenging infinite gameplay loop.  
 - **Lane & Mirroring System** – Developed a unique movement system allowing players to shift between lanes or instantly mirror their position for quick dodging.  
-

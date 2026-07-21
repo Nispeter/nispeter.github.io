@@ -172,14 +172,6 @@ iframe { max-width: 100%; border: 0; border-radius: var(--radius); }
 .masthead__nav a:hover { color: #fff; background: var(--bg-elev); }
 .masthead__nav a.is-active { color: var(--bg); background: var(--accent); }
 
-.masthead__right { display: flex; align-items: center; gap: 0.6rem; }
-.lang-toggle {
-  font-family: var(--font-display); font-size: 0.82rem; color: var(--text-dim);
-  background: var(--bg-elev); border: 1px solid var(--border-2); border-radius: 999px;
-  padding: 0.32rem 0.72rem; cursor: pointer; transition: color 0.2s, border-color 0.2s;
-}
-.lang-toggle:hover { color: #fff; border-color: var(--accent); }
-
 .nav-burger { display: none; }
 .nav-toggle { display: none; }
 

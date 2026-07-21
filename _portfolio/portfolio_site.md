@@ -9,7 +9,6 @@ header:
 sidebar:
   - title: "Role: Design & Development"
   - text: "Year: 2025"
-  - text: "Stack: Jekyll, Three.js, vanilla CSS"
 ---
 [GitHub Repo](https://github.com/Nispeter/nispeter.github.io){: .btn .btn--primary}
 [Live Site](https://nispeter.github.io/){: .btn .btn--primary}
@@ -32,10 +31,3 @@ discipline you can explore: Gamedev, Web & Tools, and Computer Science.
   links when WebGL is unavailable, and honours `prefers-reduced-motion`.
 - **One cohesive stylesheet** — a small, dependency-free CSS design system (palette,
   starfield, gallery + lightbox, responsive nav) that themes every page consistently.
-
-## Tech Stack
-
-- **Site generator:** Jekyll (GitHub Pages)
-- **3D:** Three.js (vendored, pinned)
-- **Styling:** Vanilla CSS (custom properties, grid/flex)
-- **Hosting:** GitHub Pages

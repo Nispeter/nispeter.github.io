@@ -10,16 +10,9 @@ sidebar:
   - title: "Role: Full-stack Engineer"
   - text: "Company: Sentinel Care"
   - text: "Year: 2025"
-  - text: "Stack: React, Vite, Node, Fastify, QuestDB, PostgreSQL"
 ---
 ## Overview
 
 Built a **real-time web application** to stream, store and visualize data from multiple
 sensors. Designed interactive **APIs and dashboards** for low-latency monitoring and
 historical analysis, deployed with **Azure containers**.
-
-## Tech Stack
-- **Front-end:** React, Vite
-- **Back-end:** Node, Fastify
-- **Data:** QuestDB (time-series), PostgreSQL
-- **Infra:** Azure Containers

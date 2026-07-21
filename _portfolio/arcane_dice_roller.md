@@ -10,7 +10,6 @@ sidebar:
   - title: "Role: Solo Dev"
   - text: "Type: Web app / TTRPG tool"
   - text: "Year: 2024"
-  - text: "Stack: JavaScript (client-side)"
 ---
 [Live Demo](https://nispeter.github.io/ArcaneDiceRoller/){: .btn .btn--primary}
 [GitHub Repo](https://github.com/Nispeter/ArcaneDiceRoller){: .btn .btn--primary}
@@ -34,7 +33,3 @@ single web app.
 - **Probability tools** — a calculator and a spinning, weight-customizable wheel.
 - **Utilities** — timer / countdown and a note-taking system with save / export.
 - **Terminal-style command interface** for power users.
-
-## Tech Stack
-- **Type:** Client-side web app (JavaScript)
-- **Hosting:** GitHub Pages

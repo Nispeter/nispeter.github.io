@@ -37,14 +37,6 @@ By integrating Retrieval-Augmented Generation and structured dialogue trees, the
 
 {% include gallery %}  
 
-## Tech Stack  
-- **Language:** C#  
-- **Graphics & Audio Library:** Unity Engine  
-- **Additional Dependencies:**  
-  - `UnityOpenAI` – Simple package for using OpenAI API.
-  - `GraphEditor` – Library for creating the dialogue tree editor tool. 
-- **Visuals:** Low-poly aesthetic made with Blender  
-
 ## Features Developed  
 I was responsible for implementing key systems, including:  
 - **Advanced 3D movement system** – Smooth movement with multiple jumps, speeds, and directional evasion.  
@@ -68,5 +60,3 @@ This culturally rich environment serves as a demonstration of NPCs designed with
 itch.io password: whales
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/mPapwbrV82I?si=959S_J3LIrhmZJsZ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-
-

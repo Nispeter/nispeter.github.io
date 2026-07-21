@@ -1,17 +1,10 @@
 # Achievements shown on the About page. Edit here — the About page loops this list.
-# title_es / detail_es are the Spanish versions used by the language toggle.
 - icon: "🏆"
   title: "1st place — Hack the Challenge 2023"
   detail: "Cybersecurity & AI hackathon · NTT Data"
-  title_es: "1er lugar — Hack the Challenge 2023"
-  detail_es: "Hackathon de ciberseguridad e IA · NTT Data"
 - icon: "🥈"
   title: "2nd place — Chile Chori Jam 2023"
   detail: "Game jam hosted on itch.io"
-  title_es: "2do lugar — Chile Chori Jam 2023"
-  detail_es: "Game jam alojado en itch.io"
 - icon: "🏅"
   title: "Honorable Mention — ICPC Latin America"
   detail: "Competitive Programming · 2020 & 2021"
-  title_es: "Mención honrosa — ICPC Latinoamérica"
-  detail_es: "Programación competitiva · 2020 y 2021"

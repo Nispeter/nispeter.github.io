@@ -5,22 +5,18 @@
       <span class="masthead__title">{{ site.title }}</span>
     </a>
 
-    <div class="masthead__right">
-      <button class="lang-toggle" type="button" data-lang-btn onclick="__toggleLang()" aria-label="Cambiar a español">ES</button>
+    <input type="checkbox" id="nav-toggle" class="nav-toggle" hidden>
+    <label for="nav-toggle" class="nav-burger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </label>
 
-      <input type="checkbox" id="nav-toggle" class="nav-toggle" hidden>
-      <label for="nav-toggle" class="nav-burger" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </label>
-
-      <nav class="masthead__nav" aria-label="Primary">
-        {% for item in site.data.navigation.main %}
-          {% assign is_active = false %}
-          {% if item.url == '/' and page.url == '/' %}{% assign is_active = true %}
-          {% elsif item.url != '/' and page.url contains item.url %}{% assign is_active = true %}{% endif %}
-          <a href="{{ item.url | relative_url }}"{% if is_active %} class="is-active" aria-current="page"{% endif %}{% if item.title_es %} data-es="{{ item.title_es }}"{% endif %}>{{ item.title }}</a>
-        {% endfor %}
-      </nav>
-    </div>
+    <nav class="masthead__nav" aria-label="Primary">
+      {% for item in site.data.navigation.main %}
+        {% assign is_active = false %}
+        {% if item.url == '/' and page.url == '/' %}{% assign is_active = true %}
+        {% elsif item.url != '/' and page.url contains item.url %}{% assign is_active = true %}{% endif %}
+        <a href="{{ item.url | relative_url }}"{% if is_active %} class="is-active" aria-current="page"{% endif %}>{{ item.title }}</a>
+      {% endfor %}
+    </nav>
   </div>
 </header>
