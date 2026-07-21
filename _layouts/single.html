@@ -1,0 +1,49 @@
+---
+layout: default
+---
+<article class="project">
+  <header class="project__header">
+    <h1>{{ page.title }}</h1>
+    {% if page.excerpt %}<p class="project__excerpt">{{ page.excerpt | strip_html }}</p>{% endif %}
+  </header>
+
+  <div class="project__grid">
+    <aside class="project__sidebar">
+      {%- for s in page.sidebar -%}
+        {%- if s.image and s.image != '' -%}
+          {%- assign simg = s.image -%}
+          {%- unless simg contains '://' -%}{%- assign simg = simg | prepend: '/' | replace: '//', '/' -%}{%- endunless -%}
+          <img src="{{ simg | relative_url }}" alt="{{ s.image_alt }}">
+        {%- endif -%}
+        {%- if s.title -%}<p class="project__role">{{ s.title }}</p>{%- endif -%}
+      {%- endfor -%}
+
+      <ul class="project__meta">
+        {%- for s in page.sidebar -%}
+          {%- if s.text -%}
+            {%- assign key = s.text | split: ': ' | first -%}
+            {%- assign val = s.text | remove_first: key | remove_first: ': ' -%}
+            <li>{% if val != '' %}<span class="k">{{ key }}:</span> {{ val }}{% else %}{{ s.text }}{% endif %}</li>
+          {%- endif -%}
+          {%- if s.label and s.url -%}
+            <li><a href="{{ s.url }}" rel="noopener" target="_blank">{{ s.label }}</a></li>
+          {%- endif -%}
+        {%- endfor -%}
+      </ul>
+
+      {%- if page.sections -%}
+      <ul class="project__meta">
+        <li><span class="k">In orbit of:</span>
+          {%- for sec in page.sections -%}
+            {%- if sec == 'gamedev' -%}<a href="{{ '/gamedev/' | relative_url }}">Gamedev</a>{%- elsif sec == 'web' -%}<a href="{{ '/web/' | relative_url }}">Web &amp; Tools</a>{%- elsif sec == 'cs' -%}<a href="{{ '/cs/' | relative_url }}">Computer Science</a>{%- endif -%}{%- unless forloop.last -%} · {%- endunless -%}
+          {%- endfor -%}
+        </li>
+      </ul>
+      {%- endif -%}
+    </aside>
+
+    <div class="project__body">
+      {{ content }}
+    </div>
+  </div>
+</article>

@@ -1,0 +1,23 @@
+{%- comment -%} Lightweight replacement for minimal-mistakes' gallery include.
+  Usage: {% include gallery %}  or  {% include gallery id="gallery1" %} {%- endcomment -%}
+{%- if include.id -%}{%- assign gallery = page[include.id] -%}{%- else -%}{%- assign gallery = page.gallery -%}{%- endif -%}
+{%- assign guid = include.id | default: 'g' -%}
+{%- if gallery -%}
+<figure class="gallery gallery--{{ gallery.size }}">
+  {%- for img in gallery -%}
+  {%- assign ip = img.image_path -%}
+  {%- unless ip contains '://' -%}{%- assign ip = ip | prepend: '/' | replace: '//', '/' -%}{%- endunless -%}
+  <a class="gallery__item" href="#lb-{{ page.slug }}-{{ guid }}-{{ forloop.index }}" aria-label="{{ img.alt | default: 'Open image' }}">
+    <img src="{{ ip | relative_url }}" alt="{{ img.alt }}" loading="lazy">
+  </a>
+  {%- endfor -%}
+</figure>
+{%- for img in gallery -%}
+{%- assign ip = img.image_path -%}
+{%- unless ip contains '://' -%}{%- assign ip = ip | prepend: '/' | replace: '//', '/' -%}{%- endunless -%}
+<a class="lightbox" id="lb-{{ page.slug }}-{{ guid }}-{{ forloop.index }}" href="#_" aria-hidden="true">
+  <span class="lightbox__close" aria-hidden="true">×</span>
+  <img src="{{ ip | relative_url }}" alt="{{ img.alt }}">
+</a>
+{%- endfor -%}
+{%- endif -%}
