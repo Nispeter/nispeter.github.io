@@ -301,12 +301,44 @@ iframe { max-width: 100%; border: 0; border-radius: var(--radius); }
   margin-bottom: 1rem;
 }
 .section-hero__planet {
-  width: 108px; height: 108px; margin: 0 auto 1.2rem; border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, var(--accent-2), var(--accent) 55%, #05070f 130%);
-  box-shadow: 0 0 60px color-mix(in srgb, var(--accent) 55%, transparent), inset -8px -10px 24px rgba(0,0,0,0.5);
+  position: relative;
+  width: 124px; height: 124px; margin: 0 auto 1.5rem; border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, var(--accent-2), var(--accent) 56%, #05070f 132%);
+  box-shadow:
+    0 0 70px color-mix(in srgb, var(--accent) 55%, transparent),
+    inset -9px -11px 26px rgba(0, 0, 0, 0.55),
+    inset 8px 8px 22px color-mix(in srgb, var(--accent-2) 28%, transparent);
   animation: bob 6s ease-in-out infinite;
 }
 @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* Gamedev — a little moon */
+body.theme-game .section-hero__planet::after {
+  content: ""; position: absolute; width: 26px; height: 26px; right: -30px; top: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #fff, #ffe9c2 55%, #7a6640 130%);
+  box-shadow: 0 0 16px rgba(255, 233, 194, 0.55), inset -3px -3px 6px rgba(0, 0, 0, 0.5);
+  animation: moon-bob 6s ease-in-out infinite;
+}
+@keyframes moon-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
+
+/* Web & Tools — a technical wireframe grid */
+body.theme-web .section-hero__planet::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%; overflow: hidden;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 12px, color-mix(in srgb, var(--accent-2) 55%, transparent) 12px 13px),
+    repeating-linear-gradient(90deg, transparent 0 12px, color-mix(in srgb, var(--accent-2) 40%, transparent) 12px 13px);
+  mix-blend-mode: screen; opacity: 0.65;
+}
+
+/* Computer Science — a Saturn-style ring */
+body.theme-cs .section-hero__planet::after {
+  content: ""; position: absolute; left: 50%; top: 50%;
+  width: 210px; height: 66px; margin: -33px 0 0 -105px; border-radius: 50%;
+  border: 3px solid color-mix(in srgb, var(--accent) 75%, #ffffff 10%);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--accent) 45%, transparent);
+  transform: rotate(-18deg);
+}
 .section-hero h1 {
   background: linear-gradient(120deg, var(--accent-2), #fff);
   -webkit-background-clip: text; background-clip: text; color: transparent;
