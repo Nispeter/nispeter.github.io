@@ -233,6 +233,15 @@
     scene.add(belt);
   })();
 
+  // Invisible but raycastable collider covering the whole belt zone, so a click
+  // anywhere in the ring counts (the rocks themselves are tiny to hit).
+  var beltZone = new THREE.Mesh(
+    new THREE.RingGeometry(9.4, 13.8, 48),
+    new THREE.MeshBasicMaterial({ transparent: true, opacity: 0, depthWrite: false, colorWrite: false, side: THREE.DoubleSide })
+  );
+  beltZone.rotation.x = -Math.PI / 2;
+  scene.add(beltZone);
+
   // --- Shooting stars ------------------------------------------------------
   var meteors = [];
   var meteorTimer = 2 + Math.random() * 3;
@@ -345,8 +354,16 @@
     var hits = raycaster.intersectObjects(bodies, false);
     if (hits.length) { go(hits[0].object); return; }
     if (asteroidCbs.length) {
-      var ah = raycaster.intersectObjects(belt.children, false);
-      if (ah.length) { for (var k = 0; k < asteroidCbs.length; k++) asteroidCbs[k](ah[0].object, ah[0].point); }
+      var ah = raycaster.intersectObjects([beltZone], false);
+      if (ah.length) {
+        var pt = ah[0].point, near = null, best = Infinity, wp = new THREE.Vector3();
+        for (var r = 0; r < belt.children.length; r++) {
+          belt.children[r].getWorldPosition(wp);
+          var d = wp.distanceToSquared(pt);
+          if (d < best) { best = d; near = belt.children[r]; }
+        }
+        for (var k = 0; k < asteroidCbs.length; k++) asteroidCbs[k](near, pt);
+      }
     }
   }
   function onUp(e) {
