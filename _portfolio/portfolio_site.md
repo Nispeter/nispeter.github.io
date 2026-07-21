@@ -4,11 +4,9 @@ excerpt: "The site you're on: a custom Jekyll theme with an interactive 3D 'cosm
 sections: [web]
 year: 2025
 header:
-  teaser: /assets/images/home_header.png
+  teaser:   # no image — shows the themed placeholder
 sidebar:
   - title: "Role: Design & Development"
-    image: /assets/images/home_header.png
-    image_alt: "Cosmic Observatory portfolio"
   - text: "Year: 2025"
   - text: "Stack: Jekyll, Three.js, vanilla CSS"
 ---
