@@ -20,7 +20,7 @@
   // per = units per spawned model (rarity ratio), cap = max models of that type.
   var BUILDINGS = [
     { id: "miner",       ic: "🛰️", name: "Asteroid Miner Ship",      desc: "Mines ore from the belt.",              baseCost: 15,       growth: 1.15, ore: 0.5,   eOut: 0,    eUse: 0,   per: 2,  cap: 60, motion: "asteroid",  color: 0xffb35c },
-    { id: "solar",       ic: "☀️", name: "Solar Floating Panel",      desc: "Generates energy.",                     baseCost: 50,       growth: 1.16, ore: 0,     eOut: 2,    eUse: 0,   per: 2,  cap: 60, motion: "sun",       radius: 2.7, color: 0x8fdcff },
+    { id: "solar",       ic: "☀️", name: "Solar Floating Panel",      desc: "Generates energy.",                     baseCost: 50,       growth: 1.16, ore: 0,     eOut: 2,    eUse: 0,   per: 2,  cap: 60, motion: "sun",       radius: 2.4, color: 0x8fdcff },
     { id: "drone",       ic: "🛩️", name: "Cargo Drone",              desc: "Hops between miners hauling ore.",      baseCost: 220,      growth: 1.16, ore: 2,     eOut: 0,    eUse: 0.5, per: 2,  cap: 40, motion: "dronehop",  color: 0x4dd6c4 },
     { id: "transport",   ic: "🚀", name: "Planet Transport Ship",    desc: "Hauls ore between planets & stations.", baseCost: 900,      growth: 1.17, ore: 7,     eOut: 0,    eUse: 2,   per: 2,  cap: 30, motion: "transport", color: 0x74a8ff },
     { id: "tether",      ic: "🌀", name: "Warp Station",             desc: "Warps distant cargo drones across the belt.", baseCost: 4000, growth: 1.17, ore: 24, eOut: 0, eUse: 5, per: 2,  cap: 24, motion: "warp",      radius: 7.9, color: 0xc9a3ff },
@@ -29,7 +29,7 @@
     { id: "facility",    ic: "🏭", name: "Planetary Mining Facility", desc: "Sits on a planet, strip-mining it.",   baseCost: 220000,   growth: 1.19, ore: 320,   eOut: 0,    eUse: 45,  per: 2,  cap: 24, motion: "planet",    color: 0x66c9e0 },
     { id: "shipyard",    ic: "🏗️", name: "Orbital Shipyard",         desc: "Fleets that build ore.",                baseCost: 900000,   growth: 1.19, ore: 1000,  eOut: 0,    eUse: 120, per: 2,  cap: 24, motion: "asteroid",  color: 0xa9c3dd },
     { id: "satellite",   ic: "📡", name: "Deep Space Satellite",     desc: "Beams down ore and energy.",            baseCost: 3500000,  growth: 1.20, ore: 2600,  eOut: 120,  eUse: 0,   per: 2,  cap: 24, motion: "far",       color: 0x8ec9ff },
-    { id: "dyson",       ic: "🌐", name: "Dyson Swarm Node",         desc: "Drinks the star's light.",              baseCost: 14000000, growth: 1.20, ore: 0,     eOut: 1500, eUse: 0,   per: 2,  cap: 40, motion: "sun",       radius: 2.1, color: 0xffe3a0 },
+    { id: "dyson",       ic: "🌐", name: "Dyson Swarm Node",         desc: "Drinks the star's light.",              baseCost: 14000000, growth: 1.20, ore: 0,     eOut: 1500, eUse: 0,   per: 2,  cap: 12, motion: "dysonring", color: 0xffe3a0 },
     { id: "exploration", ic: "🧭", name: "Space Exploration Team",   desc: "Finds rich new belts.",                 baseCost: 60000000, growth: 1.22, ore: 12000, eOut: 0,    eUse: 400, per: 2,  cap: 20, motion: "transport", color: 0x8affd6 }
   ];
   var byId = {};
@@ -118,7 +118,7 @@
       case "facility":    g = new THREE.BoxGeometry(0.26, 0.16, 0.26); break;
       case "shipyard":    g = new THREE.BoxGeometry(0.36, 0.12, 0.24); break;
       case "satellite":   g = new THREE.BoxGeometry(0.11, 0.11, 0.11); break;
-      case "dyson":       g = new THREE.OctahedronGeometry(0.24, 0); break;
+      case "dyson":       g = new THREE.TorusGeometry(1, 0.03, 6, 40); g.rotateX(Math.PI / 2); break; // thin horizontal ring (scaled per node)
       case "exploration": g = new THREE.ConeGeometry(0.1, 0.34, 5); g.rotateX(Math.PI / 2); break;
       default:            g = new THREE.CylinderGeometry(0.02, 0.06, 0.24, 6); g.rotateX(Math.PI / 2); // miner = small drill bit
     }
@@ -175,6 +175,12 @@
       // warp station: orbit at a fixed standard speed; aims + fires on demand
       u.mt = "warp"; u.r = b.radius; u.ang = Math.random() * TAU; u.y = (Math.random() - 0.5) * 0.5;
       u.aimT = 0; u.aimPos = new THREE.Vector3();
+    } else if (b.motion === "dysonring") {
+      // thin rings stacked above & below the sun, growing outward
+      u.mt = "dysonring";
+      var dl = Math.floor(i / 2), dside = (i % 2 === 0) ? 1 : -1;
+      u.y = dside * (1.5 + dl * 0.32);
+      u.rad = 0.5 + dl * 0.4;
     } else {
       u.mt = "orbit";
       u.r = (b.motion === "ring") ? b.radius : (b.motion === "far" ? 14 : (11.2 + (Math.random() - 0.5) * 1.6));
@@ -261,14 +267,15 @@
             if (u.wait > 0) {
               u.wait -= dt;
             } else if (u.st === "toTether") {
-              // fly to the warp station, aiming at the far miner
+              // fly to the warp station (which is orbiting) — catch it, with a timeout so it never sticks
               var wt = (u.tether && u.tether.parent) ? u.tether.position : null;
               var dv = (u.target && u.target.parent) ? u.target.position : null;
               if (!wt || !dv) { u.st = null; u.target = null; }
               else {
-                mesh.position.lerp(wt, Math.min(1, dt * 1.0));
+                u.tt = (u.tt || 0) + dt;
+                mesh.position.lerp(wt, Math.min(1, dt * 2.5));
                 mesh.lookAt(dv.x, dv.y, dv.z);
-                if (mesh.position.distanceTo(wt) < 0.4) { u.st = "aim"; u.aimT = 0.5; }
+                if (mesh.position.distanceTo(wt) < 0.6 || u.tt > 2.5) { u.st = "aim"; u.aimT = 0.5; u.tt = 0; }
               }
             } else if (u.st === "aim") {
               // sit at the station while it rotates to aim, then get fired
@@ -298,7 +305,7 @@
                 if (stns && stns.length && mesh.position.distanceTo(u.target.position) > 8) {
                   var best = null, bd = Infinity;
                   for (var w = 0; w < stns.length; w++) { var dd = mesh.position.distanceTo(stns[w].position); if (dd < bd) { bd = dd; best = stns[w]; } }
-                  u.tether = best; u.st = "toTether";
+                  u.tether = best; u.st = "toTether"; u.tt = 0;
                 }
               }
               if (u.st !== "toTether") {
@@ -320,6 +327,9 @@
           mesh.position.set(Math.cos(u.ang) * u.r, u.y, Math.sin(u.ang) * u.r);
           if (u.aimT > 0) { mesh.lookAt(u.aimPos.x, u.aimPos.y, u.aimPos.z); u.aimT -= dt; } // aim the barrel
           else { mesh.lookAt(mesh.position.x - Math.sin(u.ang), mesh.position.y, mesh.position.z + Math.cos(u.ang)); }
+        } else if (u.mt === "dysonring") {
+          mesh.position.set(0, u.y, 0);
+          mesh.scale.setScalar(u.rad);
         } else {
           u.ang += u.sp * dt;
           mesh.position.set(Math.cos(u.ang) * u.r, u.y, Math.sin(u.ang) * u.r);
