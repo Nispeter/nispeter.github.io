@@ -303,6 +303,12 @@ iframe { max-width: 100%; border: 0; border-radius: var(--radius); }
 .observatory { position: relative; width: 100%; height: 100vh; min-height: 560px; }
 #observatory-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
+/* Fallback vs 3D toggling (JS removes .no3d when WebGL is available) */
+.observatory.no3d #observatory-canvas,
+.observatory.no3d .observatory__intro,
+.observatory.no3d .observatory__hint { display: none; }
+.observatory:not(.no3d) .observatory__fallback { display: none; }
+
 .observatory__intro {
   position: absolute; left: 50%; top: calc(var(--masthead-h) + 4vh); transform: translateX(-50%);
   text-align: center; z-index: 2; pointer-events: none; width: min(92vw, 720px);
