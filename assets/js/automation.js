@@ -29,8 +29,8 @@
     { id: "facility",    ic: "🏭", name: "Planetary Mining Facility", desc: "Sits on a planet, strip-mining it.",   baseCost: 220000,   growth: 1.19, ore: 320,   eOut: 0,    eUse: 45,  per: 2,  cap: 24, motion: "planet",    color: 0x66c9e0 },
     { id: "shipyard",    ic: "🏗️", name: "Orbital Shipyard",         desc: "Fleets that build ore.",                baseCost: 900000,   growth: 1.19, ore: 1000,  eOut: 0,    eUse: 120, per: 2,  cap: 24, motion: "asteroid",  color: 0xa9c3dd },
     { id: "satellite",   ic: "📡", name: "Deep Space Satellite",     desc: "Beams down ore and energy.",            baseCost: 3500000,  growth: 1.20, ore: 2600,  eOut: 120,  eUse: 0,   per: 2,  cap: 24, motion: "far",       color: 0x8ec9ff },
-    { id: "dyson",       ic: "🌐", name: "Dyson Swarm Node",         desc: "Drinks the star's light.",              baseCost: 14000000, growth: 1.20, ore: 0,     eOut: 1500, eUse: 0,   per: 2,  cap: 12, motion: "dysonring", color: 0xffe3a0 },
-    { id: "exploration", ic: "🧭", name: "Space Exploration Team",   desc: "Finds rich new belts.",                 baseCost: 60000000, growth: 1.22, ore: 12000, eOut: 0,    eUse: 400, per: 2,  cap: 20, motion: "transport", color: 0x8affd6 }
+    { id: "dyson",       ic: "🌐", name: "Dyson Swarm Node",         desc: "Drinks the star's light.",              baseCost: 14000000, growth: 1.20, ore: 0,     eOut: 1500, eUse: 0,   per: 4,  cap: 12, motion: "dysonring", color: 0xffe3a0 },
+    { id: "exploration", ic: "🧭", name: "Space Exploration Team",   desc: "Finds rich new belts.",                 baseCost: 60000000, growth: 1.22, ore: 12000, eOut: 0,    eUse: 400, per: 2,  cap: 20, motion: "explore",   color: 0x8affd6 }
   ];
   var byId = {};
   BUILDINGS.forEach(function (b) { byId[b.id] = b; });
@@ -183,6 +183,13 @@
       u.rad = 0.5 + dl * 0.4;
       mesh.geometry = new THREE.TorusGeometry(u.rad, 0.02, 6, 44);   // per-ring size, uniform tube thickness
       mesh.geometry.rotateX(Math.PI / 2);
+    } else if (b.motion === "explore") {
+      // fly out past the belt, wait, hyper-light jump away, reappear after a few seconds
+      u.mt = "explore"; u.est = "out"; u.timer = 0;
+      u.dest = new THREE.Vector3(); u.jdir = new THREE.Vector3();
+      var ea = Math.random() * TAU, er = 12 + Math.random() * 2;
+      mesh.position.set(Math.cos(ea) * er, (Math.random() - 0.5) * 2, Math.sin(ea) * er);
+      outwardDest(u.dest, mesh.position);
     } else {
       u.mt = "orbit";
       u.r = (b.motion === "ring") ? b.radius : (b.motion === "far" ? 14 : (11.2 + (Math.random() - 0.5) * 1.6));
@@ -234,6 +241,12 @@
       var k = SUN_KEEP / d; v.x *= k; v.y *= k; v.z *= k;
     }
   }
+  // a staging point well outside the asteroid belt, roughly outward from `from`
+  function outwardDest(v, from) {
+    var a = Math.atan2(from.z, from.x) + (Math.random() - 0.5);
+    var r = 15 + Math.random() * 4;
+    v.set(Math.cos(a) * r, (Math.random() - 0.5) * 3, Math.sin(a) * r);
+  }
   function updateModels(dt) {
     updateFx(dt);
     for (var id in models) {
@@ -266,6 +279,7 @@
         } else if (u.mt === "dronehop") {
           var miners = models.miner;
           if (miners && miners.length) {
+            if (u.st) { u.wl = (u.wl || 0) + dt; if (u.wl > 8) { u.st = null; u.wl = 0; } } else { u.wl = 0; } // safety: never stay stuck in a warp state
             if (u.wait > 0) {
               u.wait -= dt;
             } else if (u.st === "toTether") {
@@ -305,7 +319,7 @@
               if (!u.target || !u.target.parent) {
                 u.target = miners[(Math.random() * miners.length) | 0];
                 var stns = models.tether;
-                if (stns && stns.length && mesh.position.distanceTo(u.target.position) > 6) {
+                if (stns && stns.length && mesh.position.distanceTo(u.target.position) > 8) {
                   var best = null, bd = Infinity;
                   for (var w = 0; w < stns.length; w++) { var dd = mesh.position.distanceTo(stns[w].position); if (dd < bd) { bd = dd; best = stns[w]; } }
                   u.tether = best; u.st = "toTether"; u.tt = 0;
@@ -332,6 +346,28 @@
           else { mesh.lookAt(mesh.position.x - Math.sin(u.ang), mesh.position.y, mesh.position.z + Math.cos(u.ang)); }
         } else if (u.mt === "dysonring") {
           mesh.position.set(0, u.y, 0);
+        } else if (u.mt === "explore") {
+          if (u.est === "out") {
+            mesh.position.lerp(u.dest, Math.min(1, dt * 0.6));
+            mesh.lookAt(u.dest.x, u.dest.y, u.dest.z);
+            if (mesh.position.distanceTo(u.dest) < 0.6) { u.est = "charge"; u.timer = 1.0 + Math.random() * 0.8; }
+          } else if (u.est === "charge") {
+            u.timer -= dt;
+            if (u.timer <= 0) { u.est = "jump"; u.timer = 0.35; u.jdir.copy(mesh.position).normalize(); flash(mesh.position); }
+          } else if (u.est === "jump") {
+            u.timer -= dt;
+            mesh.position.addScaledVector(u.jdir, dt * 50);
+            mesh.lookAt(mesh.position.x + u.jdir.x, mesh.position.y + u.jdir.y, mesh.position.z + u.jdir.z);
+            mesh.scale.set(1, 1, 2 + (0.35 - u.timer) * 30);   // stretch into a light streak
+            if (u.timer <= 0) { mesh.visible = false; mesh.scale.set(1, 1, 1); u.est = "gone"; u.timer = 3 + Math.random() * 2.5; }
+          } else { // gone — reappear after a few seconds
+            u.timer -= dt;
+            if (u.timer <= 0) {
+              var ra = Math.random() * TAU, rr2 = 12 + Math.random() * 2;
+              mesh.position.set(Math.cos(ra) * rr2, (Math.random() - 0.5) * 2, Math.sin(ra) * rr2);
+              mesh.visible = true; outwardDest(u.dest, mesh.position); u.est = "out";
+            }
+          }
         } else {
           u.ang += u.sp * dt;
           mesh.position.set(Math.cos(u.ang) * u.r, u.y, Math.sin(u.ang) * u.r);
