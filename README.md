@@ -1,27 +1,51 @@
-# Minimal Mistakes remote theme starter
+# nispeter.github.io — Cosmic Observatory portfolio
 
-Click [**Use this template**](https://github.com/mmistakes/mm-github-pages-starter/generate) button above for the quickest method of getting started with the [Minimal Mistakes Jekyll theme](https://github.com/mmistakes/minimal-mistakes).
+Personal portfolio built with **Jekyll** and a small custom theme. The home page is an
+interactive **3D "cosmic observatory"** (Three.js); each planet is a discipline:
+**Gamedev**, **Web & Tools**, and **Computer Science**.
 
-Contains basic configuration to get you a site with:
+## Layout of the repo
 
-- Sample posts.
-- Sample top navigation.
-- Sample author sidebar with social links.
-- Sample footer links.
-- Paginated home page.
-- Archive pages for posts grouped by year, category, and tag.
-- Sample about page.
-- Sample 404 page.
-- Site wide search.
+| Path | What it is |
+|---|---|
+| `_portfolio/*.md` | **One file per project/work** — the content you edit most. |
+| `_pages/section-*.md` | The three section (planet) landing pages. |
+| `_pages/*.md` | About, all-projects, posts, 404. |
+| `_layouts/`, `_includes/` | The custom theme (default, observatory, single, section, page…). |
+| `assets/css/cosmic.css` | The single stylesheet (colors, layout, everything). |
+| `assets/js/observatory.js` | The 3D home scene (Three.js is vendored in `assets/js/vendor/`). |
+| `base_portfolio_template.md` | Copy this to add a new project. |
 
-Replace sample content with your own and [configure as necessary](https://mmistakes.github.io/minimal-mistakes/docs/configuration/).
+## Add a new project
 
----
+1. Copy `base_portfolio_template.md` to `_portfolio/<slug>.md`
+   (the slug becomes the URL: `/portfolio/<slug>/`).
+2. Fill in `title`, `excerpt`, `sections` (any of `gamedev`, `web`, `cs`), and `year`.
+3. Add photos (see below), or leave `teaser` blank for an automatic themed placeholder.
+4. Write the body: description, buttons, tech stack, and `` `{% include gallery %}` `` if you added a gallery.
 
-## Troubleshooting
+It then appears automatically on the right planet(s) and on `/portfolio/`, ordered by `year`.
 
-If you have a question about using Jekyll, start a discussion on the [Jekyll Forum](https://talk.jekyllrb.com/) or [StackOverflow](https://stackoverflow.com/questions/tagged/jekyll). Other resources:
+## Add photos
 
-- [Ruby 101](https://jekyllrb.com/docs/ruby-101/)
-- [Setting up a Jekyll site with GitHub Pages](https://jekyllrb.com/docs/github-pages/)
-- [Configuring GitHub Metadata](https://github.com/jekyll/github-metadata/blob/master/docs/configuration.md#configuration) to work properly when developing locally and avoid `No GitHub API authentication could be found. Some fields may be missing or have incorrect data.` warnings.
+- Put images in **`assets/images/<slug>/`** (e.g. `assets/images/my-game/cover.png`).
+- `header.teaser` → the card / cover image.
+- `gallery:` → a list of `image_path` entries; renders a responsive grid with a lightbox.
+
+## Change sections or order
+
+- Edit `sections:` to move a project between planets (a project can live on several).
+- Edit `year:` to reorder within a section (higher year = shown first).
+
+## Run locally
+
+Requires Ruby. From the repo folder:
+
+```bash
+gem install bundler
+bundle install
+bundle add webrick        # needed on Ruby 3+
+bundle exec jekyll serve --livereload
+```
+
+Then open <http://localhost:4000>.

@@ -29,6 +29,22 @@ timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 include:
   - _pages
 
+# Files kept in the repo but not published as pages.
+# NOTE: setting `exclude` replaces Jekyll's defaults, so the default entries
+# (Gemfile, vendor/, node_modules…) are repeated here on purpose.
+exclude:
+  - base_portfolio_template.md
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - .sass-cache
+  - .jekyll-cache
+
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
