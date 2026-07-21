@@ -1,9 +1,11 @@
 main:
   - title: "Home"
     url: /
-  - title: "Projects"
-    url: /portfolio/
-  - title: "Posts"
-    url: /posts/
+  - title: "Gamedev"
+    url: /gamedev/
+  - title: "Web & Tools"
+    url: /web/
+  - title: "CS"
+    url: /cs/
   - title: "About"
     url: /about/
