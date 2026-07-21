@@ -14,6 +14,10 @@ sidebar:
 [Live Demo](https://nispeter.github.io/ArcaneDiceRoller/){: .btn .btn--primary}
 [GitHub Repo](https://github.com/Nispeter/ArcaneDiceRoller){: .btn .btn--primary}
 
+## Play it right here
+
+<iframe class="live-embed" src="https://nispeter.github.io/ArcaneDiceRoller/" title="Arcane Dice Roller (live app)" loading="lazy"></iframe>
+
 ## Overview
 
 **Arcane Dice Roller** is a browser-based **tabletop-RPG companion tool** with a
