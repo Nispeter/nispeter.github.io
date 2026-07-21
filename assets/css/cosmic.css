@@ -515,6 +515,8 @@ body.theme-cs .section-hero__planet::after {
   overflow: visible; pointer-events: none;
 }
 .idle--open { transform: none; }
+/* `hidden` must win over the display:flex/grid rules below (tab switching, locked tiles) */
+.idle[hidden], .idle [hidden] { display: none !important; }
 .idle__inner {
   height: 100%; display: flex; flex-direction: column; pointer-events: auto;
   background: rgba(10, 14, 39, 0.86); backdrop-filter: blur(14px) saturate(140%);
