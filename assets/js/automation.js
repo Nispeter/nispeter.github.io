@@ -149,7 +149,9 @@
     }
   }
   function reconcile(b) {
-    var target = Math.min(b.cap, Math.floor(owned(b.id) / b.per));
+    var o = owned(b.id);
+    // Always show at least one model once you own any (then scale by rarity ratio).
+    var target = o > 0 ? Math.max(1, Math.min(b.cap, Math.floor(o / b.per))) : 0;
     var arr = models[b.id] || (models[b.id] = []);
     while (arr.length < target) { var m = makeMesh(b); initMotion(m, b, arr.length); unitsGroup.add(m); arr.push(m); }
     while (arr.length > target) { unitsGroup.remove(arr.pop()); }
@@ -249,7 +251,7 @@
     S = fresh();
     for (var id in models) { models[id].forEach(function (m) { unitsGroup.remove(m); }); models[id] = []; }
     recompute(); try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
-    panel.hidden = true; openBtn.hidden = true; refresh();
+    panel.hidden = true; panel.classList.remove("idle--open"); refresh();
   }
 
   // ---------- Persistence ----------
@@ -259,36 +261,31 @@
   function load() { try { var raw = localStorage.getItem(SAVE_KEY); if (!raw) return null; var o = JSON.parse(raw); o.b = o.b || {}; o.up = o.up || {}; o.rs = o.rs || {}; o.maxOre = o.maxOre || o.ore || 0; return o; } catch (e) { return null; } }
   window.addEventListener("beforeunload", save);
 
-  // ---------- UI ----------
+  // ---------- UI (left slide-drawer) ----------
   function el(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 
   var panel = el("aside", "idle"); panel.hidden = true;
   panel.innerHTML =
-    '<div class="idle__bar">' +
-      '<b class="idle__ore">0</b><span class="idle__u">ore</span>' +
-      '<span class="idle__rate">+0/s</span>' +
-      '<span class="idle__nrg" title="energy balance"><i></i></span>' +
-      '<button class="idle__min" title="minimize">–</button>' +
-    '</div>' +
-    '<div class="idle__tabs"><button data-tab="build" class="on">Build</button><button data-tab="research">Research</button></div>' +
-    '<div class="idle__scroll"><div class="idle__list" data-panel="build"></div><div class="idle__list" data-panel="research" hidden></div></div>' +
-    '<div class="idle__foot"><button class="idle__reset">reset</button></div>';
+    '<button class="idle__handle" aria-label="Toggle panel"><span class="idle__hgem">◆</span><span class="idle__hore">0</span></button>' +
+    '<div class="idle__inner">' +
+      '<div class="idle__bar"><span class="idle__gem">◆</span><b class="idle__ore">0</b><span class="idle__u">ore</span><span class="idle__rate">+0/s</span></div>' +
+      '<div class="idle__energy"><span class="idle__elbl">⚡ energy/s</span><span class="idle__evals">+0 / −0</span><i class="idle__ebar"><b></b></i></div>' +
+      '<div class="idle__tabs"><button data-tab="build" class="on">Build</button><button data-tab="research">Research</button></div>' +
+      '<div class="idle__scroll"><div class="idle__list" data-panel="build"></div><div class="idle__list" data-panel="research" hidden></div></div>' +
+      '<div class="idle__foot"><button class="idle__reset">reset</button></div>' +
+    '</div>';
   document.body.appendChild(panel);
 
-  var openBtn = el("button", "idle-open", '⛏ <span>0</span>'); openBtn.hidden = true;
-  document.body.appendChild(openBtn);
-
   var oreEl = panel.querySelector(".idle__ore");
+  var hOreEl = panel.querySelector(".idle__hore");
   var rateEl = panel.querySelector(".idle__rate");
-  var nrgEl = panel.querySelector(".idle__nrg i");
+  var eValsEl = panel.querySelector(".idle__evals");
+  var eBarEl = panel.querySelector(".idle__ebar b");
   var buildList = panel.querySelector('[data-panel="build"]');
   var researchList = panel.querySelector('[data-panel="research"]');
-  var openOre = openBtn.querySelector("span");
 
-  function openPanel() { panel.hidden = false; openBtn.hidden = true; }
-  function minPanel() { panel.hidden = true; openBtn.hidden = false; }
-  panel.querySelector(".idle__min").addEventListener("click", minPanel);
-  openBtn.addEventListener("click", openPanel);
+  function openPanel() { panel.hidden = false; panel.classList.add("idle--open"); }
+  panel.querySelector(".idle__handle").addEventListener("click", function () { panel.classList.toggle("idle--open"); });
   panel.querySelector(".idle__reset").addEventListener("click", doReset);
   panel.querySelectorAll(".idle__tabs button").forEach(function (btn) {
     btn.addEventListener("click", function () {
@@ -305,14 +302,18 @@
     row.innerHTML =
       '<div class="irow__top"><span class="irow__ic">' + b.ic + '</span>' +
       '<span class="irow__nm">' + b.name + '</span><span class="irow__ct">×0</span></div>' +
-      '<div class="irow__desc">' + b.desc + '</div>' +
-      '<div class="irow__bot"><span class="irow__pr"></span>' +
-      '<button class="irow__upt" title="upgrade">Mk</button>' +
+      '<div class="irow__stats"><span class="irow__pr"></span><span class="irow__nrg"></span></div>' +
+      '<div class="irow__bot"><button class="irow__upt" title="upgrade">Mk</button>' +
       '<button class="irow__buy"></button></div>';
     row.querySelector(".irow__buy").addEventListener("click", function () { buy(b.id); });
     row.querySelector(".irow__upt").addEventListener("click", function () { buyUp(b.id); });
     buildList.appendChild(row);
     b._row = row;
+    b._ct = row.querySelector(".irow__ct");
+    b._pr = row.querySelector(".irow__pr");
+    b._nrg = row.querySelector(".irow__nrg");
+    b._buy = row.querySelector(".irow__buy");
+    b._upt = row.querySelector(".irow__upt");
   });
 
   // Research rows
@@ -322,63 +323,56 @@
     row.querySelector(".rrow__buy").addEventListener("click", function () { buyResearch(r.id); });
     researchList.appendChild(row);
     r._row = row;
+    r._buy = row.querySelector(".rrow__buy");
   });
 
   function lineRate(b) {
-    var o = owned(b.id); if (!o) return 0;
-    if (b.ore > 0) { var p = b.ore * o * (mods.bld[b.id] || 1) * mods.all; if (b.eUse > 0) p *= rate.ratio; return p; }
-    return 0;
+    var o = owned(b.id); if (!o || !b.ore) return 0;
+    var p = b.ore * o * (mods.bld[b.id] || 1) * mods.all; if (b.eUse > 0) p *= rate.ratio; return p;
   }
 
   function refresh() {
     oreEl.textContent = fmt(S.ore);
-    openOre.textContent = fmt(S.ore);
+    hOreEl.textContent = fmt(S.ore);
     rateEl.textContent = "+" + fmt(rate.ore) + "/s";
+    eValsEl.textContent = "+" + fmt(rate.eOut) + " / −" + fmt(rate.eUse);
     var pct = rate.eUse > 0 ? Math.round(rate.ratio * 100) : 100;
-    nrgEl.style.width = pct + "%";
-    nrgEl.parentNode.title = "Energy  " + fmt(rate.eOut) + " / " + fmt(rate.eUse) + (rate.eUse > 0 && rate.ratio < 1 ? "  (throttled)" : "");
-    nrgEl.className = pct >= 100 ? "" : (pct >= 60 ? "warn" : "low");
+    eBarEl.style.width = pct + "%";
+    eBarEl.className = pct >= 100 ? "" : (pct >= 60 ? "warn" : "low");
 
     BUILDINGS.forEach(function (b) {
-      var row = b._row;
-      var visible = owned(b.id) > 0 || S.maxOre >= b.baseCost * 0.5;
-      row.hidden = !visible; if (!visible) return;
-      row.querySelector(".irow__ct").textContent = "×" + owned(b.id);
-      var pr = row.querySelector(".irow__pr");
-      if (b.ore > 0) pr.textContent = owned(b.id) ? "+" + fmt(lineRate(b)) + "/s" : "";
-      else pr.textContent = owned(b.id) ? "+" + fmt(b.eOut * owned(b.id) * mods.eOut) + " ⚡" : "";
+      var o = owned(b.id);
+      var visible = o > 0 || S.maxOre >= b.baseCost * 0.5;
+      b._row.hidden = !visible; if (!visible) return;
+      b._ct.textContent = "×" + o;
+      // ore contribution (or per-unit "ea" before you own any)
+      b._pr.textContent = b.ore > 0 ? ("+" + fmt(o > 0 ? lineRate(b) : b.ore) + "/s" + (o > 0 ? "" : " ea")) : "";
+      // energy: producers +, consumers −  (shows the requirement of each before buying)
+      if (b.eOut > 0) { b._nrg.textContent = "+" + fmt(o > 0 ? b.eOut * o * mods.eOut : b.eOut) + "⚡" + (o > 0 ? "" : " ea"); b._nrg.className = "irow__nrg pos"; }
+      else if (b.eUse > 0) { b._nrg.textContent = "−" + fmt(o > 0 ? b.eUse * o * mods.eUse : b.eUse) + "⚡" + (o > 0 ? "" : " ea"); b._nrg.className = "irow__nrg neg"; }
+      else { b._nrg.textContent = ""; b._nrg.className = "irow__nrg"; }
       var c = cost(b);
-      var buyBtn = row.querySelector(".irow__buy");
-      buyBtn.textContent = "Buy · " + fmt(c);
-      buyBtn.disabled = S.ore < c;
-      // upgrade button
-      var upBtn = row.querySelector(".irow__upt");
+      b._buy.textContent = "Buy · " + fmt(c);
+      b._buy.disabled = S.ore < c;
       var t = upTier(b.id);
-      if (owned(b.id) < 1) { upBtn.hidden = true; }
-      else if (t >= 3) { upBtn.hidden = false; upBtn.textContent = "Mk IV✓"; upBtn.disabled = true; }
-      else {
-        var uc = upCost(b);
-        upBtn.hidden = false;
-        upBtn.textContent = "Mk" + [" II", " III", " IV"][t] + " · " + fmt(uc);
-        upBtn.disabled = S.ore < uc;
-      }
+      if (o < 1) { b._upt.hidden = true; }
+      else if (t >= 3) { b._upt.hidden = false; b._upt.textContent = "Mk IV ✓"; b._upt.disabled = true; }
+      else { var uc = upCost(b); b._upt.hidden = false; b._upt.textContent = "Mk" + [" II", " III", " IV"][t] + " · " + fmt(uc); b._upt.disabled = S.ore < uc; }
     });
 
     RESEARCH.forEach(function (r) {
-      var row = r._row;
       var bought = !!S.rs[r.id];
       var show = bought || canReq(r);
-      row.hidden = !show; if (!show) return;
-      var btn = row.querySelector(".rrow__buy");
-      row.classList.toggle("done", bought);
-      if (bought) { btn.textContent = "✓"; btn.disabled = true; }
-      else { btn.textContent = fmt(r.cost); btn.disabled = S.ore < r.cost; }
+      r._row.hidden = !show; if (!show) return;
+      r._row.classList.toggle("done", bought);
+      if (bought) { r._buy.textContent = "✓"; r._buy.disabled = true; }
+      else { r._buy.textContent = fmt(r.cost); r._buy.disabled = S.ore < r.cost; }
     });
   }
 
   // ---------- Boot ----------
-  reconcile && BUILDINGS.forEach(reconcile); // spawn models for saved counts
-  if (S.started) openBtn.hidden = false;      // start minimized; asteroid click opens it
+  BUILDINGS.forEach(reconcile);         // spawn models for saved counts
+  if (S.started) panel.hidden = false;  // start collapsed (handle only); asteroid click opens it
   refresh();
   setInterval(refresh, 220);
 })();

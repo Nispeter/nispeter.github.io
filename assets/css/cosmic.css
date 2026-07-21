@@ -507,39 +507,76 @@ body.theme-cs .section-hero__planet::after {
   .nav-toggle:checked ~ .nav-burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 }
 
-/* ---------- Idle game (Space Automation) ---------- */
+/* ---------- Idle game (Space Automation) — left slide-drawer ---------- */
 .idle {
-  position: fixed; right: 14px; bottom: 14px; z-index: 90;
-  width: 300px; max-width: calc(100vw - 28px); max-height: 66vh;
-  display: flex; flex-direction: column;
-  background: rgba(10, 14, 39, 0.82); backdrop-filter: blur(12px) saturate(140%);
-  -webkit-backdrop-filter: blur(12px) saturate(140%);
-  border: 1px solid var(--border-2); border-radius: 14px;
-  box-shadow: var(--shadow); font-size: 0.82rem; overflow: hidden;
+  position: fixed; left: 0; top: var(--masthead-h); bottom: 0; z-index: 90;
+  width: 300px; max-width: 88vw;
+  transform: translateX(-100%); transition: transform 0.35s var(--ease);
+  overflow: visible; pointer-events: none;
 }
+.idle--open { transform: none; }
+.idle__inner {
+  height: 100%; display: flex; flex-direction: column; pointer-events: auto;
+  background: rgba(10, 14, 39, 0.86); backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border-right: 1px solid var(--border-2); box-shadow: 8px 0 40px rgba(0, 0, 0, 0.45);
+  font-size: 0.82rem;
+}
+
+/* Handle tab on the drawer's right edge — always visible once started */
+.idle__handle {
+  position: absolute; right: -40px; top: 18px; pointer-events: auto;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  width: 40px; padding: 0.5rem 0; cursor: pointer;
+  background: rgba(10, 14, 39, 0.86); backdrop-filter: blur(12px);
+  border: 1px solid var(--border-2); border-left: 0; border-radius: 0 12px 12px 0;
+  color: var(--text); font-family: var(--font-display);
+}
+.idle__hgem { color: var(--sun); font-size: 1rem; }
+.idle__hore { font-size: 0.64rem; color: var(--text-dim); }
+.idle__handle:hover { border-color: var(--accent); }
+
 .idle__bar {
-  display: flex; align-items: center; gap: 0.4rem; padding: 0.55rem 0.7rem;
+  display: flex; align-items: center; gap: 0.4rem; padding: 0.6rem 0.75rem;
   border-bottom: 1px solid var(--border); font-family: var(--font-display);
 }
-.idle__ore { color: var(--sun); font-size: 1rem; }
+.idle__gem { color: var(--sun); font-size: 1.05rem; }
+.idle__ore { color: var(--text); font-size: 1.05rem; }
 .idle__u { color: var(--text-dim); margin-right: auto; font-size: 0.72rem; }
-.idle__rate { color: var(--web-2); font-size: 0.75rem; }
-.idle__nrg { width: 42px; height: 7px; border-radius: 4px; background: var(--bg-elev); overflow: hidden; border: 1px solid var(--border); }
-.idle__nrg i { display: block; height: 100%; width: 100%; background: var(--web); transition: width 0.3s; }
-.idle__nrg i.warn { background: var(--game-2); }
-.idle__nrg i.low { background: #ff5d6c; }
-.idle__min { background: none; border: 0; color: var(--text-dim); font-size: 1.1rem; cursor: pointer; line-height: 1; padding: 0 0.2rem; }
-.idle__min:hover { color: #fff; }
+.idle__rate { color: var(--web-2); font-size: 0.78rem; }
 
-.idle__tabs { display: flex; gap: 0.3rem; padding: 0.5rem 0.7rem 0; }
-.idle__tabs button {
-  flex: 1; font-family: var(--font-display); font-size: 0.75rem; color: var(--text-dim);
-  background: var(--bg-elev); border: 1px solid var(--border); border-bottom: 0;
-  border-radius: 8px 8px 0 0; padding: 0.35rem; cursor: pointer;
+.idle__energy {
+  display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border); font-size: 0.74rem;
 }
-.idle__tabs button.on { color: var(--bg); background: var(--accent); }
+.idle__elbl { color: var(--text-dim); font-family: var(--font-display); white-space: nowrap; }
+.idle__evals { color: var(--sun); font-family: var(--font-display); white-space: nowrap; }
+.idle__ebar { flex: 1; min-width: 40px; height: 7px; border-radius: 4px; background: var(--bg-elev); overflow: hidden; border: 1px solid var(--border); }
+.idle__ebar b { display: block; height: 100%; width: 100%; background: var(--web); transition: width 0.3s; }
+.idle__ebar b.warn { background: var(--game-2); }
+.idle__ebar b.low { background: #ff5d6c; }
 
-.idle__scroll { overflow-y: auto; padding: 0.5rem 0.6rem; flex: 1; }
+/* Tabs — segmented control with a clearly distinct active state */
+.idle__tabs { display: flex; gap: 0.35rem; padding: 0.55rem 0.6rem 0.35rem; }
+.idle__tabs button {
+  flex: 1; font-family: var(--font-display); font-weight: 500; font-size: 0.78rem;
+  color: var(--text-dim); background: transparent; border: 1px solid var(--border-2);
+  border-radius: 999px; padding: 0.34rem; cursor: pointer; transition: color 0.15s, background 0.15s;
+}
+.idle__tabs button:hover { color: #fff; }
+.idle__tabs button.on {
+  color: #06121f; background: var(--accent); border-color: transparent;
+  box-shadow: 0 2px 12px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.idle__scroll {
+  overflow-y: auto; padding: 0.35rem 0.6rem 0.6rem; flex: 1;
+  scrollbar-width: thin; scrollbar-color: var(--border-2) transparent;
+}
+.idle__scroll::-webkit-scrollbar { width: 8px; }
+.idle__scroll::-webkit-scrollbar-track { background: transparent; }
+.idle__scroll::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 999px; border: 2px solid transparent; background-clip: content-box; }
+.idle__scroll::-webkit-scrollbar-thumb:hover { background: color-mix(in srgb, var(--accent) 60%, var(--border-2)); background-clip: content-box; }
 .idle__list { display: flex; flex-direction: column; gap: 0.4rem; }
 
 .irow { background: var(--bg-2); border: 1px solid var(--border); border-radius: 9px; padding: 0.45rem 0.55rem; }
@@ -547,9 +584,13 @@ body.theme-cs .section-hero__planet::after {
 .irow__ic { font-size: 1rem; }
 .irow__nm { font-family: var(--font-display); font-weight: 500; flex: 1; }
 .irow__ct { color: var(--text-dim); font-size: 0.78rem; }
-.irow__desc { color: var(--text-dim); font-size: 0.7rem; margin: 0.1rem 0 0.35rem; }
+.irow__stats { display: flex; gap: 0.6rem; margin: 0.25rem 0 0.4rem; font-size: 0.72rem; }
+.irow__pr { color: var(--web-2); white-space: nowrap; }
+.irow__nrg { white-space: nowrap; }
+.irow__nrg.pos { color: var(--web-2); }
+.irow__nrg.neg { color: var(--game-2); }
 .irow__bot { display: flex; align-items: center; gap: 0.35rem; }
-.irow__pr { color: var(--web-2); font-size: 0.72rem; flex: 1; white-space: nowrap; }
+.irow__upt { color: var(--accent-2); margin-right: auto; }
 .irow__buy, .irow__upt {
   font-family: var(--font-display); font-size: 0.72rem; cursor: pointer;
   border: 1px solid var(--border-2); border-radius: 999px; padding: 0.24rem 0.55rem;
@@ -557,7 +598,6 @@ body.theme-cs .section-hero__planet::after {
 }
 .irow__buy:hover:not(:disabled), .irow__upt:hover:not(:disabled) { background: var(--bg-elev-2); }
 .irow__buy:disabled, .irow__upt:disabled { opacity: 0.4; cursor: default; }
-.irow__upt { color: var(--accent-2); }
 
 .rrow { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-2); border: 1px solid var(--border); border-radius: 9px; padding: 0.45rem 0.55rem; }
 .rrow__t { flex: 1; }
@@ -568,19 +608,9 @@ body.theme-cs .section-hero__planet::after {
 .rrow.done { opacity: 0.6; }
 .rrow.done .rrow__buy { color: var(--web); }
 
-.idle__foot { padding: 0.4rem 0.7rem; border-top: 1px solid var(--border); text-align: right; }
+.idle__foot { padding: 0.4rem 0.75rem; border-top: 1px solid var(--border); text-align: right; }
 .idle__reset { background: none; border: 0; color: var(--text-dim); font-size: 0.68rem; cursor: pointer; text-decoration: underline; }
 .idle__reset:hover { color: #ff5d6c; }
-
-.idle-open {
-  position: fixed; right: 14px; bottom: 14px; z-index: 90;
-  display: flex; align-items: center; gap: 0.4rem;
-  font-family: var(--font-display); font-size: 0.85rem; color: var(--sun);
-  background: rgba(10, 14, 39, 0.82); backdrop-filter: blur(12px);
-  border: 1px solid var(--border-2); border-radius: 999px; padding: 0.5rem 0.85rem; cursor: pointer;
-  box-shadow: var(--shadow);
-}
-.idle-open:hover { border-color: var(--accent); }
 
 .idle-pop {
   position: fixed; z-index: 400; transform: translate(-50%, -50%);
@@ -592,10 +622,6 @@ body.theme-cs .section-hero__planet::after {
   0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
   20% { opacity: 1; }
   100% { opacity: 0; transform: translate(-50%, -170%) scale(1); }
-}
-
-@media (max-width: 560px) {
-  .idle { right: 8px; left: 8px; bottom: 8px; width: auto; max-height: 58vh; }
 }
 
 /* ---------- Reduced motion ---------- */
