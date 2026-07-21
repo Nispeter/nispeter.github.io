@@ -402,7 +402,7 @@
     warping = true;
     if (fade) fade.classList.add("on");
     body.getWorldPosition(warpTarget);
-    setTimeout(function () { window.location.href = body.userData.url; }, 820);
+    setTimeout(function () { window.location.href = body.userData.url; }, 1250);
   }
   function onKey(e) {
     if (e.key === "1") go(planets[0].body);
@@ -505,7 +505,7 @@
 
     // Camera: drag-orbit + idle auto-spin, or warp fly-to
     if (warping) {
-      camera.position.lerp(tmpV.copy(warpTarget).multiplyScalar(0.55).setY(warpTarget.y + 1.5), 0.045);
+      camera.position.lerp(tmpV.copy(warpTarget).multiplyScalar(0.55).setY(warpTarget.y + 1.5), 0.028);
       camera.lookAt(warpTarget);
     } else {
       if (!dragging && !reduceMotion) targetYaw += AUTO_SPIN * dt;

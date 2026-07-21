@@ -444,7 +444,7 @@ body.theme-cs .section-hero__planet::after {
 /* Screen fade used on planet click */
 .warp-fade {
   position: fixed; inset: 0; z-index: 500; background: #05070f;
-  opacity: 0; pointer-events: none; transition: opacity 0.55s ease;
+  opacity: 0; pointer-events: none; transition: opacity 0.95s ease;
 }
 .warp-fade.on { opacity: 1; }
 
