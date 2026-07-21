@@ -206,8 +206,8 @@
   function loop() {
     if (!running) return;
     requestAnimationFrame(loop);
-    var t = clock.getElapsedTime();
     var dt = Math.min(clock.getDelta(), 0.05);
+    var t = clock.elapsedTime;
 
     // Orbit + spin (frozen positions when reduced motion, but scene still renders)
     planetMeshes.forEach(function (m) {
