@@ -224,7 +224,7 @@
   (function asteroids() {
     var mat = new THREE.MeshStandardMaterial({ color: 0x7a819c, flatShading: true, roughness: 1 });
     for (var i = 0; i < 70; i++) {
-      var rock = new THREE.Mesh(new THREE.IcosahedronGeometry(0.05 + Math.random() * 0.1, 0), mat);
+      var rock = new THREE.Mesh(new THREE.IcosahedronGeometry(0.1 + Math.random() * 0.14, 0), mat);
       var a = Math.random() * Math.PI * 2, r = 11.6 + (Math.random() - 0.5) * 1.4;
       rock.position.set(Math.cos(a) * r, (Math.random() - 0.5) * 0.7, Math.sin(a) * r);
       rock.rotation.set(Math.random() * 6, Math.random() * 6, Math.random() * 6);
@@ -473,7 +473,7 @@
       pl.group.position.set(Math.cos(a) * c.orbit, Math.sin(a * 1.3) * 0.35, Math.sin(a) * c.orbit);
       if (!reduceMotion) {
         pl.body.rotation.y += dt * 0.25;
-        if (pl.moonPivot) pl.moonPivot.rotation.y += dt * 1.1;
+        if (pl.moonPivot) pl.moonPivot.rotation.y += dt * 0.4;
         if (pl.bitPivot) pl.bitPivot.rotation.y += dt * 0.9;
         if (pl.wire) pl.wire.rotation.y -= dt * 0.15;
       }
