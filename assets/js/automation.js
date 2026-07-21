@@ -19,8 +19,8 @@
   // ---------- Buildings (cheap → expensive) ----------
   // per = units per spawned model (rarity ratio), cap = max models of that type.
   var BUILDINGS = [
-    { id: "miner",       ic: "🛰️", name: "Asteroid Miner Ship",      desc: "Mines ore from the belt.",           baseCost: 15,       growth: 1.15, ore: 0.5,   eOut: 0,    eUse: 0,   per: 50, cap: 40, motion: "belt",      color: 0xcfd3e0 },
-    { id: "solar",       ic: "☀️", name: "Solar Floating Panel",      desc: "Generates energy.",                  baseCost: 50,       growth: 1.16, ore: 0,     eOut: 2,    eUse: 0,   per: 40, cap: 30, motion: "ring",      radius: 6.2, color: 0x2ec4b6 },
+    { id: "miner",       ic: "🛰️", name: "Asteroid Miner Ship",      desc: "Mines ore from the belt.",           baseCost: 15,       growth: 1.15, ore: 0.5,   eOut: 0,    eUse: 0,   per: 50, cap: 40, motion: "asteroid",  color: 0xcfd3e0 },
+    { id: "solar",       ic: "☀️", name: "Solar Floating Panel",      desc: "Generates energy.",                  baseCost: 50,       growth: 1.16, ore: 0,     eOut: 2,    eUse: 0,   per: 40, cap: 30, motion: "sun",       radius: 2.7, color: 0x2ec4b6 },
     { id: "drone",       ic: "🛩️", name: "Cargo Drone",              desc: "Light ore hauler. Sips energy.",     baseCost: 220,      growth: 1.16, ore: 2,     eOut: 0,    eUse: 0.5, per: 45, cap: 30, motion: "belt",      color: 0xbfe3ff },
     { id: "transport",   ic: "🚀", name: "Planet Transport Ship",    desc: "Hauls ore between planets.",         baseCost: 900,      growth: 1.17, ore: 7,     eOut: 0,    eUse: 2,   per: 30, cap: 24, motion: "transport", color: 0xffb060 },
     { id: "tether",      ic: "🪢", name: "Space Tether",             desc: "Cheap launches, big throughput.",    baseCost: 4000,     growth: 1.17, ore: 24,    eOut: 0,    eUse: 5,   per: 24, cap: 20, motion: "ring",      radius: 8.6, color: 0x9b8cff },
@@ -29,7 +29,7 @@
     { id: "facility",    ic: "🏭", name: "Planetary Mining Facility", desc: "Strip-mines whole worlds.",         baseCost: 220000,   growth: 1.19, ore: 320,   eOut: 0,    eUse: 45,  per: 12, cap: 14, motion: "belt",      color: 0xff8c69 },
     { id: "shipyard",    ic: "🏗️", name: "Orbital Shipyard",         desc: "Fleets that build ore.",             baseCost: 900000,   growth: 1.19, ore: 1000,  eOut: 0,    eUse: 120, per: 10, cap: 12, motion: "belt",      color: 0x9fb0c8 },
     { id: "satellite",   ic: "📡", name: "Deep Space Satellite",     desc: "Beams down ore and energy.",         baseCost: 3500000,  growth: 1.20, ore: 2600,  eOut: 120,  eUse: 0,   per: 9,  cap: 12, motion: "far",       color: 0x8fd3ff },
-    { id: "dyson",       ic: "🌐", name: "Dyson Swarm Node",         desc: "Drinks the star's light.",           baseCost: 14000000, growth: 1.20, ore: 0,     eOut: 1500, eUse: 0,   per: 8,  cap: 10, motion: "ring",      radius: 2.4, color: 0xffe6a6 },
+    { id: "dyson",       ic: "🌐", name: "Dyson Swarm Node",         desc: "Drinks the star's light.",           baseCost: 14000000, growth: 1.20, ore: 0,     eOut: 1500, eUse: 0,   per: 8,  cap: 10, motion: "sun",       radius: 2.1, color: 0xffe6a6 },
     { id: "exploration", ic: "🧭", name: "Space Exploration Team",   desc: "Finds rich new belts.",              baseCost: 60000000, growth: 1.22, ore: 12000, eOut: 0,    eUse: 400, per: 6,  cap: 10, motion: "transport", color: 0x6ff2e4 }
   ];
   var byId = {};
@@ -100,9 +100,9 @@
     if (b._geo) return b._geo;
     var g;
     switch (b.id) {
-      case "solar":       g = new THREE.BoxGeometry(0.05, 0.3, 0.46); break;
+      case "solar":       g = new THREE.BoxGeometry(0.42, 0.3, 0.04); break; // thin panel, flat face toward the sun
       case "drone":       g = new THREE.BoxGeometry(0.12, 0.08, 0.18); break;
-      case "transport":   g = new THREE.ConeGeometry(0.11, 0.36, 6); break;
+      case "transport":   g = new THREE.ConeGeometry(0.07, 0.22, 6); g.rotateX(-Math.PI / 2); break; // small, tip points at destination
       case "tether":      g = new THREE.BoxGeometry(0.035, 0.035, 1.3); break;
       case "station":     g = new THREE.TorusGeometry(0.17, 0.05, 6, 16); break;
       case "reactor":     g = new THREE.BoxGeometry(0.22, 0.22, 0.22); break;
@@ -110,8 +110,8 @@
       case "shipyard":    g = new THREE.BoxGeometry(0.36, 0.12, 0.24); break;
       case "satellite":   g = new THREE.BoxGeometry(0.11, 0.11, 0.11); break;
       case "dyson":       g = new THREE.OctahedronGeometry(0.26, 0); break;
-      case "exploration": g = new THREE.ConeGeometry(0.1, 0.34, 5); break;
-      default:            g = new THREE.BoxGeometry(0.16, 0.08, 0.3); // miner
+      case "exploration": g = new THREE.ConeGeometry(0.1, 0.34, 5); g.rotateX(-Math.PI / 2); break;
+      default:            g = new THREE.ConeGeometry(0.12, 0.34, 4); g.rotateX(-Math.PI / 2); // miner = pyramid ship facing its rock
     }
     b._geo = g; return g;
   }
@@ -133,16 +133,28 @@
     }
     return mesh;
   }
+  var TAU = Math.PI * 2, _wp = new THREE.Vector3();
   function initMotion(mesh, b, i) {
     var u = mesh.userData;
     if (b.motion === "transport") {
       var np = OBS.planets.length;
       u.mt = "transport"; u.a = i % np; u.b = (i + 1) % np;
       u.t = Math.random(); u.sp = 0.05 + Math.random() * 0.07; u.far = (b.id === "exploration");
+    } else if (b.motion === "sun") {
+      // hug the sun on a sphere, always facing it
+      u.mt = "sun"; u.r = b.radius;
+      u.theta = Math.random() * TAU; u.phi = Math.acos(2 * Math.random() - 1);
+      u.sp = (0.1 + Math.random() * 0.1) * (Math.random() < 0.5 ? 1 : -1);
+    } else if (b.motion === "asteroid") {
+      // sit beside a real asteroid and point at it
+      u.mt = "asteroid";
+      var rocks = OBS.belt.children; u.rock = rocks[i % rocks.length];
+      var a = Math.random() * TAU, rr = 0.26 + Math.random() * 0.14;
+      u.off = new THREE.Vector3(Math.cos(a) * rr, (Math.random() - 0.5) * 0.14, Math.sin(a) * rr);
     } else {
       u.mt = "orbit";
       u.r = (b.motion === "ring") ? b.radius : (b.motion === "far" ? 14 : (11.2 + (Math.random() - 0.5) * 1.6));
-      u.ang = Math.random() * Math.PI * 2;
+      u.ang = Math.random() * TAU;
       u.y = (Math.random() - 0.5) * (b.motion === "ring" ? 1.4 : 0.7);
       u.sp = (0.03 + Math.random() * 0.05) * (Math.random() < 0.5 ? 1 : -1);
       if (b.id === "tether") { u.y = 0; u.radial = true; }
@@ -163,17 +175,26 @@
         var mesh = arr[i], u = mesh.userData;
         if (u.mt === "transport") {
           u.t += u.sp * dt;
-          if (u.t > 1) { u.t = 0; var tmp = u.a; u.a = u.b; u.b = tmp; }
+          if (u.t > 1) { u.t = 0; var sw = u.a; u.a = u.b; u.b = sw; }
           var pa = OBS.planets[u.a].group.position;
           var pb = u.far ? FAR : OBS.planets[u.b].group.position;
           var tt = u.t;
           mesh.position.set(pa.x + (pb.x - pa.x) * tt, pa.y + (pb.y - pa.y) * tt + Math.sin(tt * Math.PI) * 1.1, pa.z + (pb.z - pa.z) * tt);
           mesh.lookAt(pb.x, pb.y, pb.z);
+        } else if (u.mt === "sun") {
+          u.theta += u.sp * dt;
+          var s = Math.sin(u.phi);
+          mesh.position.set(u.r * s * Math.cos(u.theta), u.r * Math.cos(u.phi), u.r * s * Math.sin(u.theta));
+          mesh.lookAt(0, 0, 0);
+        } else if (u.mt === "asteroid") {
+          u.rock.getWorldPosition(_wp);
+          mesh.position.set(_wp.x + u.off.x, _wp.y + u.off.y, _wp.z + u.off.z);
+          mesh.lookAt(_wp.x, _wp.y, _wp.z);
         } else {
           u.ang += u.sp * dt;
           mesh.position.set(Math.cos(u.ang) * u.r, u.y, Math.sin(u.ang) * u.r);
-          if (u.radial) mesh.lookAt(0, u.y, 0);
-          else mesh.rotation.y += dt * 0.4;
+          if (u.radial) { mesh.lookAt(0, u.y, 0); }
+          else { var dir = u.sp < 0 ? -1 : 1; mesh.lookAt(mesh.position.x - Math.sin(u.ang) * dir, mesh.position.y, mesh.position.z + Math.cos(u.ang) * dir); }
         }
       }
     }
@@ -271,7 +292,7 @@
       '<div class="idle__bar"><span class="idle__gem">◆</span><b class="idle__ore">0</b><span class="idle__u">ore</span><span class="idle__rate">+0/s</span></div>' +
       '<div class="idle__energy"><span class="idle__elbl">⚡ energy/s</span><span class="idle__evals">+0 / −0</span><i class="idle__ebar"><b></b></i></div>' +
       '<div class="idle__tabs"><button data-tab="build" class="on">Build</button><button data-tab="research">Research</button></div>' +
-      '<div class="idle__scroll"><div class="idle__list" data-panel="build"></div><div class="idle__list" data-panel="research" hidden></div></div>' +
+      '<div class="idle__scroll"><div class="idle__list" data-panel="build"></div><div class="idle__list idle__list--grid" data-panel="research" hidden></div></div>' +
       '<div class="idle__foot"><button class="idle__reset">reset</button></div>' +
     '</div>';
   document.body.appendChild(panel);
@@ -316,14 +337,14 @@
     b._upt = row.querySelector(".irow__upt");
   });
 
-  // Research rows
+  // Research tiles — a grid of available + already-acquired upgrades
   RESEARCH.forEach(function (r) {
-    var row = el("div", "rrow"); row.hidden = true;
-    row.innerHTML = '<div class="rrow__t"><b>' + r.name + '</b><span>' + r.desc + '</span></div><button class="rrow__buy"></button>';
-    row.querySelector(".rrow__buy").addEventListener("click", function () { buyResearch(r.id); });
-    researchList.appendChild(row);
-    r._row = row;
-    r._buy = row.querySelector(".rrow__buy");
+    var tile = el("button", "rtile"); tile.hidden = true;
+    tile.innerHTML = '<b>' + r.name + '</b><span class="rtile__d">' + r.desc + '</span><span class="rtile__c"></span>';
+    tile.addEventListener("click", function () { buyResearch(r.id); });
+    researchList.appendChild(tile);
+    r._row = tile;
+    r._cost = tile.querySelector(".rtile__c");
   });
 
   function lineRate(b) {
@@ -365,8 +386,8 @@
       var show = bought || canReq(r);
       r._row.hidden = !show; if (!show) return;
       r._row.classList.toggle("done", bought);
-      if (bought) { r._buy.textContent = "✓"; r._buy.disabled = true; }
-      else { r._buy.textContent = fmt(r.cost); r._buy.disabled = S.ore < r.cost; }
+      r._row.disabled = bought || S.ore < r.cost;
+      r._cost.textContent = bought ? "✓ owned" : "◆ " + fmt(r.cost);
     });
   }
 
