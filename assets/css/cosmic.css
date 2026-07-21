@@ -297,6 +297,11 @@ iframe { max-width: 100%; border: 0; border-radius: var(--radius); }
 .card:hover { transform: translateY(-6px); box-shadow: var(--shadow); border-color: color-mix(in srgb, var(--accent) 50%, var(--border)); }
 .card__media { aspect-ratio: 16/10; overflow: hidden; background: var(--bg-elev); }
 .card__media img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s var(--ease); }
+.card__media--empty {
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(circle at 32% 26%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 70%), var(--bg-elev);
+}
+.card__glyph { font-family: var(--font-display); font-weight: 700; font-size: 3.2rem; color: var(--accent-2); opacity: 0.85; }
 .card:hover .card__media img { transform: scale(1.07); }
 .card__body { padding: 1rem 1.1rem 1.2rem; }
 .card__title { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; margin: 0 0 0.35rem; }

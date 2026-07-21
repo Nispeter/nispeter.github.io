@@ -1,15 +1,20 @@
-{%- comment -%} Teaser card for section grids. Expects `include.item` (a portfolio doc). {%- endcomment -%}
+{%- comment -%} Teaser card for section grids. Expects `include.item` (a portfolio doc).
+  Falls back to a themed placeholder (project initial) when no image is set. {%- endcomment -%}
 {%- assign item = include.item -%}
 {%- assign teaser = item.header.teaser | default: item.header.image -%}
 {%- if teaser and teaser != '' -%}
   {%- unless teaser contains '://' -%}{%- assign teaser = teaser | prepend: '/' | replace: '//', '/' -%}{%- endunless -%}
 {%- endif -%}
 <a class="card" href="{{ item.url | relative_url }}">
+  {%- if teaser and teaser != '' -%}
   <div class="card__media">
-    {%- if teaser and teaser != '' -%}
     <img src="{{ teaser | relative_url }}" alt="{{ item.title }}" loading="lazy">
-    {%- endif -%}
   </div>
+  {%- else -%}
+  <div class="card__media card__media--empty" aria-hidden="true">
+    <span class="card__glyph">{{ item.title | slice: 0 | upcase }}</span>
+  </div>
+  {%- endif -%}
   <div class="card__body">
     <h3 class="card__title">{{ item.title }}</h3>
     <p class="card__excerpt">{{ item.excerpt | strip_html | strip_newlines | truncate: 120 }}</p>
