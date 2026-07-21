@@ -21,7 +21,7 @@
   var BUILDINGS = [
     { id: "miner",       ic: "🛰️", name: "Asteroid Miner Ship",      desc: "Mines ore from the belt.",              baseCost: 15,       growth: 1.15, ore: 0.5,   eOut: 0,    eUse: 0,   per: 20, cap: 60, motion: "asteroid",  color: 0xffd24a },
     { id: "solar",       ic: "☀️", name: "Solar Floating Panel",      desc: "Generates energy.",                     baseCost: 50,       growth: 1.16, ore: 0,     eOut: 2,    eUse: 0,   per: 15, cap: 40, motion: "sun",       radius: 2.7, color: 0x2ec4b6 },
-    { id: "drone",       ic: "🛩️", name: "Cargo Drone",              desc: "Hops between miners hauling ore.",      baseCost: 220,      growth: 1.16, ore: 2,     eOut: 0,    eUse: 0.5, per: 18, cap: 40, motion: "dronehop",  color: 0xbfe3ff },
+    { id: "drone",       ic: "🛩️", name: "Cargo Drone",              desc: "Hops between miners hauling ore.",      baseCost: 220,      growth: 1.16, ore: 2,     eOut: 0,    eUse: 0.5, per: 18, cap: 40, motion: "dronehop",  color: 0x4dd6c4 },
     { id: "transport",   ic: "🚀", name: "Planet Transport Ship",    desc: "Hauls ore between planets & stations.", baseCost: 900,      growth: 1.17, ore: 7,     eOut: 0,    eUse: 2,   per: 12, cap: 30, motion: "transport", color: 0xffb060 },
     { id: "tether",      ic: "🌀", name: "Warp Station",             desc: "Warps distant cargo drones across the belt.", baseCost: 4000, growth: 1.17, ore: 24, eOut: 0, eUse: 5, per: 10, cap: 24, motion: "ring",      radius: 8.6, color: 0x9b8cff },
     { id: "station",     ic: "🛸", name: "Space Station",            desc: "Orbital ore hub.",                      baseCost: 18000,    growth: 1.18, ore: 70,    eOut: 0,    eUse: 12,  per: 8,  cap: 20, motion: "ring",      radius: 3.0, color: 0xe8eaf2 },
@@ -113,7 +113,7 @@
       case "satellite":   g = new THREE.BoxGeometry(0.11, 0.11, 0.11); break;
       case "dyson":       g = new THREE.OctahedronGeometry(0.24, 0); break;
       case "exploration": g = new THREE.ConeGeometry(0.1, 0.34, 5); g.rotateX(Math.PI / 2); break;
-      default:            g = new THREE.BoxGeometry(0.18, 0.1, 0.1); // miner = rotating rectangle
+      default:            g = new THREE.CylinderGeometry(0.03, 0.09, 0.34, 6); g.rotateX(Math.PI / 2); // miner = drill bit
     }
     b._geo = g; return g;
   }
@@ -135,7 +135,7 @@
     }
     return mesh;
   }
-  var TAU = Math.PI * 2, _wp = new THREE.Vector3();
+  var TAU = Math.PI * 2, _wp = new THREE.Vector3(), _dir = new THREE.Vector3(), _base = new THREE.Vector3();
   function initMotion(mesh, b, i) {
     var u = mesh.userData;
     if (b.motion === "transport") {
@@ -148,13 +148,12 @@
       u.theta = Math.random() * TAU; u.phi = Math.acos(2 * Math.random() - 1);
       u.sp = (0.1 + Math.random() * 0.1) * (Math.random() < 0.5 ? 1 : -1);
     } else if (b.motion === "asteroid") {
-      // sit beside a real asteroid; miners tumble, others face the rock
+      // sit beside a real asteroid; miners drill into its centre, others face it
       u.mt = "asteroid";
       var rocks = OBS.belt.children; u.rock = rocks[i % rocks.length];
-      var a = Math.random() * TAU, rr = 0.26 + Math.random() * 0.14;
-      u.off = new THREE.Vector3(Math.cos(a) * rr, (Math.random() - 0.5) * 0.14, Math.sin(a) * rr);
-      u.spin = (b.id === "miner");
-      u.rx = 0.3 + Math.random() * 0.6; u.ry = 0.3 + Math.random() * 0.6;
+      var a = Math.random() * TAU, rr = 0.18 + Math.random() * 0.1;
+      u.off = new THREE.Vector3(Math.cos(a) * rr, (Math.random() - 0.5) * 0.12, Math.sin(a) * rr);
+      u.spin = (b.id === "miner"); u.roll = 0;
     } else if (b.motion === "dronehop") {
       // hop from miner to miner
       u.mt = "dronehop"; u.target = null; u.st = null; u.wait = Math.random() * 2;
@@ -175,7 +174,7 @@
   function reconcile(b) {
     var o = owned(b.id);
     // Always show at least one model once you own any (then scale by rarity ratio).
-    var target = o > 0 ? Math.max(1, Math.min(b.cap, Math.floor(o / b.per))) : 0;
+    var target = o > 0 ? Math.min(b.cap, Math.ceil(o / b.per)) : 0;
     var arr = models[b.id] || (models[b.id] = []);
     while (arr.length < target) { var m = makeMesh(b); initMotion(m, b, arr.length); unitsGroup.add(m); arr.push(m); }
     while (arr.length > target) { unitsGroup.remove(arr.pop()); }
@@ -233,8 +232,8 @@
         } else if (u.mt === "asteroid") {
           u.rock.getWorldPosition(_wp);
           mesh.position.set(_wp.x + u.off.x, _wp.y + u.off.y, _wp.z + u.off.z);
-          if (u.spin) { mesh.rotation.x += dt * u.rx; mesh.rotation.y += dt * u.ry; } // miners tumble
-          else mesh.lookAt(_wp.x, _wp.y, _wp.z);
+          mesh.lookAt(_wp.x, _wp.y, _wp.z);                     // point the drill at the asteroid centre
+          if (u.spin) { u.roll += dt * 7; mesh.rotateZ(u.roll); } // miners spin around that axis like a drill
         } else if (u.mt === "dronehop") {
           var miners = models.miner;
           if (miners && miners.length) {
@@ -254,9 +253,12 @@
               // brief hold, then jump to the far miner with a flash at both ends
               u.warpT -= dt;
               if (u.warpT <= 0) {
-                var d2 = (u.target && u.target.parent) ? u.target.position : null;
                 flash(mesh.position);
-                if (d2) { mesh.position.set(d2.x + 0.2, d2.y, d2.z + 0.2); flash(mesh.position); }
+                if (u.target && u.target.parent) {
+                  _dir.set(0, 0, 1).applyQuaternion(u.target.quaternion);          // miner forward (toward rock)
+                  mesh.position.set(u.target.position.x - _dir.x * 0.22, u.target.position.y - _dir.y * 0.22, u.target.position.z - _dir.z * 0.22);
+                  flash(mesh.position);
+                }
                 u.wait = 0.5 + Math.random() * 1.2; u.target = null; u.st = null;
               }
             } else {
@@ -271,10 +273,12 @@
                 }
               }
               if (u.st !== "toTether") {
-                var tp = u.target.position;
-                mesh.position.lerp(tp, Math.min(1, dt * 0.9));
-                mesh.lookAt(tp.x, tp.y, tp.z);
-                if (mesh.position.distanceTo(tp) < 0.3) { u.wait = 0.5 + Math.random() * 1.4; u.target = null; }
+                var mt = u.target;
+                _dir.set(0, 0, 1).applyQuaternion(mt.quaternion);                   // dock at the miner's base (behind the drill)
+                _base.set(mt.position.x - _dir.x * 0.22, mt.position.y - _dir.y * 0.22, mt.position.z - _dir.z * 0.22);
+                mesh.position.lerp(_base, Math.min(1, dt * 0.9));
+                mesh.lookAt(mt.position.x, mt.position.y, mt.position.z);
+                if (mesh.position.distanceTo(_base) < 0.25) { u.wait = 0.5 + Math.random() * 1.4; u.target = null; }
               }
             }
           }
