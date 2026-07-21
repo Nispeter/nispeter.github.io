@@ -19,18 +19,18 @@
   // ---------- Buildings (cheap → expensive) ----------
   // per = units per spawned model (rarity ratio), cap = max models of that type.
   var BUILDINGS = [
-    { id: "miner",       ic: "🛰️", name: "Asteroid Miner Ship",      desc: "Mines ore from the belt.",              baseCost: 15,       growth: 1.15, ore: 0.5,   eOut: 0,    eUse: 0,   per: 2,  cap: 60, motion: "asteroid",  color: 0xffd24a },
-    { id: "solar",       ic: "☀️", name: "Solar Floating Panel",      desc: "Generates energy.",                     baseCost: 50,       growth: 1.16, ore: 0,     eOut: 2,    eUse: 0,   per: 2,  cap: 60, motion: "sun",       radius: 2.7, color: 0x2ec4b6 },
+    { id: "miner",       ic: "🛰️", name: "Asteroid Miner Ship",      desc: "Mines ore from the belt.",              baseCost: 15,       growth: 1.15, ore: 0.5,   eOut: 0,    eUse: 0,   per: 2,  cap: 60, motion: "asteroid",  color: 0xffb35c },
+    { id: "solar",       ic: "☀️", name: "Solar Floating Panel",      desc: "Generates energy.",                     baseCost: 50,       growth: 1.16, ore: 0,     eOut: 2,    eUse: 0,   per: 2,  cap: 60, motion: "sun",       radius: 2.7, color: 0x8fdcff },
     { id: "drone",       ic: "🛩️", name: "Cargo Drone",              desc: "Hops between miners hauling ore.",      baseCost: 220,      growth: 1.16, ore: 2,     eOut: 0,    eUse: 0.5, per: 2,  cap: 40, motion: "dronehop",  color: 0x4dd6c4 },
-    { id: "transport",   ic: "🚀", name: "Planet Transport Ship",    desc: "Hauls ore between planets & stations.", baseCost: 900,      growth: 1.17, ore: 7,     eOut: 0,    eUse: 2,   per: 2,  cap: 30, motion: "transport", color: 0xffb060 },
-    { id: "tether",      ic: "🌀", name: "Warp Station",             desc: "Warps distant cargo drones across the belt.", baseCost: 4000, growth: 1.17, ore: 24, eOut: 0, eUse: 5, per: 2,  cap: 24, motion: "ring",      radius: 8.6, color: 0x9b8cff },
-    { id: "station",     ic: "🛸", name: "Space Station",            desc: "Orbital ore hub.",                      baseCost: 18000,    growth: 1.18, ore: 70,    eOut: 0,    eUse: 12,  per: 2,  cap: 24, motion: "ring",      radius: 3.0, color: 0xe8eaf2 },
-    { id: "reactor",     ic: "⚛️", name: "Fusion Reactor",           desc: "Studs the sun. Big energy output.",     baseCost: 65000,    growth: 1.18, ore: 0,     eOut: 60,   eUse: 0,   per: 2,  cap: 40, motion: "sun",       radius: 1.6, color: 0xffd27d },
-    { id: "facility",    ic: "🏭", name: "Planetary Mining Facility", desc: "Sits on a planet, strip-mining it.",   baseCost: 220000,   growth: 1.19, ore: 320,   eOut: 0,    eUse: 45,  per: 2,  cap: 24, motion: "planet",    color: 0xff8c69 },
-    { id: "shipyard",    ic: "🏗️", name: "Orbital Shipyard",         desc: "Fleets that build ore.",                baseCost: 900000,   growth: 1.19, ore: 1000,  eOut: 0,    eUse: 120, per: 2,  cap: 24, motion: "asteroid",  color: 0x9fb0c8 },
-    { id: "satellite",   ic: "📡", name: "Deep Space Satellite",     desc: "Beams down ore and energy.",            baseCost: 3500000,  growth: 1.20, ore: 2600,  eOut: 120,  eUse: 0,   per: 2,  cap: 24, motion: "far",       color: 0x8fd3ff },
-    { id: "dyson",       ic: "🌐", name: "Dyson Swarm Node",         desc: "Drinks the star's light.",              baseCost: 14000000, growth: 1.20, ore: 0,     eOut: 1500, eUse: 0,   per: 2,  cap: 40, motion: "sun",       radius: 2.1, color: 0xffe6a6 },
-    { id: "exploration", ic: "🧭", name: "Space Exploration Team",   desc: "Finds rich new belts.",                 baseCost: 60000000, growth: 1.22, ore: 12000, eOut: 0,    eUse: 400, per: 2,  cap: 20, motion: "transport", color: 0x6ff2e4 }
+    { id: "transport",   ic: "🚀", name: "Planet Transport Ship",    desc: "Hauls ore between planets & stations.", baseCost: 900,      growth: 1.17, ore: 7,     eOut: 0,    eUse: 2,   per: 2,  cap: 30, motion: "transport", color: 0x74a8ff },
+    { id: "tether",      ic: "🌀", name: "Warp Station",             desc: "Warps distant cargo drones across the belt.", baseCost: 4000, growth: 1.17, ore: 24, eOut: 0, eUse: 5, per: 2,  cap: 24, motion: "warp",      radius: 7.9, color: 0xc9a3ff },
+    { id: "station",     ic: "🛸", name: "Space Station",            desc: "Orbital ore hub.",                      baseCost: 18000,    growth: 1.18, ore: 70,    eOut: 0,    eUse: 12,  per: 2,  cap: 24, motion: "ring",      radius: 3.0, color: 0xe6f4ff },
+    { id: "reactor",     ic: "⚛️", name: "Fusion Reactor",           desc: "Studs the sun. Big energy output.",     baseCost: 65000,    growth: 1.18, ore: 0,     eOut: 60,   eUse: 0,   per: 2,  cap: 40, motion: "sun",       radius: 1.4, color: 0xffcf6a },
+    { id: "facility",    ic: "🏭", name: "Planetary Mining Facility", desc: "Sits on a planet, strip-mining it.",   baseCost: 220000,   growth: 1.19, ore: 320,   eOut: 0,    eUse: 45,  per: 2,  cap: 24, motion: "planet",    color: 0x66c9e0 },
+    { id: "shipyard",    ic: "🏗️", name: "Orbital Shipyard",         desc: "Fleets that build ore.",                baseCost: 900000,   growth: 1.19, ore: 1000,  eOut: 0,    eUse: 120, per: 2,  cap: 24, motion: "asteroid",  color: 0xa9c3dd },
+    { id: "satellite",   ic: "📡", name: "Deep Space Satellite",     desc: "Beams down ore and energy.",            baseCost: 3500000,  growth: 1.20, ore: 2600,  eOut: 120,  eUse: 0,   per: 2,  cap: 24, motion: "far",       color: 0x8ec9ff },
+    { id: "dyson",       ic: "🌐", name: "Dyson Swarm Node",         desc: "Drinks the star's light.",              baseCost: 14000000, growth: 1.20, ore: 0,     eOut: 1500, eUse: 0,   per: 2,  cap: 40, motion: "sun",       radius: 2.1, color: 0xffe3a0 },
+    { id: "exploration", ic: "🧭", name: "Space Exploration Team",   desc: "Finds rich new belts.",                 baseCost: 60000000, growth: 1.22, ore: 12000, eOut: 0,    eUse: 400, per: 2,  cap: 20, motion: "transport", color: 0x8affd6 }
   ];
   var byId = {};
   BUILDINGS.forEach(function (b) { byId[b.id] = b; });
@@ -48,7 +48,11 @@
     { id: "colonize_w", name: "Colonize Planet Web",  desc: "All ore ×1.5",            cost: 6000000,   req: { ore: 4000000 },       effect: { kind: "all", mult: 1.5 } },
     { id: "charter",    name: "Deep-Space Charter",   desc: "Exploration Teams ×3",    cost: 20000000,  req: { b: "exploration", n: 5 }, effect: { kind: "bld", id: "exploration", mult: 3 } },
     { id: "colonize_c", name: "Colonize Planet CS",   desc: "All ore ×1.5",            cost: 80000000,  req: { ore: 50000000 },      effect: { kind: "all", mult: 1.5 } },
-    { id: "quantum",    name: "Quantum Uplink",       desc: "All ore ×2",              cost: 500000000, req: { ore: 300000000 },     effect: { kind: "all", mult: 2 } }
+    { id: "quantum",    name: "Quantum Uplink",       desc: "All ore ×2",              cost: 500000000, req: { ore: 300000000 },     effect: { kind: "all", mult: 2 } },
+    { id: "rushjob",    name: "Rush Job",             desc: "Click ×25 · production ×0.85",     cost: 40000,      req: {},                     effect: [{ kind: "click", mult: 25 }, { kind: "all", mult: 0.85 }] },
+    { id: "overclock",  name: "Overclock Cores",      desc: "All ore ×2 · energy use +60%",     cost: 250000,     req: { b: "station", n: 3 }, effect: [{ kind: "all", mult: 2 }, { kind: "eUse", mult: 1.6 }] },
+    { id: "leanpower",  name: "Lean Power Grid",      desc: "Energy output ×2 · all ore −25%",  cost: 1200000,    req: {},                     effect: [{ kind: "eOut", mult: 2 }, { kind: "all", mult: 0.75 }] },
+    { id: "singularity",name: "Singularity Drive",    desc: "All ore ×5 · energy use +150%",    cost: 2000000000, req: { ore: 1000000000 },    effect: [{ kind: "all", mult: 5 }, { kind: "eUse", mult: 2.5 }] }
   ];
   var rById = {};
   RESEARCH.forEach(function (r) { rById[r.id] = r; });
@@ -74,16 +78,19 @@
 
   // ---------- Derived modifiers (recomputed on any purchase) ----------
   var mods = { all: 1, click: 1, eUse: 1, eOut: 1, bld: {} };
+  function applyEffect(e) {
+    if (e.kind === "all") mods.all *= e.mult;
+    else if (e.kind === "click") mods.click *= e.mult;
+    else if (e.kind === "eUse") mods.eUse *= e.mult;
+    else if (e.kind === "eOut") mods.eOut *= e.mult;
+    else if (e.kind === "bld") mods.bld[e.id] = (mods.bld[e.id] || 1) * e.mult;
+  }
   function recompute() {
     mods = { all: 1, click: 1, eUse: 1, eOut: 1, bld: {} };
     RESEARCH.forEach(function (r) {
       if (!S.rs[r.id]) return;
       var e = r.effect;
-      if (e.kind === "all") mods.all *= e.mult;
-      else if (e.kind === "click") mods.click *= e.mult;
-      else if (e.kind === "eUse") mods.eUse *= e.mult;
-      else if (e.kind === "eOut") mods.eOut *= e.mult;
-      else if (e.kind === "bld") mods.bld[e.id] = (mods.bld[e.id] || 1) * e.mult;
+      if (e.length) { for (var k = 0; k < e.length; k++) applyEffect(e[k]); } else applyEffect(e);
     });
     BUILDINGS.forEach(function (b) {
       mods.bld[b.id] = (mods.bld[b.id] || 1) * Math.pow(2, upTier(b.id));
@@ -104,8 +111,8 @@
     switch (b.id) {
       case "solar":       g = new THREE.BoxGeometry(0.42, 0.3, 0.04); break; // thin panel, faces the sun
       case "drone":       g = new THREE.ConeGeometry(0.09, 0.26, 4); g.rotateX(Math.PI / 2); break; // pyramid, tip forward
-      case "transport":   g = new THREE.ConeGeometry(0.07, 0.22, 6); g.rotateX(Math.PI / 2); break;  // small, tip at destination
-      case "tether":      g = new THREE.CylinderGeometry(0.1, 0.1, 0.6, 12); break; // warp station cylinder
+      case "transport":   g = new THREE.BoxGeometry(0.09, 0.07, 0.26); break; // rectangle, long axis = travel direction
+      case "tether":      g = new THREE.CylinderGeometry(0.09, 0.09, 0.55, 12); g.rotateX(Math.PI / 2); break; // horizontal warp barrel
       case "station":     g = new THREE.TorusGeometry(0.17, 0.05, 6, 16); break;
       case "reactor":     g = new THREE.BoxGeometry(0.22, 0.22, 0.22); break;
       case "facility":    g = new THREE.BoxGeometry(0.26, 0.16, 0.26); break;
@@ -113,7 +120,7 @@
       case "satellite":   g = new THREE.BoxGeometry(0.11, 0.11, 0.11); break;
       case "dyson":       g = new THREE.OctahedronGeometry(0.24, 0); break;
       case "exploration": g = new THREE.ConeGeometry(0.1, 0.34, 5); g.rotateX(Math.PI / 2); break;
-      default:            g = new THREE.CylinderGeometry(0.03, 0.09, 0.34, 6); g.rotateX(Math.PI / 2); // miner = drill bit
+      default:            g = new THREE.CylinderGeometry(0.02, 0.06, 0.24, 6); g.rotateX(Math.PI / 2); // miner = small drill bit
     }
     b._geo = g; return g;
   }
@@ -135,7 +142,8 @@
     }
     return mesh;
   }
-  var TAU = Math.PI * 2, _wp = new THREE.Vector3(), _dir = new THREE.Vector3(), _base = new THREE.Vector3();
+  var TAU = Math.PI * 2, STD = 0.12, SUN_KEEP = 2.3;  // STD = shared standard rotation speed
+  var _wp = new THREE.Vector3(), _dir = new THREE.Vector3(), _base = new THREE.Vector3();
   function initMotion(mesh, b, i) {
     var u = mesh.userData;
     if (b.motion === "transport") {
@@ -146,7 +154,7 @@
       // hug the sun on a sphere, always facing it (surface studs for reactors)
       u.mt = "sun"; u.r = b.radius;
       u.theta = Math.random() * TAU; u.phi = Math.acos(2 * Math.random() - 1);
-      u.sp = (0.1 + Math.random() * 0.1) * (Math.random() < 0.5 ? 1 : -1);
+      u.sp = STD;   // synced standard speed (panels move together)
     } else if (b.motion === "asteroid") {
       // sit beside a real asteroid; miners drill into its centre, others face it
       u.mt = "asteroid";
@@ -163,6 +171,10 @@
       u.mt = "planet"; u.p = i % OBS.planets.length;
       var pa = Math.random() * TAU, pph = Math.acos(2 * Math.random() - 1), ps = Math.sin(pph);
       u.dir = new THREE.Vector3(ps * Math.cos(pa), Math.cos(pph), ps * Math.sin(pa));
+    } else if (b.motion === "warp") {
+      // warp station: orbit at a fixed standard speed; aims + fires on demand
+      u.mt = "warp"; u.r = b.radius; u.ang = Math.random() * TAU; u.y = (Math.random() - 0.5) * 0.5;
+      u.aimT = 0; u.aimPos = new THREE.Vector3();
     } else {
       u.mt = "orbit";
       u.r = (b.motion === "ring") ? b.radius : (b.motion === "far" ? 14 : (11.2 + (Math.random() - 0.5) * 1.6));
@@ -206,6 +218,14 @@
     }
   }
 
+  // keep a moving point from crossing the sun (bends the path around it)
+  function avoidSun(v) {
+    var d = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+    if (d < SUN_KEEP) {
+      if (d < 0.0001) { v.y += SUN_KEEP; return; }
+      var k = SUN_KEEP / d; v.x *= k; v.y *= k; v.z *= k;
+    }
+  }
   function updateModels(dt) {
     updateFx(dt);
     for (var id in models) {
@@ -222,7 +242,8 @@
           var pa = OBS.planets[u.a].group.position;
           var pb = u.station ? u.station.position : (u.far ? FAR : OBS.planets[u.b].group.position);
           var tt = u.t;
-          mesh.position.set(pa.x + (pb.x - pa.x) * tt, pa.y + (pb.y - pa.y) * tt + Math.sin(tt * Math.PI) * 1.1, pa.z + (pb.z - pa.z) * tt);
+          _wp.set(pa.x + (pb.x - pa.x) * tt, pa.y + (pb.y - pa.y) * tt, pa.z + (pb.z - pa.z) * tt);
+          avoidSun(_wp); mesh.position.copy(_wp);           // straight path, curved around the sun
           mesh.lookAt(pb.x, pb.y, pb.z);
         } else if (u.mt === "sun") {
           u.theta += u.sp * dt;
@@ -245,21 +266,29 @@
               var dv = (u.target && u.target.parent) ? u.target.position : null;
               if (!wt || !dv) { u.st = null; u.target = null; }
               else {
-                mesh.position.lerp(wt, Math.min(1, dt * 0.9));
+                mesh.position.lerp(wt, Math.min(1, dt * 1.0));
                 mesh.lookAt(dv.x, dv.y, dv.z);
-                if (mesh.position.distanceTo(wt) < 0.5) { u.st = "warp"; u.warpT = 0.35; }
+                if (mesh.position.distanceTo(wt) < 0.4) { u.st = "aim"; u.aimT = 0.5; }
               }
-            } else if (u.st === "warp") {
-              // brief hold, then jump to the far miner with a flash at both ends
-              u.warpT -= dt;
-              if (u.warpT <= 0) {
-                flash(mesh.position);
-                if (u.target && u.target.parent) {
-                  _dir.set(0, 0, 1).applyQuaternion(u.target.quaternion);          // miner forward (toward rock)
-                  mesh.position.set(u.target.position.x - _dir.x * 0.22, u.target.position.y - _dir.y * 0.22, u.target.position.z - _dir.z * 0.22);
-                  flash(mesh.position);
-                }
-                u.wait = 0.5 + Math.random() * 1.2; u.target = null; u.st = null;
+            } else if (u.st === "aim") {
+              // sit at the station while it rotates to aim, then get fired
+              var tg = (u.target && u.target.parent) ? u.target.position : null;
+              var stn = (u.tether && u.tether.parent) ? u.tether : null;
+              if (!tg || !stn) { u.st = null; u.target = null; }
+              else {
+                stn.userData.aimPos.copy(tg); stn.userData.aimT = 0.3;   // drive the station's barrel toward the target
+                mesh.position.copy(stn.position);
+                u.aimT -= dt;
+                if (u.aimT <= 0) { flash(mesh.position); u.st = "fired"; }
+              }
+            } else if (u.st === "fired") {
+              // launched: streak fast to the far miner
+              var ft = (u.target && u.target.parent) ? u.target.position : null;
+              if (!ft) { u.st = null; u.target = null; }
+              else {
+                mesh.position.lerp(ft, Math.min(1, dt * 3.2));
+                mesh.lookAt(ft.x, ft.y, ft.z);
+                if (mesh.position.distanceTo(ft) < 0.35) { flash(mesh.position); u.wait = 0.5 + Math.random() * 1.2; u.target = null; u.st = null; }
               }
             } else {
               // pick a miner; if it's far and a warp station exists, route via the nearest one
@@ -283,9 +312,14 @@
             }
           }
         } else if (u.mt === "planet") {
-          var pl = OBS.planets[u.p], pp = pl.group.position, rad = pl.cfg.size + 0.12;
+          var pl = OBS.planets[u.p], pp = pl.group.position, rad = pl.cfg.size - 0.02;
           mesh.position.set(pp.x + u.dir.x * rad, pp.y + u.dir.y * rad, pp.z + u.dir.z * rad);
           mesh.lookAt(pp.x + u.dir.x * 2, pp.y + u.dir.y * 2, pp.z + u.dir.z * 2); // face outward
+        } else if (u.mt === "warp") {
+          u.ang += STD * dt;                                    // synced standard speed
+          mesh.position.set(Math.cos(u.ang) * u.r, u.y, Math.sin(u.ang) * u.r);
+          if (u.aimT > 0) { mesh.lookAt(u.aimPos.x, u.aimPos.y, u.aimPos.z); u.aimT -= dt; } // aim the barrel
+          else { mesh.lookAt(mesh.position.x - Math.sin(u.ang), mesh.position.y, mesh.position.z + Math.cos(u.ang)); }
         } else {
           u.ang += u.sp * dt;
           mesh.position.set(Math.cos(u.ang) * u.r, u.y, Math.sin(u.ang) * u.r);
@@ -304,7 +338,10 @@
     var eOut = 0, eUse = 0, i, b, o;
     for (i = 0; i < BUILDINGS.length; i++) { b = BUILDINGS[i]; o = owned(b.id); if (!o) continue; eOut += b.eOut * o; eUse += b.eUse * o; }
     eOut *= mods.eOut; eUse *= mods.eUse;
-    var ratio = eUse > 0 ? Math.min(1, eOut / eUse) : 1;
+    // deficit → down to 15% efficiency (never fully off); surplus → up to +50% (so energy upgrades pay off)
+    var ratio;
+    if (eUse <= 0) { ratio = 1; }
+    else { var rr = eOut / eUse; ratio = rr >= 1 ? (1 + Math.min(1, rr - 1) * 0.5) : Math.max(0.15, rr); }
     var ore = 0;
     for (i = 0; i < BUILDINGS.length; i++) {
       b = BUILDINGS[i]; o = owned(b.id); if (!o || !b.ore) continue;
@@ -363,6 +400,19 @@
     S.ore -= r.cost; S.rs[id] = 1;
     recompute(); refresh(); scheduleSave();
   }
+  function sellBuilding(id) {
+    var b = byId[id]; if (owned(id) <= 0) return;
+    S.b[id] = owned(id) - 1;
+    S.ore += Math.floor(0.5 * b.baseCost * Math.pow(b.growth, owned(id)));  // refund ~50%
+    if (owned(id) === 0) S.up[id] = 0;                                       // lose its upgrades if it's the last one
+    reconcile(b); recompute(); refresh(); scheduleSave();
+  }
+  function sellResearch(id) {
+    if (!S.rs[id]) return;
+    S.ore += Math.floor(rById[id].cost * 0.5);
+    S.rs[id] = 0;
+    recompute(); refresh(); scheduleSave();
+  }
   function doReset() {
     if (!window.confirm("Reset your space empire? This cannot be undone.")) return;
     S = fresh();
@@ -418,6 +468,11 @@
     });
   });
 
+  // How-to-play tooltip, shown while you own nothing
+  var helpEl = el("div", "idle-help",
+    "⛏ <b>Mine the asteroid belt</b> to earn ore, then buy your first <b>Miner</b> below — it mines on its own. Grow a fleet, watch your ⚡ energy, and research upgrades.");
+  buildList.appendChild(helpEl);
+
   // Build rows
   BUILDINGS.forEach(function (b) {
     var row = el("div", "irow"); row.hidden = true;
@@ -425,21 +480,23 @@
       '<div class="irow__top"><span class="irow__ic">' + b.ic + '</span>' +
       '<span class="irow__nm">' + b.name + '</span><span class="irow__ct">×0</span></div>' +
       '<div class="irow__stats"><span class="irow__each"></span><span class="irow__all"></span></div>' +
-      '<div class="irow__bot"><button class="irow__buy"></button></div>';
+      '<div class="irow__bot"><button class="irow__sell" title="Sell one (50% refund)">−</button><button class="irow__buy"></button></div>';
     row.querySelector(".irow__buy").addEventListener("click", function () { buy(b.id); });
+    row.querySelector(".irow__sell").addEventListener("click", function () { sellBuilding(b.id); });
     buildList.appendChild(row);
     b._row = row;
     b._ct = row.querySelector(".irow__ct");
     b._each = row.querySelector(".irow__each");
     b._all = row.querySelector(".irow__all");
     b._buy = row.querySelector(".irow__buy");
+    b._sell = row.querySelector(".irow__sell");
   });
 
   // Research tiles — a grid of available + already-acquired upgrades
   RESEARCH.forEach(function (r) {
     var tile = el("button", "rtile"); tile.hidden = true;
     tile.innerHTML = '<b>' + r.name + '</b><span class="rtile__d">' + r.desc + '</span><span class="rtile__c"></span>';
-    tile.addEventListener("click", function () { buyResearch(r.id); });
+    tile.addEventListener("click", function () { if (S.rs[r.id]) sellResearch(r.id); else buyResearch(r.id); });
     researchList.appendChild(tile);
     r._row = tile;
     r._cost = tile.querySelector(".rtile__c");
@@ -477,6 +534,10 @@
     eBarEl.style.width = pct + "%";
     eBarEl.className = pct >= 100 ? "" : (pct >= 60 ? "warn" : "low");
 
+    var totalOwned = 0;
+    for (var bi = 0; bi < BUILDINGS.length; bi++) totalOwned += owned(BUILDINGS[bi].id);
+    helpEl.hidden = totalOwned > 0;
+
     BUILDINGS.forEach(function (b) {
       var o = owned(b.id);
       var visible = o > 0 || S.maxOre >= b.baseCost * 0.5;
@@ -491,6 +552,7 @@
       var c = cost(b);
       b._buy.textContent = "Buy · " + fmt(c);
       b._buy.disabled = S.ore < c;
+      b._sell.hidden = o <= 0;
       // per-building upgrade tile (lives in Research) — only once you own the building
       if (o > 0) {
         var t = upTier(b.id);
@@ -505,8 +567,8 @@
       var show = bought || canReq(r);
       r._row.hidden = !show; if (!show) return;
       r._row.classList.toggle("done", bought);
-      r._row.disabled = bought || S.ore < r.cost;
-      r._cost.textContent = bought ? "✓ owned" : "◆ " + fmt(r.cost);
+      r._row.disabled = bought ? false : (S.ore < r.cost);
+      r._cost.textContent = bought ? "✓ · sell" : "◆ " + fmt(r.cost);
     });
   }
 

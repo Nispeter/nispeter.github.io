@@ -607,6 +607,18 @@ body.theme-cs .section-hero__planet::after {
 .irow__buy:hover:not(:disabled), .irow__upt:hover:not(:disabled) { background: var(--bg-elev-2); }
 .irow__buy:disabled, .irow__upt:disabled { opacity: 0.4; cursor: default; }
 .irow__bot .irow__buy { flex: 1; text-align: center; }
+.irow__sell {
+  font-family: var(--font-display); font-size: 0.78rem; cursor: pointer; line-height: 1;
+  border: 1px solid var(--border-2); border-radius: 999px; padding: 0.24rem 0.6rem;
+  background: var(--bg-elev); color: var(--text-dim);
+}
+.irow__sell:hover { color: #ff5d6c; border-color: #ff5d6c; }
+.idle-help {
+  background: color-mix(in srgb, var(--accent) 12%, var(--bg-2)); border: 1px solid var(--border-2);
+  border-radius: 10px; padding: 0.6rem 0.7rem; margin-bottom: 0.5rem;
+  color: var(--text-dim); font-size: 0.72rem; line-height: 1.45;
+}
+.idle-help b { color: var(--text); font-family: var(--font-display); }
 
 /* Research — grid of upgrade tiles (available + acquired) */
 .idle__list--grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; align-content: start; }
