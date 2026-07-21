@@ -28,13 +28,13 @@
   // --- Planet definitions --------------------------------------------------
   var PLANETS = [
     { key: "gamedev", name: "Gamedev",          blurb: "Games as art you can play",
-      color: 0xff8c69, glow: "255,140,105", size: 0.9,  orbit: 4.6, speed: 0.16, angle: 0.4,
+      color: 0xff8c69, glow: "255,140,105", size: 0.9,  orbit: 4.6, speed: 0.08, angle: 0.4,
       detail: "moon",  url: root.getAttribute("data-gamedev") || "/gamedev/", count: root.getAttribute("data-count-gamedev") },
     { key: "web",     name: "Web & Tools",      blurb: "Interfaces & the tools behind them",
-      color: 0x2ec4b6, glow: "46,196,182",  size: 0.72, orbit: 6.8, speed: 0.11, angle: 2.4,
+      color: 0x2ec4b6, glow: "46,196,182",  size: 0.72, orbit: 6.8, speed: 0.055, angle: 2.4,
       detail: "wire",  url: root.getAttribute("data-web") || "/web/", count: root.getAttribute("data-count-web") },
     { key: "cs",      name: "Computer Science", blurb: "Low-level systems, rendering & AI",
-      color: 0x9b8cff, glow: "155,140,255", size: 0.82, orbit: 9.0, speed: 0.08, angle: 4.5,
+      color: 0x9b8cff, glow: "155,140,255", size: 0.82, orbit: 9.0, speed: 0.04, angle: 4.5,
       detail: "ring",  url: root.getAttribute("data-cs") || "/cs/", count: root.getAttribute("data-count-cs") }
   ];
 
@@ -270,6 +270,7 @@
   var tmpV = new THREE.Vector3();
   var tmpS = new THREE.Vector3();
   var warpTarget = new THREE.Vector3();
+  var frameCbs = [], asteroidCbs = [];
 
   canvas.style.cursor = "grab";
   canvas.style.touchAction = "pan-y"; // allow vertical page scroll, capture horizontal drag
@@ -281,6 +282,7 @@
   }
 
   function onDown(e) {
+    setPointer(e);
     dragging = true; dragged = false;
     downX = lastX = e.clientX; downY = lastY = e.clientY;
     canvas.style.cursor = "grabbing";
@@ -295,7 +297,14 @@
     lastX = e.clientX; lastY = e.clientY;
   }
   function onUp() {
-    if (dragging && !dragged && hovered) go(hovered);
+    if (dragging && !dragged) {
+      if (hovered) go(hovered);
+      else if (asteroidCbs.length) {
+        raycaster.setFromCamera(pointer, camera);
+        var ah = raycaster.intersectObjects(belt.children, false);
+        if (ah.length) { for (var k = 0; k < asteroidCbs.length; k++) asteroidCbs[k](ah[0].object, ah[0].point); }
+      }
+    }
     dragging = false;
     canvas.style.cursor = hovered ? "pointer" : "grab";
   }
@@ -363,6 +372,7 @@
 
     if (!reduceMotion) belt.rotation.y += dt * 0.02;
     updateMeteors(dt);
+    for (var fci = 0; fci < frameCbs.length; fci++) frameCbs[fci](dt);
 
     // Planets: orbit, spin, satellites
     planets.forEach(function (pl) {
@@ -371,7 +381,7 @@
       var a = c.angle;
       pl.group.position.set(Math.cos(a) * c.orbit, Math.sin(a * 1.3) * 0.35, Math.sin(a) * c.orbit);
       if (!reduceMotion) {
-        pl.body.rotation.y += dt * 0.4;
+        pl.body.rotation.y += dt * 0.25;
         if (pl.moonPivot) pl.moonPivot.rotation.y += dt * 1.1;
         if (pl.bitPivot) pl.bitPivot.rotation.y += dt * 0.9;
         if (pl.wire) pl.wire.rotation.y -= dt * 0.15;
@@ -421,5 +431,10 @@
   // --- Boot ----------------------------------------------------------------
   root.classList.remove("no3d");
   resize();
+  window.OBS = {
+    THREE: THREE, scene: scene, camera: camera, canvas: canvas, planets: planets, belt: belt,
+    onFrame: function (fn) { frameCbs.push(fn); },
+    onAsteroidClick: function (fn) { asteroidCbs.push(fn); }
+  };
   loop();
 })();
