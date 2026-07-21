@@ -28,13 +28,13 @@
   // --- Planet definitions --------------------------------------------------
   var PLANETS = [
     { key: "gamedev", name: "Gamedev",          blurb: "Games as art you can play",
-      color: 0xff8c69, glow: "255,140,105", size: 0.9,  orbit: 4.6, speed: 0.08, angle: 0.4,
+      color: 0xff8c69, glow: "255,140,105", size: 0.78, orbit: 4.6, speed: 0.08, angle: 0.4,
       detail: "moon",  url: root.getAttribute("data-gamedev") || "/gamedev/", count: root.getAttribute("data-count-gamedev") },
     { key: "web",     name: "Web & Tools",      blurb: "Interfaces & the tools behind them",
-      color: 0x2ec4b6, glow: "46,196,182",  size: 0.72, orbit: 6.8, speed: 0.055, angle: 2.4,
+      color: 0x2ec4b6, glow: "46,196,182",  size: 0.62, orbit: 6.8, speed: 0.055, angle: 2.4,
       detail: "wire",  url: root.getAttribute("data-web") || "/web/", count: root.getAttribute("data-count-web") },
     { key: "cs",      name: "Computer Science", blurb: "Low-level systems, rendering & AI",
-      color: 0x9b8cff, glow: "155,140,255", size: 0.82, orbit: 9.0, speed: 0.04, angle: 4.5,
+      color: 0x9b8cff, glow: "155,140,255", size: 0.7,  orbit: 9.0, speed: 0.04, angle: 4.5,
       detail: "ring",  url: root.getAttribute("data-cs") || "/cs/", count: root.getAttribute("data-count-cs") }
   ];
 
@@ -118,13 +118,13 @@
 
   // --- Sun (the author) ----------------------------------------------------
   var sun = new THREE.Mesh(
-    new THREE.SphereGeometry(1.5, 48, 48),
+    new THREE.SphereGeometry(1.3, 48, 48),
     new THREE.MeshBasicMaterial({ map: sunTexture() })
   );
   scene.add(sun);
   // corona shell (soft additive halo hugging the limb)
   var corona = new THREE.Mesh(
-    new THREE.SphereGeometry(1.78, 32, 32),
+    new THREE.SphereGeometry(1.55, 32, 32),
     new THREE.MeshBasicMaterial({ color: 0xffb84d, transparent: true, opacity: 0.22, side: THREE.BackSide, blending: THREE.AdditiveBlending, depthWrite: false })
   );
   sun.add(corona);
@@ -402,7 +402,7 @@
     warping = true;
     if (fade) fade.classList.add("on");
     body.getWorldPosition(warpTarget);
-    setTimeout(function () { window.location.href = body.userData.url; }, 560);
+    setTimeout(function () { window.location.href = body.userData.url; }, 820);
   }
   function onKey(e) {
     if (e.key === "1") go(planets[0].body);
@@ -418,6 +418,8 @@
   canvas.addEventListener("pointerleave", onLeave);
   canvas.addEventListener("wheel", onWheel, { passive: false });
   window.addEventListener("keydown", onKey);
+  // Coming back (browser Back / bfcache) must clear the warp fade, or the page stays black.
+  window.addEventListener("pageshow", function () { warping = false; if (fade) fade.classList.remove("on"); });
 
   // --- Resize / pause ------------------------------------------------------
   function resize() {
@@ -503,7 +505,7 @@
 
     // Camera: drag-orbit + idle auto-spin, or warp fly-to
     if (warping) {
-      camera.position.lerp(tmpV.copy(warpTarget).multiplyScalar(0.55).setY(warpTarget.y + 1.5), 0.06);
+      camera.position.lerp(tmpV.copy(warpTarget).multiplyScalar(0.55).setY(warpTarget.y + 1.5), 0.045);
       camera.lookAt(warpTarget);
     } else {
       if (!dragging && !reduceMotion) targetYaw += AUTO_SPIN * dt;
