@@ -305,6 +305,49 @@
     var r = 15 + Math.random() * 4;
     v.set(Math.cos(a) * r, (Math.random() - 0.5) * 3, Math.sin(a) * r);
   }
+
+  // ---- Cargo-drone target helpers ----
+  function nearestMiner(pos, exclude) {
+    var ms = models.miner, best = null, bd = Infinity;
+    if (ms) for (var i = 0; i < ms.length; i++) {
+      var m = ms[i]; if (m === exclude) continue;
+      var d = pos.distanceToSquared(m.position);
+      if (d < bd) { bd = d; best = m; }
+    }
+    return best;
+  }
+  function nearbyMiner(pos, exclude, range) {
+    var ms = models.miner; if (!ms) return null;
+    var near = [], best = null, bd = Infinity, r2 = range * range;
+    for (var i = 0; i < ms.length; i++) {
+      var m = ms[i]; if (m === exclude) continue;
+      var d = pos.distanceToSquared(m.position);
+      if (d < bd) { bd = d; best = m; }
+      if (d <= r2) near.push(m);
+    }
+    return near.length ? near[(Math.random() * near.length) | 0] : best;  // none close → nearest (likely far → will warp)
+  }
+  // Dock point for a cargo-drone target: just behind a miner's drill, or just off a planet's near side.
+  function droneDock(obj, kind, planet, fromPos, out) {
+    if (kind === "planet") {
+      _dir.copy(fromPos).sub(obj.position);
+      if (_dir.lengthSq() < 1e-6) _dir.set(0, 1, 0);
+      _dir.normalize();
+      var rad = (planet ? planet.cfg.size : 0.7) * 1.25 + 0.12;
+      out.set(obj.position.x + _dir.x * rad, obj.position.y + _dir.y * rad, obj.position.z + _dir.z * rad);
+    } else {
+      _dir.set(0, 0, 1).applyQuaternion(obj.quaternion);
+      out.set(obj.position.x - _dir.x * 0.22, obj.position.y - _dir.y * 0.22, obj.position.z - _dir.z * 0.22);
+    }
+  }
+  // finished a hop: park on the target, remember what kind it was (planet → next hop must be an asteroid)
+  function dockHere(u) {
+    u.wait = 0.9 + Math.random() * 1.5;
+    u.dock = u.target; u.dockKind = u.tkind; u.dockPlanet = u.tplanet;
+    u.fromPlanet = (u.tkind === "planet");
+    u.target = null; u.st = null; u.hopT = 0;
+  }
+
   function updateModels(dt) {
     updateFx(dt);
     updateCustomMiner(dt);
@@ -338,12 +381,13 @@
         } else if (u.mt === "dronehop") {
           var miners = models.miner;
           if (miners && miners.length) {
+            var SHORT_HOP = 7;
             if (u.st) { u.wl = (u.wl || 0) + dt; if (u.wl > 8) { u.st = null; u.wl = 0; } } else { u.wl = 0; } // safety: never stay stuck in a warp state
             if (u.wait > 0) {
               u.wait -= dt;
-              if (u.dock && u.dock.parent) {                    // stay docked on the miner (ride along) while loading ore
-                _dir.set(0, 0, 1).applyQuaternion(u.dock.quaternion);
-                mesh.position.set(u.dock.position.x - _dir.x * 0.22, u.dock.position.y - _dir.y * 0.22, u.dock.position.z - _dir.z * 0.22);
+              if (u.dock && u.dock.parent) {                    // ride along on the miner/planet while loading ore
+                droneDock(u.dock, u.dockKind, u.dockPlanet, mesh.position, _base);
+                mesh.position.set(_base.x, _base.y, _base.z);
                 mesh.lookAt(u.dock.position.x, u.dock.position.y, u.dock.position.z);
               }
             } else if (u.st === "toTether") {
@@ -370,51 +414,45 @@
                 if (u.aimT <= 0) { flash(mesh.position); u.st = "fired"; }
               }
             } else if (u.st === "fired") {
-              // launched: streak fast to the far miner
-              var ft = (u.target && u.target.parent) ? u.target.position : null;
-              if (!ft) { u.st = null; u.target = null; }
+              // launched: streak fast across the belt to the far target, then dock
+              if (!u.target || !u.target.parent) { u.st = null; u.target = null; }
               else {
-                mesh.position.lerp(ft, Math.min(1, dt * 3.2));
-                mesh.lookAt(ft.x, ft.y, ft.z);
-                if (mesh.position.distanceTo(ft) < 0.35) { flash(mesh.position); u.wait = 0.9 + Math.random() * 1.5; u.dock = u.target; u.target = null; u.st = null; }
+                droneDock(u.target, u.tkind, u.tplanet, mesh.position, _base);
+                mesh.position.lerp(_base, Math.min(1, dt * 3.2));
+                mesh.lookAt(u.target.position.x, u.target.position.y, u.target.position.z);
+                if (mesh.position.distanceTo(_base) < 0.4) { flash(mesh.position); dockHere(u); }
               }
             } else {
-              // Pick a NEW target. Short jumps go straight to a nearby miner;
-              // anything beyond SHORT_HOP can only be crossed by riding a warp station.
+              // Pick a NEW destination. Short jumps go direct; anything past SHORT_HOP must ride a warp station.
               if (!u.target || !u.target.parent) {
-                var SHORT_HOP = 7;
-                var nearest = null, nd = Infinity, nearby = [];
-                for (var mi = 0; mi < miners.length; mi++) {
-                  var cand = miners[mi];
-                  if (cand === u.dock) continue;                 // don't just hop back where we parked
-                  var cd = mesh.position.distanceTo(cand.position);
-                  if (cd < nd) { nd = cd; nearest = cand; }
-                  if (cd <= SHORT_HOP) nearby.push(cand);        // close enough for a direct jump
+                u.hopT = 0;
+                var chosen = null, planets = OBS.planets;
+                if (u.fromPlanet) {
+                  u.fromPlanet = false;                                          // just left a planet → head to the nearest asteroid
+                  chosen = nearestMiner(mesh.position, u.dock); u.tkind = "miner"; u.tplanet = null;
+                } else if (planets && planets.length && Math.random() < 0.22) {
+                  var dpl = planets[(Math.random() * planets.length) | 0];       // occasionally visit a planet (often far → warps there)
+                  chosen = dpl.group; u.tkind = "planet"; u.tplanet = dpl;
+                } else {
+                  chosen = nearbyMiner(mesh.position, u.dock, SHORT_HOP); u.tkind = "miner"; u.tplanet = null;
                 }
-                if (!nearest) { u.wait = 0.6; }                  // only miner is the one we're on → idle a beat
+                if (!chosen) { u.wait = 0.6; }                                   // nowhere else to go → idle a beat
                 else {
-                  u.dock = null; u.hopT = 0;
+                  u.target = chosen; u.dock = null;
                   var stns = models.tether;
-                  if (nearby.length) {
-                    u.target = nearby[(Math.random() * nearby.length) | 0];   // short jump: fly there directly
-                  } else if (stns && stns.length) {
-                    u.target = nearest;                                       // too far to jump → warp across
-                    var best = null, bd = Infinity;
+                  if (mesh.position.distanceTo(chosen.position) > SHORT_HOP && stns && stns.length) {
+                    var best = null, bd = Infinity;                              // too far to jump → warp across
                     for (var w = 0; w < stns.length; w++) { var dd = mesh.position.distanceTo(stns[w].position); if (dd < bd) { bd = dd; best = stns[w]; } }
                     u.tether = best; u.st = "toTether"; u.tt = 0;
-                  } else {
-                    u.target = nearest;                                       // far miner, no warp yet: direct hop so it never gets stuck
                   }
                 }
               }
               if (u.st !== "toTether" && u.target) {
-                var mt = u.target;
                 u.hopT = (u.hopT || 0) + dt;
-                _dir.set(0, 0, 1).applyQuaternion(mt.quaternion);                   // dock at the miner's base (behind the drill)
-                _base.set(mt.position.x - _dir.x * 0.22, mt.position.y - _dir.y * 0.22, mt.position.z - _dir.z * 0.22);
-                mesh.position.lerp(_base, Math.min(1, dt * 1.5));                     // ease in a touch slower than before
-                mesh.lookAt(mt.position.x, mt.position.y, mt.position.z);
-                if (mesh.position.distanceTo(_base) < 0.4 || u.hopT > 4) { u.wait = 0.9 + Math.random() * 1.5; u.dock = u.target; u.target = null; u.hopT = 0; }
+                droneDock(u.target, u.tkind, u.tplanet, mesh.position, _base);
+                mesh.position.lerp(_base, Math.min(1, dt * 1.5));                // ease in a touch slower than before
+                mesh.lookAt(u.target.position.x, u.target.position.y, u.target.position.z);
+                if (mesh.position.distanceTo(_base) < 0.4 || u.hopT > 4) { dockHere(u); }
               }
             }
           }
@@ -559,11 +597,14 @@
   }
   function doReset() {
     if (!window.confirm("Reset your space empire? This cannot be undone.")) return;
-    S = fresh();
-    for (var id in models) { models[id].forEach(function (m) { unitsGroup.remove(m); }); models[id] = []; }
     if (saveT) { clearTimeout(saveT); saveT = 0; }   // drop any pending write of the pre-reset save
-    recompute(); computeRate();                      // rebuild modifiers AND the rate readout, else the header keeps the old upgraded numbers
+    S = fresh();                                      // wipes ore, buildings, Mk upgrades (up) and research (rs)
+    for (var id in models) { models[id].forEach(function (m) { unitsGroup.remove(m); }); models[id] = []; }
+    recompute(); computeRate();                      // rebuild modifiers AND the rate readout, else the header keeps the old (upgraded) numbers
     lastAccrue = Date.now();
+    // scrub any lingering "done / ✓ Mk IV" state off the upgrade & research tiles
+    BUILDINGS.forEach(function (b) { if (b._utile) { b._utile.hidden = true; b._utile.disabled = false; b._utile.classList.remove("done"); } });
+    RESEARCH.forEach(function (r) { if (r._row) r._row.classList.remove("done"); });
     try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
     panel.hidden = true; panel.classList.remove("idle--open"); refresh();
   }
