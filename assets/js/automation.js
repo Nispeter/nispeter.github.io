@@ -59,7 +59,24 @@
     { id: "orecomp",    name: "Ore Compression",      desc: "All ore ×3",                       cost: 5000000,    req: { ore: 3000000 },          effect: { kind: "all", mult: 3 } },
     { id: "foundry",    name: "Orbital Foundries",    desc: "Shipyards ×4 · energy use +40%",   cost: 8000000,    req: { b: "shipyard", n: 8 },   effect: [{ kind: "bld", id: "shipyard", mult: 4 }, { kind: "eUse", mult: 1.4 }] },
     { id: "antimatter", name: "Antimatter Catalyst",  desc: "All ore ×4 · energy use ×2",       cost: 5000000000, req: { ore: 3000000000 },       effect: [{ kind: "all", mult: 4 }, { kind: "eUse", mult: 2 }] },
-    { id: "prospector", name: "Prospector Drone",     desc: "A rig that drills wherever you last mined · all ore ×1.5", cost: 8000, req: { b: "miner", n: 10 }, effect: { kind: "all", mult: 1.5 } }
+    { id: "prospector", name: "Prospector Drone",     desc: "A rig that drills wherever you last mined · all ore ×1.5", cost: 8000, req: { b: "miner", n: 10 }, effect: { kind: "all", mult: 1.5 } },
+    { id: "diamondtip", name: "Diamond-Tipped Drills",desc: "Click yields ×5",                   cost: 20000,      req: {},                        effect: { kind: "click", mult: 5 } },
+    { id: "cargobots",  name: "Cargo Robotics",       desc: "Transport Ships ×3",                cost: 6000,       req: { b: "transport", n: 20 }, effect: { kind: "bld", id: "transport", mult: 3 } },
+    { id: "photovolt",  name: "Photovoltaic Coating", desc: "Solar Panels ×3 (energy)",          cost: 40000,      req: { b: "solar", n: 20 },     effect: { kind: "bld", id: "solar", mult: 3 } },
+    { id: "stationnet", name: "Station Networks",     desc: "Space Stations ×3",                 cost: 120000,     req: { b: "station", n: 10 },   effect: { kind: "bld", id: "station", mult: 3 } },
+    { id: "bulk",       name: "Bulk Discount",        desc: "Building costs ×0.85",              cost: 250000,     req: {},                        effect: { kind: "cost", mult: 0.85 } },
+    { id: "warpflow",   name: "Warp Throughput",      desc: "Warp Stations ×3",                  cost: 400000,     req: { b: "tether", n: 6 },     effect: { kind: "bld", id: "tether", mult: 3 } },
+    { id: "confinement",name: "Magnetic Confinement", desc: "Fusion Reactors ×3 (energy)",       cost: 700000,     req: { b: "reactor", n: 10 },   effect: { kind: "bld", id: "reactor", mult: 3 } },
+    { id: "supercon2",  name: "Room-Temp Superconductors", desc: "Energy use −40%",              cost: 4000000,    req: {},                        effect: { kind: "eUse", mult: 0.6 } },
+    { id: "overtuned",  name: "Overtuned Reactors",   desc: "Energy output ×4 · all ore ×0.7",   cost: 2500000,    req: {},                        effect: [{ kind: "eOut", mult: 4 }, { kind: "all", mult: 0.7 }] },
+    { id: "market",     name: "Galactic Market",      desc: "All ore ×3",                        cost: 300000000,  req: { ore: 150000000 },        effect: { kind: "all", mult: 3 } },
+    { id: "antigrid",   name: "Antimatter Grid",      desc: "Energy output ×3",                  cost: 15000000,   req: {},                        effect: { kind: "eOut", mult: 3 } },
+    { id: "satarray",   name: "Satellite Array",      desc: "Deep Space Satellites ×3",          cost: 25000000,   req: { b: "satellite", n: 8 },  effect: { kind: "bld", id: "satellite", mult: 3 } },
+    { id: "subsidy",    name: "Cosmic Subsidy",       desc: "Building costs ×0.7",               cost: 50000000,   req: { ore: 30000000 },         effect: { kind: "cost", mult: 0.7 } },
+    { id: "dysoneff",   name: "Dyson Efficiency",     desc: "Dyson Nodes ×3 (energy)",           cost: 40000000,   req: { b: "dyson", n: 6 },      effect: { kind: "bld", id: "dyson", mult: 3 } },
+    { id: "reckless",   name: "Reckless Expansion",   desc: "All ore ×3 · building costs ×1.3",  cost: 1500000,    req: {},                        effect: [{ kind: "all", mult: 3 }, { kind: "cost", mult: 1.3 }] },
+    { id: "blackmarket",name: "Black Market Deal",    desc: "All ore ×6 · energy use ×2 · costs ×1.5", cost: 3000000000, req: { ore: 2000000000 }, effect: [{ kind: "all", mult: 6 }, { kind: "eUse", mult: 2 }, { kind: "cost", mult: 1.5 }] },
+    { id: "jackpot",    name: "Cosmic Jackpot",       desc: "All ore ×10",                       cost: 100000000000, req: { ore: 50000000000 },    effect: { kind: "all", mult: 10 } }
   ];
   var rById = {};
   RESEARCH.forEach(function (r) { rById[r.id] = r; });
@@ -69,7 +86,7 @@
   var S = load() || fresh();
 
   function owned(id) { return S.b[id] || 0; }
-  function cost(b) { return Math.floor(b.baseCost * Math.pow(b.growth, owned(b.id))); }
+  function cost(b) { return Math.floor(b.baseCost * Math.pow(b.growth, owned(b.id)) * mods.cost); }
   function upTier(id) { return S.up[id] || 0; }
   function upCost(b) { return Math.round(b.baseCost * 15 * Math.pow(8, upTier(b.id))); }
 
@@ -84,16 +101,17 @@
   }
 
   // ---------- Derived modifiers (recomputed on any purchase) ----------
-  var mods = { all: 1, click: 1, eUse: 1, eOut: 1, bld: {} };
+  var mods = { all: 1, click: 1, eUse: 1, eOut: 1, cost: 1, bld: {} };
   function applyEffect(e) {
     if (e.kind === "all") mods.all *= e.mult;
     else if (e.kind === "click") mods.click *= e.mult;
     else if (e.kind === "eUse") mods.eUse *= e.mult;
     else if (e.kind === "eOut") mods.eOut *= e.mult;
     else if (e.kind === "bld") mods.bld[e.id] = (mods.bld[e.id] || 1) * e.mult;
+    else if (e.kind === "cost") mods.cost *= e.mult;
   }
   function recompute() {
-    mods = { all: 1, click: 1, eUse: 1, eOut: 1, bld: {} };
+    mods = { all: 1, click: 1, eUse: 1, eOut: 1, cost: 1, bld: {} };
     RESEARCH.forEach(function (r) {
       if (!S.rs[r.id]) return;
       var e = r.effect;
@@ -429,7 +447,7 @@
   var rate = { ore: 0, eOut: 0, eUse: 0, ratio: 1 };
   function computeRate() {
     var eOut = 0, eUse = 0, i, b, o;
-    for (i = 0; i < BUILDINGS.length; i++) { b = BUILDINGS[i]; o = owned(b.id); if (!o) continue; eOut += b.eOut * o; eUse += b.eUse * o; }
+    for (i = 0; i < BUILDINGS.length; i++) { b = BUILDINGS[i]; o = owned(b.id); if (!o) continue; eOut += b.eOut * o * (mods.bld[b.id] || 1); eUse += b.eUse * o; }
     eOut *= mods.eOut; eUse *= mods.eUse;
     // deficit → down to 15% efficiency (never fully off); surplus → up to +50% (so energy upgrades pay off)
     var ratio;
@@ -690,8 +708,14 @@
   function updateDbg() {
     if (dbgEl.hidden) return;
     var n = 0; OBS.scene.traverse(function () { n++; });
-    var mm = 0; for (var k in models) mm += models[k].length;
-    dbgEl.textContent = "objects: " + n + "   unit models: " + mm + "   fx: " + fx.length;
+    var rows = [], mm = 0;
+    for (var bi = 0; bi < BUILDINGS.length; bi++) {
+      var b = BUILDINGS[bi], c = models[b.id] ? models[b.id].length : 0;
+      mm += c;
+      if (c > 0) rows.push(b.ic + " " + b.id + ": " + c + " models · own " + owned(b.id));
+    }
+    if (customMiner) rows.push("⛏ prospector: 1");
+    dbgEl.innerHTML = ["scene objects: " + n, "unit models: " + mm + "   fx: " + fx.length, "───"].concat(rows).join("<br>");
   }
   setInterval(updateDbg, 400);
   window.addEventListener("keydown", function (e) {
