@@ -146,17 +146,13 @@
   }
   function updateCustomMiner(dt) {
     if (!customMiner) return;
-    // nearest body to the last mined point: sun (origin), a planet, or the nearest asteroid
-    _wp.set(0, 0, 0); var tr = 1.3, bd = clickPoint.lengthSq();
-    for (var pi = 0; pi < OBS.planets.length; pi++) {
-      var pp = OBS.planets[pi].group.position, d = clickPoint.distanceToSquared(pp);
-      if (d < bd) { bd = d; _wp.copy(pp); tr = OBS.planets[pi].cfg.size; }
-    }
-    var rocks = OBS.belt.children;
+    // drill only asteroids: fly to the rock nearest the last mined point
+    var rocks = OBS.belt.children, tr = 0.14, bd = Infinity;
     for (var ri = 0; ri < rocks.length; ri++) {
       rocks[ri].getWorldPosition(_base); var dr = clickPoint.distanceToSquared(_base);
-      if (dr < bd) { bd = dr; _wp.copy(_base); tr = 0.14; }
+      if (dr < bd) { bd = dr; _wp.copy(_base); }
     }
+    if (bd === Infinity) return;   // no asteroids to mine
     _dir.copy(clickPoint).sub(_wp);
     if (_dir.lengthSq() < 0.0001) _dir.set(1, 0, 0);
     _dir.normalize();
