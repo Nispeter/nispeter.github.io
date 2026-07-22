@@ -200,13 +200,12 @@
       u.theta = Math.random() * TAU; u.phi = Math.PI / 2 + (Math.random() - 0.5) * 0.9;
       u.sp = STD;   // synced standard speed (panels move together)
     } else if (b.motion === "asteroid") {
-      // sit beside a real asteroid; miners drill into its centre and relocate now and then
+      // sit beside a real asteroid; miners drill into its centre
       u.mt = "asteroid";
       var rocks = OBS.belt.children; u.rock = rocks[i % rocks.length];
       var a = Math.random() * TAU, rr = 0.18 + Math.random() * 0.1;
       u.off = new THREE.Vector3(Math.cos(a) * rr, (Math.random() - 0.5) * 0.12, Math.sin(a) * rr);
       u.spin = (b.id === "miner"); u.roll = 0;
-      u.moveT = 4 + Math.random() * 8; u.moving = false; u.moveP = 0;
     } else if (b.motion === "dronehop") {
       // hop from miner to miner
       u.mt = "dronehop"; u.target = null; u.st = null; u.wait = Math.random() * 2;
@@ -319,23 +318,9 @@
           mesh.lookAt(0, 0, 0);
         } else if (u.mt === "asteroid") {
           u.rock.getWorldPosition(_wp);
-          if (u.moving && u.toRock && u.toRock.parent) {
-            u.moveP = Math.min(1, u.moveP + dt * 0.8);           // fly across to a new asteroid (~1.25s)
-            u.toRock.getWorldPosition(_base);
-            var fx0 = _wp.x + u.off.x, fy0 = _wp.y + u.off.y, fz0 = _wp.z + u.off.z, mp = u.moveP;
-            mesh.position.set(fx0 + ((_base.x + u.off.x) - fx0) * mp, fy0 + ((_base.y + u.off.y) - fy0) * mp, fz0 + ((_base.z + u.off.z) - fz0) * mp);
-            mesh.lookAt(_base.x, _base.y, _base.z);
-            if (mp >= 1) { u.rock = u.toRock; u.moving = false; }
-          } else {
-            mesh.position.set(_wp.x + u.off.x, _wp.y + u.off.y, _wp.z + u.off.z);
-            mesh.lookAt(_wp.x, _wp.y, _wp.z);                    // point the drill at the asteroid centre
-            if (u.spin) { u.roll += dt * 7; mesh.rotateZ(u.roll); }
-            u.moveT -= dt;
-            if (u.moveT <= 0) {
-              var rk = OBS.belt.children; u.toRock = rk[(Math.random() * rk.length) | 0];
-              u.moving = true; u.moveP = 0; u.moveT = 5 + Math.random() * 7;
-            }
-          }
+          mesh.position.set(_wp.x + u.off.x, _wp.y + u.off.y, _wp.z + u.off.z);
+          mesh.lookAt(_wp.x, _wp.y, _wp.z);                     // point the drill at the asteroid centre
+          if (u.spin) { u.roll += dt * 7; mesh.rotateZ(u.roll); } // miners spin around that axis like a drill
         } else if (u.mt === "dronehop") {
           var miners = models.miner;
           if (miners && miners.length) {
