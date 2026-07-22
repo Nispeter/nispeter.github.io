@@ -382,7 +382,7 @@
               if (!u.target || !u.target.parent) {
                 u.target = miners[(Math.random() * miners.length) | 0];
                 var stns = models.tether;
-                if (stns && stns.length && mesh.position.distanceTo(u.target.position) > 8 && Math.random() < 0.6) {
+                if (stns && stns.length && mesh.position.distanceTo(u.target.position) > 10 && Math.random() < 0.25) {
                   var best = null, bd = Infinity;
                   for (var w = 0; w < stns.length; w++) { var dd = mesh.position.distanceTo(stns[w].position); if (dd < bd) { bd = dd; best = stns[w]; } }
                   u.tether = best; u.st = "toTether"; u.tt = 0;
