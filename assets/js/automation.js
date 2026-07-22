@@ -376,29 +376,45 @@
               else {
                 mesh.position.lerp(ft, Math.min(1, dt * 3.2));
                 mesh.lookAt(ft.x, ft.y, ft.z);
-                if (mesh.position.distanceTo(ft) < 0.35) { flash(mesh.position); u.wait = 0.4 + Math.random() * 0.9; u.dock = u.target; u.target = null; u.st = null; }
+                if (mesh.position.distanceTo(ft) < 0.35) { flash(mesh.position); u.wait = 0.9 + Math.random() * 1.5; u.dock = u.target; u.target = null; u.st = null; }
               }
             } else {
-              // pick a NEW miner (different from where we just parked); route far trips via a warp station sometimes
+              // Pick a NEW target. Short jumps go straight to a nearby miner;
+              // anything beyond SHORT_HOP can only be crossed by riding a warp station.
               if (!u.target || !u.target.parent) {
-                var pick = miners[(Math.random() * miners.length) | 0];
-                if (pick === u.dock && miners.length > 1) pick = miners[(miners.indexOf(pick) + 1) % miners.length];
-                u.target = pick; u.dock = null; u.hopT = 0;
-                var stns = models.tether;
-                if (stns && stns.length && mesh.position.distanceTo(u.target.position) > 10 && Math.random() < 0.25) {
-                  var best = null, bd = Infinity;
-                  for (var w = 0; w < stns.length; w++) { var dd = mesh.position.distanceTo(stns[w].position); if (dd < bd) { bd = dd; best = stns[w]; } }
-                  u.tether = best; u.st = "toTether"; u.tt = 0;
+                var SHORT_HOP = 7;
+                var nearest = null, nd = Infinity, nearby = [];
+                for (var mi = 0; mi < miners.length; mi++) {
+                  var cand = miners[mi];
+                  if (cand === u.dock) continue;                 // don't just hop back where we parked
+                  var cd = mesh.position.distanceTo(cand.position);
+                  if (cd < nd) { nd = cd; nearest = cand; }
+                  if (cd <= SHORT_HOP) nearby.push(cand);        // close enough for a direct jump
+                }
+                if (!nearest) { u.wait = 0.6; }                  // only miner is the one we're on → idle a beat
+                else {
+                  u.dock = null; u.hopT = 0;
+                  var stns = models.tether;
+                  if (nearby.length) {
+                    u.target = nearby[(Math.random() * nearby.length) | 0];   // short jump: fly there directly
+                  } else if (stns && stns.length) {
+                    u.target = nearest;                                       // too far to jump → warp across
+                    var best = null, bd = Infinity;
+                    for (var w = 0; w < stns.length; w++) { var dd = mesh.position.distanceTo(stns[w].position); if (dd < bd) { bd = dd; best = stns[w]; } }
+                    u.tether = best; u.st = "toTether"; u.tt = 0;
+                  } else {
+                    u.target = nearest;                                       // far miner, no warp yet: direct hop so it never gets stuck
+                  }
                 }
               }
-              if (u.st !== "toTether") {
+              if (u.st !== "toTether" && u.target) {
                 var mt = u.target;
                 u.hopT = (u.hopT || 0) + dt;
                 _dir.set(0, 0, 1).applyQuaternion(mt.quaternion);                   // dock at the miner's base (behind the drill)
                 _base.set(mt.position.x - _dir.x * 0.22, mt.position.y - _dir.y * 0.22, mt.position.z - _dir.z * 0.22);
-                mesh.position.lerp(_base, Math.min(1, dt * 1.8));                     // fast enough to catch the orbiting miner
+                mesh.position.lerp(_base, Math.min(1, dt * 1.5));                     // ease in a touch slower than before
                 mesh.lookAt(mt.position.x, mt.position.y, mt.position.z);
-                if (mesh.position.distanceTo(_base) < 0.4 || u.hopT > 4) { u.wait = 0.4 + Math.random() * 0.9; u.dock = u.target; u.target = null; u.hopT = 0; }
+                if (mesh.position.distanceTo(_base) < 0.4 || u.hopT > 4) { u.wait = 0.9 + Math.random() * 1.5; u.dock = u.target; u.target = null; u.hopT = 0; }
               }
             }
           }
@@ -545,7 +561,10 @@
     if (!window.confirm("Reset your space empire? This cannot be undone.")) return;
     S = fresh();
     for (var id in models) { models[id].forEach(function (m) { unitsGroup.remove(m); }); models[id] = []; }
-    recompute(); try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+    if (saveT) { clearTimeout(saveT); saveT = 0; }   // drop any pending write of the pre-reset save
+    recompute(); computeRate();                      // rebuild modifiers AND the rate readout, else the header keeps the old upgraded numbers
+    lastAccrue = Date.now();
+    try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
     panel.hidden = true; panel.classList.remove("idle--open"); refresh();
   }
 
