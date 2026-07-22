@@ -341,6 +341,11 @@
             if (u.st) { u.wl = (u.wl || 0) + dt; if (u.wl > 8) { u.st = null; u.wl = 0; } } else { u.wl = 0; } // safety: never stay stuck in a warp state
             if (u.wait > 0) {
               u.wait -= dt;
+              if (u.dock && u.dock.parent) {                    // stay docked on the miner (ride along) while loading ore
+                _dir.set(0, 0, 1).applyQuaternion(u.dock.quaternion);
+                mesh.position.set(u.dock.position.x - _dir.x * 0.22, u.dock.position.y - _dir.y * 0.22, u.dock.position.z - _dir.z * 0.22);
+                mesh.lookAt(u.dock.position.x, u.dock.position.y, u.dock.position.z);
+              }
             } else if (u.st === "toTether") {
               // fly to the warp station (which is orbiting) — catch it, with a timeout so it never sticks
               var wt = (u.tether && u.tether.parent) ? u.tether.position : null;
@@ -371,12 +376,14 @@
               else {
                 mesh.position.lerp(ft, Math.min(1, dt * 3.2));
                 mesh.lookAt(ft.x, ft.y, ft.z);
-                if (mesh.position.distanceTo(ft) < 0.35) { flash(mesh.position); u.wait = 0.5 + Math.random() * 1.2; u.target = null; u.st = null; }
+                if (mesh.position.distanceTo(ft) < 0.35) { flash(mesh.position); u.wait = 0.4 + Math.random() * 0.9; u.dock = u.target; u.target = null; u.st = null; }
               }
             } else {
-              // pick a miner; if it's far and a warp station exists, route via the nearest one
+              // pick a NEW miner (different from where we just parked); route far trips via a warp station sometimes
               if (!u.target || !u.target.parent) {
-                u.target = miners[(Math.random() * miners.length) | 0]; u.hopT = 0;
+                var pick = miners[(Math.random() * miners.length) | 0];
+                if (pick === u.dock && miners.length > 1) pick = miners[(miners.indexOf(pick) + 1) % miners.length];
+                u.target = pick; u.dock = null; u.hopT = 0;
                 var stns = models.tether;
                 if (stns && stns.length && mesh.position.distanceTo(u.target.position) > 10 && Math.random() < 0.25) {
                   var best = null, bd = Infinity;
@@ -391,7 +398,7 @@
                 _base.set(mt.position.x - _dir.x * 0.22, mt.position.y - _dir.y * 0.22, mt.position.z - _dir.z * 0.22);
                 mesh.position.lerp(_base, Math.min(1, dt * 1.8));                     // fast enough to catch the orbiting miner
                 mesh.lookAt(mt.position.x, mt.position.y, mt.position.z);
-                if (mesh.position.distanceTo(_base) < 0.4 || u.hopT > 4) { u.wait = 0.5 + Math.random() * 1.4; u.target = null; u.hopT = 0; }
+                if (mesh.position.distanceTo(_base) < 0.4 || u.hopT > 4) { u.wait = 0.4 + Math.random() * 0.9; u.dock = u.target; u.target = null; u.hopT = 0; }
               }
             }
           }
