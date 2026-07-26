@@ -35,7 +35,7 @@
     // resource every second. Each Mk level only rebuilds the model, bigger and fancier.
     // Both cost the same, so which one you chase first is pure taste.
     { id: "casino",  ic: "🎰", name: "Star Casino",   desc: "A one-off pleasure station. Produces nothing; burns ore every second.",   baseCost: 1e13, growth: 1, ore: 0, oreUse: 2.5e10, eOut: 0, eUse: 0,    per: 1, cap: 1, max: 1, motion: "casino",  radius: 6.2,  color: 0xffcf6a, upMul: 6, upGrow: 4, upText: "Mk adds decks, neon rings & spires" },
-    { id: "galleon", ic: "🌌", name: "Void Galleon",  desc: "A one-off starship of pure spectacle. Produces nothing; drinks energy every second.", baseCost: 1e13, growth: 1, ore: 0, oreUse: 0, eOut: 0, eUse: 1.2e7, per: 1, cap: 1, max: 1, motion: "galleon", radius: 13.6, color: 0xa9c3dd, upMul: 6, upGrow: 4, upText: "Mk adds hull, light sails & drives" }
+    { id: "galleon", ic: "🌌", name: "Void Galleon",  desc: "A one-off starship of pure spectacle. Produces nothing; drinks energy every second.", baseCost: 1e13, growth: 1, ore: 0, oreUse: 0, eOut: 0, eUse: 1.2e7, per: 1, cap: 1, max: 1, motion: "galleon", radius: 13.6, color: 0xa9c3dd, upMul: 6, upGrow: 4, upText: "Mk adds nacelles, wings & drives" }
   ];
   var byId = {};
   BUILDINGS.forEach(function (b) { byId[b.id] = b; });
@@ -303,61 +303,62 @@
     var hull  = vanityMat(0xa9c3dd, 0x1b2740, 0.25),
         trim  = vanityMat(0xffcf6a, null, 0.5),
         drive = vanityMat(0x8affd6, null, 1),
-        sail  = new THREE.MeshStandardMaterial({
-          color: 0x8fdcff, emissive: 0x2ec4b6, emissiveIntensity: t >= 3 ? 0.75 : 0.3,
+        plate = new THREE.MeshStandardMaterial({
+          color: 0x8fdcff, emissive: 0x2ec4b6, emissiveIntensity: t >= 3 ? 0.7 : 0.28,
           flatShading: true, side: THREE.DoubleSide, roughness: 0.6, metalness: 0.1
         });
-    // A galleon silhouette built out of starship parts: the "masts" are dorsal pylons
-    // carrying light sails, rigged across the +Z bow so the hull reads along its heading.
-    function lightSail(z, h, sw, sh) {
-      part(g, new THREE.BoxGeometry(0.03, h, 0.03), hull, 0, h / 2 + 0.04, z);         // pylon
-      part(g, new THREE.BoxGeometry(sw + 0.07, 0.025, 0.025), trim, 0, h - 0.05, z);   // spar
-      var s = new THREE.Mesh(new THREE.PlaneGeometry(sw, sh), sail);
-      s.position.set(0, h - 0.05 - sh / 2, z); g.add(s);
-      return s;
+    var i;
+    // The whole ship lies along its heading (+Z is the nose): wings and nacelles reach
+    // out SIDEWAYS and the drives sit at the stern. Nothing stands up above the hull —
+    // uprights are what make a hull read as a sailing ship.
+    function nacelle(x, z, len, rad) {
+      var n = new THREE.CylinderGeometry(rad, rad * 0.9, len, 6); n.rotateX(Math.PI / 2);
+      part(g, n, hull, x, 0, z);
+      part(g, new THREE.CylinderGeometry(rad * 0.95, rad * 0.5, len * 0.28, 6), drive, x, 0, z - len * 0.6).rotation.x = Math.PI / 2;
+    }
+    function wing(x, z, w, l, sweep) {   // a flat panel lying in the ship's own plane
+      part(g, new THREE.BoxGeometry(w, 0.025, l), plate, x, 0, z).rotation.y = sweep;
     }
 
-    // Mk I — a faceted fuselage with a sharp prow and a single light sail
-    var hg = new THREE.CylinderGeometry(0.18, 0.1, 1.5, 6); hg.rotateX(Math.PI / 2); hg.scale(1, 0.6, 1);
+    // Mk I — a flattened fuselage, a sharp nose, a canopy, the main drive and stern fins
+    var hg = new THREE.CylinderGeometry(0.11, 0.19, 1.6, 6); hg.rotateX(Math.PI / 2); hg.scale(1, 0.62, 1);
     g.add(new THREE.Mesh(hg, hull));
-    part(g, new THREE.ConeGeometry(0.1, 0.42, 6), hull, 0, 0, 0.92).rotation.x = Math.PI / 2;
-    lightSail(0.05, 0.62, 0.46, 0.4);
+    part(g, new THREE.ConeGeometry(0.11, 0.42, 6), hull, 0, 0, 0.95).rotation.x = Math.PI / 2;
+    part(g, new THREE.BoxGeometry(0.13, 0.07, 0.28), trim, 0, 0.09, 0.36);
+    part(g, new THREE.CylinderGeometry(0.13, 0.1, 0.2, 6), drive, 0, 0, -0.88).rotation.x = Math.PI / 2;
+    wing(0.24, -0.6, 0.26, 0.2, -0.3); wing(-0.24, -0.6, 0.26, 0.2, 0.3);
 
-    // Mk II — bridge module, twin engine nacelles and a second sail
+    // Mk II — outboard pylons carrying twin nacelles, plus the main swept wings
     if (t >= 1) {
-      part(g, new THREE.BoxGeometry(0.28, 0.2, 0.32), hull, 0, 0.14, -0.44);
-      part(g, new THREE.BoxGeometry(0.3, 0.03, 0.34), trim, 0, 0.26, -0.44);
-      for (var n = -1; n <= 1; n += 2) {
-        var nac = new THREE.CylinderGeometry(0.06, 0.06, 0.44, 6); nac.rotateX(Math.PI / 2);
-        part(g, nac, hull, n * 0.21, -0.02, -0.44);
-        part(g, new THREE.ConeGeometry(0.055, 0.14, 6), drive, n * 0.21, -0.02, -0.72).rotation.x = -Math.PI / 2;
-      }
-      lightSail(-0.32, 0.5, 0.36, 0.32);
+      part(g, new THREE.BoxGeometry(0.24, 0.03, 0.07), hull, 0.29, 0, -0.28);
+      part(g, new THREE.BoxGeometry(0.24, 0.03, 0.07), hull, -0.29, 0, -0.28);
+      nacelle(0.44, -0.28, 0.5, 0.06);
+      nacelle(-0.44, -0.28, 0.5, 0.06);
+      wing(0.4, 0.16, 0.44, 0.34, -0.34); wing(-0.4, 0.16, 0.44, 0.34, 0.34);
     }
 
-    // Mk III — a third sail, a topsail, running lights and hull ribs
+    // Mk III — forward canards, hull radiators, a sensor disc and wingtip lights
     if (t >= 2) {
-      lightSail(0.42, 0.5, 0.34, 0.3);
-      var top = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.18), sail); top.position.set(0, 0.78, 0.05); g.add(top);
-      part(g, new THREE.SphereGeometry(0.05, 6, 5), drive, 0.16, 0.3, -0.44);
-      part(g, new THREE.SphereGeometry(0.05, 6, 5), drive, -0.16, 0.3, -0.44);
-      for (var i = -2; i <= 2; i++) {
-        part(g, new THREE.BoxGeometry(0.02, 0.08, 0.02), trim, 0.16, 0.06, i * 0.22);
-        part(g, new THREE.BoxGeometry(0.02, 0.08, 0.02), trim, -0.16, 0.06, i * 0.22);
-      }
+      wing(0.28, 0.6, 0.3, 0.18, -0.5); wing(-0.28, 0.6, 0.3, 0.18, 0.5);
+      part(g, new THREE.BoxGeometry(0.025, 0.13, 0.66), trim, 0.19, 0.01, -0.1);
+      part(g, new THREE.BoxGeometry(0.025, 0.13, 0.66), trim, -0.19, 0.01, -0.1);
+      part(g, new THREE.CylinderGeometry(0.12, 0.12, 0.02, 12), trim, 0, 0.13, 0.02).rotation.x = 0.25;
+      part(g, new THREE.SphereGeometry(0.035, 6, 5), drive, 0.6, 0, 0.16);
+      part(g, new THREE.SphereGeometry(0.035, 6, 5), drive, -0.6, 0, 0.16);
     }
 
-    // Mk IV — a sail spine, glowing hull strips and a drive ring in the exhaust
+    // Mk IV — a dorsal rail, glowing hull strips and a drive ring burning in the exhaust
     if (t >= 3) {
-      part(g, new THREE.BoxGeometry(0.62, 0.02, 0.02), trim, 0, 0.98, 0.05);
-      for (var k = 0; k < 4; k++) {
-        part(g, new THREE.BoxGeometry(0.02, 0.02, 0.34), drive, 0.21, -0.02, -0.3 + k * 0.24);
-        part(g, new THREE.BoxGeometry(0.02, 0.02, 0.34), drive, -0.21, -0.02, -0.3 + k * 0.24);
+      part(g, new THREE.BoxGeometry(0.03, 0.03, 0.92), hull, 0, 0.15, -0.06);
+      part(g, new THREE.ConeGeometry(0.035, 0.16, 5), trim, 0, 0.15, 0.48).rotation.x = Math.PI / 2;
+      for (i = 0; i < 4; i++) {
+        part(g, new THREE.BoxGeometry(0.02, 0.02, 0.3), drive, 0.17, -0.06, -0.28 + i * 0.24);
+        part(g, new THREE.BoxGeometry(0.02, 0.02, 0.3), drive, -0.17, -0.06, -0.28 + i * 0.24);
       }
       var s5 = tiltedSpinner(g, 0, Math.PI / 2, 0.8);
       var halo = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.02, 6, 30), drive); halo.rotation.x = Math.PI / 2; s5.add(halo);
-      s5.parent.position.z = -0.85;
-      var plume = glowSprite("140,255,214", 1.6); plume.position.z = -0.98; g.add(plume);
+      s5.parent.position.z = -1.02;
+      var plume = glowSprite("140,255,214", 1.6); plume.position.z = -1.12; g.add(plume);
     }
     g.scale.setScalar(1.1);   // it rides the far orbit, so it still needs some size to read
     return g;

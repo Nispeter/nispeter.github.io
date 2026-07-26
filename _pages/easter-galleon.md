@@ -7,17 +7,17 @@ sitemap: false
 ---
 
 <p class="page__lead">Out past the belt, running on more power than the rest of the system
-combined, something with light sails is holding a slow turn around the star.</p>
+combined, something long and grey is holding a banked turn around the star.</p>
 
 You found this by building the **Void Galleon** and clicking on it. It hauls no ore, mines
 nothing and defends nobody. It drinks energy and looks incredible doing it.
 
 ## Ship's log
 
-- **Mk I** — fuselage, prow, one light sail. Barely a ship.
-- **Mk II** — bridge module and twin nacelles. Now it moves like it means it.
-- **Mk III** — a third sail, running lights, hull ribs.
-- **Mk IV** — sail spine, glowing strips, a drive ring burning in the exhaust.
+- **Mk I** — fuselage, nose, canopy, main drive. Barely a ship.
+- **Mk II** — outboard pylons and twin nacelles. Now it moves like it means it.
+- **Mk III** — canards, hull radiators, sensor disc, wingtip lights.
+- **Mk IV** — dorsal rail, glowing strips, a drive ring burning in the exhaust.
 
 Every one of those upgrades costs a fortune and adds zero production. That was the point.
 
