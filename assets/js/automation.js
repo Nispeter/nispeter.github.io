@@ -226,6 +226,7 @@
     }
     var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
     sp.scale.set(scale, scale, 1);
+    sp.raycast = function () {};   // a halo is much wider than its structure — never let it eat a click
     return sp;
   }
   function vanityMat(color, emissive, glow) {
@@ -364,6 +365,27 @@
   byId.casino.build = buildCasino;
   byId.galleon.build = buildGalleon;
 
+  // Each vanity structure is also a door: click it and the scene warps to its own
+  // easter-egg page, the same way a planet warps to its section.
+  var EGGS = {
+    casino:  { attr: "data-casino",  url: "/casino/",  blurb: "You built it — step inside" },
+    galleon: { attr: "data-galleon", url: "/galleon/", blurb: "Read the ship's log" }
+  };
+  (function eggUrls() {
+    for (var k in EGGS) {
+      var a = OBS.root && OBS.root.getAttribute(EGGS[k].attr);
+      if (a) EGGS[k].url = a;                       // Jekyll hands us the baseurl-aware path
+    }
+  })();
+  function tagVanity(mesh, b) {
+    var egg = EGGS[b.id];
+    if (!egg || !OBS.addClickable) return;
+    mesh.userData.url = egg.url;
+    mesh.userData.name = b.name;
+    mesh.userData.blurb = egg.blurb;
+    OBS.addClickable(mesh);
+  }
+
   // Swap a vanity structure's model whenever its Mk level changes.
   function rebuildSpecials() {
     for (var i = 0; i < BUILDINGS.length; i++) {
@@ -376,8 +398,9 @@
         var old = arr[k], m = b.build(t);
         m.userData = old.userData;                                   // keep its orbit phase
         m.position.copy(old.position); m.quaternion.copy(old.quaternion);
+        if (OBS.removeClickable) OBS.removeClickable(old);           // the old model is gone
         unitsGroup.remove(old); disposeTree(old);
-        unitsGroup.add(m); arr[k] = m;
+        unitsGroup.add(m); arr[k] = m; tagVanity(m, b);
       }
     }
   }
@@ -475,8 +498,11 @@
     // Always show at least one model once you own any (then scale by rarity ratio).
     var target = o > 0 ? Math.min(b.cap, Math.ceil(o / b.per)) : 0;
     var arr = models[b.id] || (models[b.id] = []);
-    while (arr.length < target) { var m = makeMesh(b); initMotion(m, b, arr.length); unitsGroup.add(m); arr.push(m); }
-    while (arr.length > target) { var rm = arr.pop(); unitsGroup.remove(rm); if (b.build) disposeTree(rm); }
+    while (arr.length < target) { var m = makeMesh(b); initMotion(m, b, arr.length); unitsGroup.add(m); arr.push(m); if (b.build) tagVanity(m, b); }
+    while (arr.length > target) {
+      var rm = arr.pop(); unitsGroup.remove(rm);
+      if (b.build) { if (OBS.removeClickable) OBS.removeClickable(rm); disposeTree(rm); }
+    }
     respace(b);
   }
   // Warp flash effect (shared texture, per-flash material for independent fade)
@@ -862,7 +888,10 @@
     S = fresh();                                      // wipes ore, buildings, Mk upgrades (up) and research (rs)
     for (var id in models) {
       var own = byId[id] && byId[id].build;
-      models[id].forEach(function (m) { unitsGroup.remove(m); if (own) disposeTree(m); });
+      models[id].forEach(function (m) {
+        unitsGroup.remove(m);
+        if (own) { if (OBS.removeClickable) OBS.removeClickable(m); disposeTree(m); }
+      });
       models[id] = [];
     }
     recompute(); computeRate();                      // rebuild modifiers AND the rate readout, else the header keeps the old (upgraded) numbers
