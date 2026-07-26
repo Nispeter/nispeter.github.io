@@ -461,7 +461,9 @@
     var dt = Math.min(clock.getDelta(), 0.05);
     var t = clock.elapsedTime;
 
-    if (!reduceMotion) belt.rotation.y += dt * 0.02;
+    // The belt drifts the same way the planets orbit (increasing orbital angle =
+    // decreasing rotation.y), so the whole system turns as one.
+    if (!reduceMotion) belt.rotation.y -= dt * 0.02;
     updateMeteors(dt);
     for (var fci = 0; fci < frameCbs.length; fci++) frameCbs[fci](dt);
 
