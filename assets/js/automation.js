@@ -292,6 +292,7 @@
       var r3 = new THREE.Mesh(new THREE.TorusGeometry(1.62, 0.028, 6, 48), neon); r3.rotation.x = Math.PI / 2; s4.add(r3);
       g.add(glowSprite("155,140,255", 4.6));
     }
+    g.scale.setScalar(0.5);
     return g;
   }
 
@@ -357,7 +358,7 @@
       s5.parent.position.z = -0.85;
       var plume = glowSprite("140,255,214", 1.6); plume.position.z = -0.98; g.add(plume);
     }
-    g.scale.setScalar(2.2);   // it rides the far orbit, so it has to be big to read
+    g.scale.setScalar(1.1);   // it rides the far orbit, so it still needs some size to read
     return g;
   }
   byId.casino.build = buildCasino;
