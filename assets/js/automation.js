@@ -174,7 +174,7 @@
     var g;
     switch (b.id) {
       case "solar":       g = new THREE.BoxGeometry(0.42, 0.3, 0.04); break; // thin panel, faces the sun
-      case "drone":       g = new THREE.ConeGeometry(0.09, 0.26, 4); g.rotateX(Math.PI / 2); break; // pyramid, tip forward
+      case "drone":       g = new THREE.ConeGeometry(0.06, 0.17, 4); g.rotateX(Math.PI / 2); break; // pyramid, tip forward
       case "transport":   g = new THREE.BoxGeometry(0.09, 0.07, 0.18); break; // short rectangle, long axis = travel direction
       case "tether":      g = new THREE.CylinderGeometry(0.09, 0.09, 0.4, 12); g.rotateX(Math.PI / 2); break; // horizontal warp barrel
       case "station":     g = new THREE.TorusGeometry(0.17, 0.05, 6, 16); break;
