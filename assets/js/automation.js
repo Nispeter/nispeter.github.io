@@ -33,8 +33,9 @@
     { id: "exploration", ic: "🧭", name: "Space Exploration Team",   desc: "Finds rich new belts.",                 baseCost: 60000000, growth: 1.22, ore: 12000, eOut: 0,    eUse: 400, per: 2,  cap: 20, motion: "explore",   color: 0x8affd6 },
     // ---- Endgame vanity: one-of-a-kind structures that produce nothing and burn a
     // resource every second. Each Mk level only rebuilds the model, bigger and fancier.
+    // Both cost the same, so which one you chase first is pure taste.
     { id: "casino",  ic: "🎰", name: "Star Casino",   desc: "A one-off pleasure station. Produces nothing; burns ore every second.",   baseCost: 1e13, growth: 1, ore: 0, oreUse: 2.5e10, eOut: 0, eUse: 0,    per: 1, cap: 1, max: 1, motion: "casino",  radius: 6.2,  color: 0xffd36e, upMul: 6, upGrow: 4, upText: "Mk adds decks, neon rings & spires" },
-    { id: "galleon", ic: "⛵", name: "Void Galleon",  desc: "A one-off starship of pure spectacle. Produces nothing; drinks energy every second.", baseCost: 5e13, growth: 1, ore: 0, oreUse: 0, eOut: 0, eUse: 1.2e7, per: 1, cap: 1, max: 1, motion: "galleon", radius: 13.6, color: 0xc9a86a, upMul: 6, upGrow: 4, upText: "Mk adds masts, sails & lanterns" }
+    { id: "galleon", ic: "⛵", name: "Void Galleon",  desc: "A one-off starship of pure spectacle. Produces nothing; drinks energy every second.", baseCost: 1e13, growth: 1, ore: 0, oreUse: 0, eOut: 0, eUse: 1.2e7, per: 1, cap: 1, max: 1, motion: "galleon", radius: 13.6, color: 0xc9a86a, upMul: 6, upGrow: 4, upText: "Mk adds masts, sails & lanterns" }
   ];
   var byId = {};
   BUILDINGS.forEach(function (b) { byId[b.id] = b; });
