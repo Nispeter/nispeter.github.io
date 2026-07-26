@@ -382,6 +382,8 @@
     }
   }
   var TAU = Math.PI * 2, STD = 0.12, SUN_KEEP = 2.3;  // STD = shared standard rotation speed
+  var GOLDEN = Math.PI * (3 - Math.sqrt(5));          // golden angle — packs points evenly on a shell
+  var SUN_BAND = 0.62;                                // |cos φ| limit for sun-huggers: clear of the Dyson rings
   var _wp = new THREE.Vector3(), _dir = new THREE.Vector3(), _base = new THREE.Vector3();
   var _aimObj = new THREE.Object3D();   // scratch for smooth barrel aiming
   function initMotion(mesh, b, i) {
@@ -391,9 +393,10 @@
       u.mt = "transport"; u.a = i % np; u.b = (i + 1) % np;
       u.t = Math.random(); u.sp = 0.05 + Math.random() * 0.07; u.far = (b.id === "exploration"); u.station = null;
     } else if (b.motion === "sun") {
-      // orbit the sun near its equator (stays clear of the Dyson rings at the poles)
+      // hug the star on a shell that stays clear of the Dyson rings at the poles;
+      // respace() hands out the actual slot, so no two ever share a spot
       u.mt = "sun"; u.r = b.radius;
-      u.theta = Math.random() * TAU; u.phi = Math.PI / 2 + (Math.random() - 0.5) * 0.9;
+      u.theta = 0; u.phi = Math.PI / 2;
       u.sp = STD;   // synced standard speed (panels move together)
     } else if (b.motion === "asteroid") {
       // sit beside a real asteroid; miners drill into its centre
@@ -448,13 +451,23 @@
     }
   }
   // Station-like fleets sit evenly spaced around their shared orbit, moving as one.
+  // Sun-huggers tile a whole shell instead of a single ring, so panels never overlap.
   function respace(b) {
-    if (b.motion !== "warp" && b.motion !== "ring") return;
     var arr = models[b.id]; if (!arr || !arr.length) return;
-    for (var i = 0; i < arr.length; i++) {
-      var u = arr[i].userData;
-      u.ang = (i / arr.length) * TAU;
-      u.sp = STD;
+    var n = arr.length, i, u;
+    if (b.motion === "warp" || b.motion === "ring") {
+      for (i = 0; i < n; i++) { u = arr[i].userData; u.ang = (i / n) * TAU; u.sp = STD; }
+    } else if (b.motion === "sun") {
+      // Fibonacci shell: golden-angle longitudes + evenly spread latitudes across the
+      // band give near-optimal spacing for any count. Re-slot from the fleet's current
+      // phase so buying one more nudges the swarm instead of teleporting it.
+      var base = arr[0].userData.theta || 0;
+      for (i = 0; i < n; i++) {
+        u = arr[i].userData;
+        u.theta = base + i * GOLDEN;
+        u.phi = Math.acos(SUN_BAND * (n === 1 ? 0 : (2 * i / (n - 1) - 1)));
+        u.sp = STD;
+      }
     }
   }
   function reconcile(b) {
