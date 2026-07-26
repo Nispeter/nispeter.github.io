@@ -290,7 +290,7 @@
       g.add(s3); g.anim.push({ o: s3, sy: -0.9 });
       var s4 = tiltedSpinner(g, 0, 0.7, 0.26);
       var r3 = new THREE.Mesh(new THREE.TorusGeometry(1.62, 0.028, 6, 48), neon); r3.rotation.x = Math.PI / 2; s4.add(r3);
-      g.add(glowSprite("255,150,220", 4.6));
+      g.add(glowSprite("155,140,255", 4.6));
     }
     return g;
   }
