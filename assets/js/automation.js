@@ -34,7 +34,7 @@
     // ---- Endgame vanity: one-of-a-kind structures that produce nothing and burn a
     // resource every second. Each Mk level only rebuilds the model, bigger and fancier.
     // Both cost the same, so which one you chase first is pure taste.
-    { id: "casino",  ic: "🎰", name: "Star Casino",   desc: "A one-off pleasure station. Produces nothing; burns ore every second.",   baseCost: 1e13, growth: 1, ore: 0, oreUse: 2.5e10, eOut: 0, eUse: 0,    per: 1, cap: 1, max: 1, motion: "casino",  radius: 6.2,  color: 0xffd36e, upMul: 6, upGrow: 4, upText: "Mk adds decks, neon rings & spires" },
+    { id: "casino",  ic: "🎰", name: "Star Casino",   desc: "A one-off pleasure station. Produces nothing; burns ore every second.",   baseCost: 1e13, growth: 1, ore: 0, oreUse: 2.5e10, eOut: 0, eUse: 0,    per: 1, cap: 1, max: 1, motion: "casino",  radius: 6.2,  color: 0xffcf6a, upMul: 6, upGrow: 4, upText: "Mk adds decks, neon rings & spires" },
     { id: "galleon", ic: "⛵", name: "Void Galleon",  desc: "A one-off starship of pure spectacle. Produces nothing; drinks energy every second.", baseCost: 1e13, growth: 1, ore: 0, oreUse: 0, eOut: 0, eUse: 1.2e7, per: 1, cap: 1, max: 1, motion: "galleon", radius: 13.6, color: 0xc9a86a, upMul: 6, upGrow: 4, upText: "Mk adds masts, sails & lanterns" }
   ];
   var byId = {};
@@ -253,10 +253,11 @@
 
   function buildCasino(t) {
     var g = new THREE.Group(); g.anim = [];
-    var dark  = vanityMat(0x2b2440, 0x140e28, 0.35),
-        gold  = vanityMat(0xffd36e, null, 0.55),
-        neon  = vanityMat(0xff6ad5, null, 0.9),
-        glass = vanityMat(0x9be7ff, null, 0.7);
+    // Scene palette: orbit-line navy hull, sun gold, CS-planet violet neon, panel blue glass.
+    var dark  = vanityMat(0x2a3358, 0x141a33, 0.35),
+        gold  = vanityMat(0xffcf6a, null, 0.55),
+        neon  = vanityMat(0x9b8cff, null, 0.9),
+        glass = vanityMat(0x8fdcff, null, 0.7);
     var i, a;
 
     // Mk I — a hex deck under a glass dome
