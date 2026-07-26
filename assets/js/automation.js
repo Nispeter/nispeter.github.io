@@ -35,7 +35,7 @@
     // resource every second. Each Mk level only rebuilds the model, bigger and fancier.
     // Both cost the same, so which one you chase first is pure taste.
     { id: "casino",  ic: "🎰", name: "Star Casino",   desc: "A one-off pleasure station. Produces nothing; burns ore every second.",   baseCost: 1e13, growth: 1, ore: 0, oreUse: 2.5e10, eOut: 0, eUse: 0,    per: 1, cap: 1, max: 1, motion: "casino",  radius: 6.2,  color: 0xffcf6a, upMul: 6, upGrow: 4, upText: "Mk adds decks, neon rings & spires" },
-    { id: "galleon", ic: "⛵", name: "Void Galleon",  desc: "A one-off starship of pure spectacle. Produces nothing; drinks energy every second.", baseCost: 1e13, growth: 1, ore: 0, oreUse: 0, eOut: 0, eUse: 1.2e7, per: 1, cap: 1, max: 1, motion: "galleon", radius: 13.6, color: 0xc9a86a, upMul: 6, upGrow: 4, upText: "Mk adds masts, sails & lanterns" }
+    { id: "galleon", ic: "🌌", name: "Void Galleon",  desc: "A one-off starship of pure spectacle. Produces nothing; drinks energy every second.", baseCost: 1e13, growth: 1, ore: 0, oreUse: 0, eOut: 0, eUse: 1.2e7, per: 1, cap: 1, max: 1, motion: "galleon", radius: 13.6, color: 0xa9c3dd, upMul: 6, upGrow: 4, upText: "Mk adds hull, light sails & drives" }
   ];
   var byId = {};
   BUILDINGS.forEach(function (b) { byId[b.id] = b; });
@@ -297,55 +297,65 @@
 
   function buildGalleon(t) {
     var g = new THREE.Group(); g.anim = [];
-    var wood = vanityMat(0xc9a86a, 0x3a2a12, 0.3),
-        trim = vanityMat(0xffd36e, null, 0.5),
-        lamp = vanityMat(0x8affd6, null, 1),
-        sail = new THREE.MeshStandardMaterial({
-          color: 0xf2ecd9, emissive: 0x7f8ff0, emissiveIntensity: t >= 3 ? 0.65 : 0.12,
-          flatShading: true, side: THREE.DoubleSide, roughness: 0.9
+    // Scene palette: shipyard grey-blue plating, sun-gold trim, exploration-teal drives.
+    var hull  = vanityMat(0xa9c3dd, 0x1b2740, 0.25),
+        trim  = vanityMat(0xffcf6a, null, 0.5),
+        drive = vanityMat(0x8affd6, null, 1),
+        sail  = new THREE.MeshStandardMaterial({
+          color: 0x8fdcff, emissive: 0x2ec4b6, emissiveIntensity: t >= 3 ? 0.75 : 0.3,
+          flatShading: true, side: THREE.DoubleSide, roughness: 0.6, metalness: 0.1
         });
-    // Sails hang across the +Z bow, so the ship reads correctly along its heading.
-    function mast(z, h, sw, sh) {
-      part(g, new THREE.BoxGeometry(0.035, h, 0.035), wood, 0, h / 2 + 0.03, z);
-      part(g, new THREE.BoxGeometry(sw + 0.08, 0.03, 0.03), wood, 0, h - 0.06, z);
+    // A galleon silhouette built out of starship parts: the "masts" are dorsal pylons
+    // carrying light sails, rigged across the +Z bow so the hull reads along its heading.
+    function lightSail(z, h, sw, sh) {
+      part(g, new THREE.BoxGeometry(0.03, h, 0.03), hull, 0, h / 2 + 0.04, z);         // pylon
+      part(g, new THREE.BoxGeometry(sw + 0.07, 0.025, 0.025), trim, 0, h - 0.05, z);   // spar
       var s = new THREE.Mesh(new THREE.PlaneGeometry(sw, sh), sail);
-      s.position.set(0, h - 0.06 - sh / 2, z); g.add(s);
+      s.position.set(0, h - 0.05 - sh / 2, z); g.add(s);
       return s;
     }
 
-    // Mk I — a flattened hull and one square sail
-    var hg = new THREE.CylinderGeometry(0.2, 0.09, 1.5, 6); hg.rotateX(Math.PI / 2); hg.scale(1, 0.55, 1);
-    g.add(new THREE.Mesh(hg, wood));
-    mast(0.05, 0.62, 0.46, 0.4);
+    // Mk I — a faceted fuselage with a sharp prow and a single light sail
+    var hg = new THREE.CylinderGeometry(0.18, 0.1, 1.5, 6); hg.rotateX(Math.PI / 2); hg.scale(1, 0.6, 1);
+    g.add(new THREE.Mesh(hg, hull));
+    part(g, new THREE.ConeGeometry(0.1, 0.42, 6), hull, 0, 0, 0.92).rotation.x = Math.PI / 2;
+    lightSail(0.05, 0.62, 0.46, 0.4);
 
-    // Mk II — stern castle, a second mast and a bowsprit
+    // Mk II — bridge module, twin engine nacelles and a second sail
     if (t >= 1) {
-      part(g, new THREE.BoxGeometry(0.3, 0.22, 0.34), wood, 0, 0.14, -0.5);
-      part(g, new THREE.BoxGeometry(0.32, 0.03, 0.36), trim, 0, 0.26, -0.5);
-      mast(-0.32, 0.5, 0.36, 0.32);
-      part(g, new THREE.ConeGeometry(0.05, 0.36, 5), trim, 0, 0.02, 0.9).rotation.x = Math.PI / 2;
+      part(g, new THREE.BoxGeometry(0.28, 0.2, 0.32), hull, 0, 0.14, -0.44);
+      part(g, new THREE.BoxGeometry(0.3, 0.03, 0.34), trim, 0, 0.26, -0.44);
+      for (var n = -1; n <= 1; n += 2) {
+        var nac = new THREE.CylinderGeometry(0.06, 0.06, 0.44, 6); nac.rotateX(Math.PI / 2);
+        part(g, nac, hull, n * 0.21, -0.02, -0.44);
+        part(g, new THREE.ConeGeometry(0.055, 0.14, 6), drive, n * 0.21, -0.02, -0.72).rotation.x = -Math.PI / 2;
+      }
+      lightSail(-0.32, 0.5, 0.36, 0.32);
     }
 
-    // Mk III — a third mast, top sails, lanterns and a railing
+    // Mk III — a third sail, a topsail, running lights and hull ribs
     if (t >= 2) {
-      mast(0.42, 0.5, 0.34, 0.3);
+      lightSail(0.42, 0.5, 0.34, 0.3);
       var top = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.18), sail); top.position.set(0, 0.78, 0.05); g.add(top);
-      part(g, new THREE.SphereGeometry(0.05, 6, 5), lamp, 0.16, 0.3, -0.5);
-      part(g, new THREE.SphereGeometry(0.05, 6, 5), lamp, -0.16, 0.3, -0.5);
-      for (var i = -2; i <= 2; i++) part(g, new THREE.BoxGeometry(0.02, 0.09, 0.02), trim, 0.17, 0.1, i * 0.22);
+      part(g, new THREE.SphereGeometry(0.05, 6, 5), drive, 0.16, 0.3, -0.44);
+      part(g, new THREE.SphereGeometry(0.05, 6, 5), drive, -0.16, 0.3, -0.44);
+      for (var i = -2; i <= 2; i++) {
+        part(g, new THREE.BoxGeometry(0.02, 0.08, 0.02), trim, 0.16, 0.06, i * 0.22);
+        part(g, new THREE.BoxGeometry(0.02, 0.08, 0.02), trim, -0.16, 0.06, i * 0.22);
+      }
     }
 
-    // Mk IV — glowing rigging, oars and a wake
+    // Mk IV — a sail spine, glowing hull strips and a drive ring in the exhaust
     if (t >= 3) {
       part(g, new THREE.BoxGeometry(0.62, 0.02, 0.02), trim, 0, 0.98, 0.05);
       for (var k = 0; k < 4; k++) {
-        part(g, new THREE.BoxGeometry(0.02, 0.02, 0.34), lamp, 0.22, -0.02, -0.3 + k * 0.24);
-        part(g, new THREE.BoxGeometry(0.02, 0.02, 0.34), lamp, -0.22, -0.02, -0.3 + k * 0.24);
+        part(g, new THREE.BoxGeometry(0.02, 0.02, 0.34), drive, 0.21, -0.02, -0.3 + k * 0.24);
+        part(g, new THREE.BoxGeometry(0.02, 0.02, 0.34), drive, -0.21, -0.02, -0.3 + k * 0.24);
       }
       var s5 = tiltedSpinner(g, 0, Math.PI / 2, 0.8);
-      var halo = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.02, 6, 30), lamp); halo.rotation.x = Math.PI / 2; s5.add(halo);
+      var halo = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.02, 6, 30), drive); halo.rotation.x = Math.PI / 2; s5.add(halo);
       s5.parent.position.z = -0.85;
-      var wake = glowSprite("140,255,214", 1.6); wake.position.z = -0.95; g.add(wake);
+      var plume = glowSprite("140,255,214", 1.6); plume.position.z = -0.98; g.add(plume);
     }
     g.scale.setScalar(2.2);   // it rides the far orbit, so it has to be big to read
     return g;
@@ -417,7 +427,7 @@
       // collides with anything, turning slowly on its own axis
       u.mt = "casino"; u.r = b.radius; u.ang = Math.random() * TAU; u.y = 2.6;
     } else if (b.motion === "galleon") {
-      // sails the outer system, bobbing and rolling like a ship at sea
+      // cruises the outer system, banked into its orbit and drifting slowly in altitude
       u.mt = "galleon"; u.r = b.radius; u.ang = Math.random() * TAU; u.t = Math.random() * 10;
     } else if (b.motion === "explore") {
       // fly out past the belt, wait, hyper-light jump away, reappear after a few seconds
@@ -708,10 +718,10 @@
           spinParts(mesh, dt);
         } else if (u.mt === "galleon") {
           u.ang += STD * 0.2 * dt; u.t += dt;
-          var gy = 1.1 + Math.sin(u.t * 0.55) * 0.55;
+          var gy = 1.1 + Math.sin(u.t * 0.55) * 0.18;      // a slow drift, not a sea swell
           mesh.position.set(Math.cos(u.ang) * u.r, gy, Math.sin(u.ang) * u.r);
-          mesh.lookAt(mesh.position.x - Math.sin(u.ang), gy + Math.sin(u.t * 0.55) * 0.2, mesh.position.z + Math.cos(u.ang));
-          mesh.rotateZ(Math.sin(u.t * 0.8) * 0.13);        // slow roll, like a ship at sea
+          mesh.lookAt(mesh.position.x - Math.sin(u.ang), gy, mesh.position.z + Math.cos(u.ang));
+          mesh.rotateZ(0.2 + Math.sin(u.t * 0.5) * 0.05);  // held in a bank, like a craft in a turn
           spinParts(mesh, dt);
         } else {
           u.ang += u.sp * dt;                              // always prograde, like the planets
