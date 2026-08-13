@@ -1,7 +1,33 @@
 ---
 layout: default
 ---
+{%- comment -%} Sibling walk for prev/next: same section list as _layouts/section.html,
+  scanned with a flag because Liquid has no indexOf. {%- endcomment -%}
+{%- assign sec = page.sections | first -%}
+{%- if sec == 'gamedev' -%}{%- assign secname = 'Gamedev' -%}{%- assign securl = '/gamedev/' -%}
+{%- elsif sec == 'web' -%}{%- assign secname = 'Web &amp; Tools' -%}{%- assign securl = '/web/' -%}
+{%- elsif sec == 'cs' -%}{%- assign secname = 'Computer Science' -%}{%- assign securl = '/cs/' -%}
+{%- endif -%}
+{%- assign sibs = site.portfolio | where_exp: "p", "p.sections contains sec" | sort: "year" | reverse -%}
+{%- assign found = false -%}
+{%- assign has_next = false -%}
+{%- for p in sibs -%}
+  {%- if found and has_next == false -%}{%- assign nextp = p -%}{%- assign has_next = true -%}{%- endif -%}
+  {%- if p.url == page.url -%}{%- assign found = true -%}{%- endif -%}
+  {%- unless found -%}{%- assign prevp = p -%}{%- endunless -%}
+{%- endfor -%}
+
 <article class="project">
+  {%- if secname -%}
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="{{ '/' | relative_url }}">Home</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <a href="{{ securl | relative_url }}">{{ secname }}</a>
+    <span class="breadcrumb__sep" aria-hidden="true">/</span>
+    <span class="breadcrumb__here" aria-current="page">{{ page.title }}</span>
+  </nav>
+  {%- endif -%}
+
   <header class="project__header">
     <h1>{{ page.title }}</h1>
     {% if page.excerpt %}<p class="project__excerpt">{{ page.excerpt | strip_html }}</p>{% endif %}
@@ -34,9 +60,9 @@ layout: default
 
       {%- if page.sections -%}
       <ul class="project__meta">
-        <li><span class="k">In orbit of:</span>
-          {%- for sec in page.sections -%}
-            {%- if sec == 'gamedev' -%}<a href="{{ '/gamedev/' | relative_url }}">Gamedev</a>{%- elsif sec == 'web' -%}<a href="{{ '/web/' | relative_url }}">Web &amp; Tools</a>{%- elsif sec == 'cs' -%}<a href="{{ '/cs/' | relative_url }}">Computer Science</a>{%- endif -%}{%- unless forloop.last -%} · {%- endunless -%}
+        <li><span class="k">In orbit of:</span>&nbsp;
+          {%- for sec2 in page.sections -%}
+            {%- if sec2 == 'gamedev' -%}<a href="{{ '/gamedev/' | relative_url }}">Gamedev</a>{%- elsif sec2 == 'web' -%}<a href="{{ '/web/' | relative_url }}">Web &amp; Tools</a>{%- elsif sec2 == 'cs' -%}<a href="{{ '/cs/' | relative_url }}">Computer Science</a>{%- endif -%}{%- unless forloop.last -%} · {%- endunless -%}
           {%- endfor -%}
         </li>
       </ul>
@@ -47,4 +73,39 @@ layout: default
       {{ content }}
     </div>
   </div>
+
+  {%- if prevp or has_next -%}
+  <nav class="project__nav" aria-label="Otros proyectos">
+    {%- if prevp -%}
+    {%- assign pt = prevp.header.teaser | default: prevp.header.image -%}
+    <a class="pnav__item pnav__item--prev" href="{{ prevp.url | relative_url }}" rel="prev">
+      {%- if pt and pt != '' -%}
+      {%- unless pt contains '://' -%}{%- assign pt = pt | prepend: '/' | replace: '//', '/' -%}{%- endunless -%}
+      <span class="pnav__thumb"><img src="{{ pt | relative_url }}" alt="" loading="lazy"></span>
+      {%- endif -%}
+      <span class="pnav__txt">
+        <span class="pnav__lbl">← Anterior</span>
+        <span class="pnav__t">{{ prevp.title }}</span>
+      </span>
+    </a>
+    {%- endif -%}
+    {%- if has_next -%}
+    {%- assign nt = nextp.header.teaser | default: nextp.header.image -%}
+    <a class="pnav__item pnav__item--next" href="{{ nextp.url | relative_url }}" rel="next">
+      {%- if nt and nt != '' -%}
+      {%- unless nt contains '://' -%}{%- assign nt = nt | prepend: '/' | replace: '//', '/' -%}{%- endunless -%}
+      <span class="pnav__thumb"><img src="{{ nt | relative_url }}" alt="" loading="lazy"></span>
+      {%- endif -%}
+      <span class="pnav__txt">
+        <span class="pnav__lbl">Siguiente →</span>
+        <span class="pnav__t">{{ nextp.title }}</span>
+      </span>
+    </a>
+    {%- endif -%}
+  </nav>
+  {%- endif -%}
+
+  {%- if secname -%}
+  <p class="project__back"><a href="{{ securl | relative_url }}">↑ Volver a {{ secname }}</a></p>
+  {%- endif -%}
 </article>
