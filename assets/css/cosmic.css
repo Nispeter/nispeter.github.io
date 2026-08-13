@@ -861,11 +861,12 @@ body.theme-cs .section-hero__planet::after {
 
 /* Handle tab on the drawer's right edge, always visible once started */
 .idle__handle {
-  position: absolute; right: -39px; top: 18px; pointer-events: auto;
+  /* Sits clear of the panel's own 16px corner curve, and matches its radius. */
+  position: absolute; right: -39px; top: 26px; pointer-events: auto;
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   width: 40px; padding: 0.5rem 0; cursor: pointer;
   background: rgba(10, 14, 39, 0.86); backdrop-filter: blur(12px);
-  border: 1px solid var(--border-2); border-left: 0; border-radius: 0 12px 12px 0;
+  border: 1px solid var(--border-2); border-left: 0; border-radius: 0 16px 16px 0;
   box-shadow: 6px 0 20px rgba(0, 0, 0, 0.35);
   color: var(--text); font-family: var(--font-ui);
 }
