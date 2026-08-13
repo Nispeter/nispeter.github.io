@@ -6,17 +6,26 @@
     </a>
 
     <input type="checkbox" id="nav-toggle" class="nav-toggle" hidden>
-    <label for="nav-toggle" class="nav-burger" aria-label="Menu">
+    <label for="nav-toggle" class="nav-burger" aria-label="Menu" role="button" tabindex="0" aria-expanded="false" aria-controls="primary-nav">
       <span></span><span></span><span></span>
     </label>
 
-    <nav class="masthead__nav" aria-label="Primary">
+    <nav class="masthead__nav" id="primary-nav" aria-label="Primary">
       {% for item in site.data.navigation.main %}
         {% assign is_active = false %}
         {% if item.url == '/' and page.url == '/' %}{% assign is_active = true %}
         {% elsif item.url != '/' and page.url contains item.url %}{% assign is_active = true %}{% endif %}
         <a href="{{ item.url | relative_url }}"{% if is_active %} class="is-active" aria-current="page"{% endif %}>{{ item.title }}</a>
       {% endfor %}
+      <span class="nav-indicator" aria-hidden="true"></span>
     </nav>
+
+    {%- comment -%} Revealed only under .has-ui — ui.js owns the palette it opens. {%- endcomment -%}
+    <button type="button" class="nav-search" data-palette-open aria-label="Buscar proyectos">
+      <svg class="ico-search" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M12.7 12.7 17 17"/></svg>
+      <span class="nav-search__key" data-shortcut-hint>Ctrl K</span>
+    </button>
+
+    <span class="masthead__progress" aria-hidden="true"></span>
   </div>
 </header>

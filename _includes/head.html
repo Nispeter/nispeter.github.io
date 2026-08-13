@@ -28,7 +28,22 @@
   <!-- Fonts (progressive enhancement; system stack is the fallback) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="{{ '/assets/css/cosmic.css' | relative_url }}">
+
+  {%- comment -%}
+    Runs before first paint so the JS-only states (reveal, filters, palette) never flash.
+    Everything gated on .has-ui simply stays inert when scripting is off.
+  {%- endcomment -%}
+  <script>
+    (function (d) {
+      var c = d.documentElement.classList;
+      c.add('has-ui');
+      try {
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) c.add('reduce-motion');
+        if (!matchMedia('(hover: hover) and (pointer: fine)').matches) c.add('coarse-pointer');
+      } catch (e) { c.add('reduce-motion'); }
+    })(document);
+  </script>
 </head>
