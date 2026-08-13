@@ -1,0 +1,22 @@
+{%- comment -%}
+  Inline search index for the command palette. ~14 projects + the nav, so it is a couple of
+  KB of JSON — cheaper than a /search.json round trip. Read by ui.js.
+  Fields: t=title, u=url, s=subtitle, k=keywords (matched but not shown), y=year, c=colour key.
+{%- endcomment -%}
+<script type="application/json" id="search-index">
+[
+{%- for item in site.portfolio -%}
+  {%- assign sec = item.sections | first -%}
+  {%- if sec == 'gamedev' -%}{%- assign secname = 'Gamedev' -%}
+  {%- elsif sec == 'web' -%}{%- assign secname = 'Web & Tools' -%}
+  {%- elsif sec == 'cs' -%}{%- assign secname = 'Computer Science' -%}
+  {%- else -%}{%- assign secname = 'Project' -%}{%- endif -%}
+  {%- capture sub -%}{{ secname }}{% if item.tech.size > 0 %} · {{ item.tech | join: ' · ' }}{% endif %}{%- endcapture -%}
+  {%- capture keys -%}{{ item.title }} {{ item.tech | join: ' ' }} {{ item.sections | join: ' ' }} {{ item.excerpt | strip_html | strip_newlines | truncate: 90 }}{%- endcapture -%}
+  {"t":{{ item.title | jsonify }},"u":{{ item.url | relative_url | jsonify }},"s":{{ sub | strip | jsonify }},"k":{{ keys | strip | downcase | jsonify }},"y":{{ item.year | default: '' | jsonify }},"c":{{ sec | default: '' | jsonify }}},
+{%- endfor -%}
+{%- for nav in site.data.navigation.main -%}
+  {"t":{{ nav.title | jsonify }},"u":{{ nav.url | relative_url | jsonify }},"s":"Sección","k":{{ nav.title | downcase | jsonify }},"y":"","c":"nav"}{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+]
+</script>
