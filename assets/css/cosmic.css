@@ -1,5 +1,5 @@
 /* ============================================================
-   Cosmic Observatory — theme for nispeter.github.io
+   Cosmic Observatory theme for nispeter.github.io
    One cohesive stylesheet. No framework.
    ============================================================ */
 
@@ -66,7 +66,7 @@ h1, h2, h3, h4 {
   font-family: var(--font-display);
   font-weight: 700;
   line-height: 1.15;
-  letter-spacing: 0;              /* Chakra Petch is already narrow — no negative tracking */
+  letter-spacing: 0;              /* Chakra Petch is already narrow, so no negative tracking */
   margin: 1.6em 0 0.6em;
   scroll-margin-top: calc(var(--masthead-total) + 1rem);
 }
@@ -168,7 +168,7 @@ iframe { max-width: 100%; border: 0; border-radius: var(--radius); }
 }
 @keyframes twinkle { from { opacity: 0.45; } to { opacity: 0.9; } }
 
-/* ---------- Masthead — floating island ---------- */
+/* ---------- Masthead: floating island ---------- */
 .masthead {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
   padding: var(--masthead-gap) 1.2rem;
@@ -238,7 +238,7 @@ body.is-scrolled .masthead__inner {
   pointer-events: none;
 }
 
-/* Search affordance — JS-only, so it never shows a dead control */
+/* Search affordance is JS-only, so it never shows a dead control */
 .nav-search {
   display: none; align-items: center; justify-content: center;
   width: 32px; height: 32px; flex: 0 0 auto;
@@ -250,7 +250,7 @@ body.is-scrolled .masthead__inner {
 }
 .has-ui .nav-search { display: inline-flex; }
 .nav-search:hover { color: #fff; background: var(--bg-elev); border-color: color-mix(in srgb, var(--accent) 55%, var(--border-2)); }
-/* Shared magnifier — a glyph like ⌕ has no usable form in most mono faces */
+/* Shared magnifier: a glyph like ⌕ has no usable form in most mono faces */
 .ico-search {
   width: 15px; height: 15px; flex: 0 0 auto; display: block;
   fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round;
@@ -439,7 +439,7 @@ body.has-progress .masthead__progress { opacity: 0.9; }
 }
 @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-/* Gamedev — a little moon */
+/* Gamedev: a little moon */
 body.theme-game .section-hero__planet::after {
   content: ""; position: absolute; width: 26px; height: 26px; right: -30px; top: 10px;
   border-radius: 50%;
@@ -449,7 +449,7 @@ body.theme-game .section-hero__planet::after {
 }
 @keyframes moon-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(7px); } }
 
-/* Web & Tools — a technical wireframe grid */
+/* Web & Tools: a technical wireframe grid */
 body.theme-web .section-hero__planet::before {
   content: ""; position: absolute; inset: 0; border-radius: 50%; overflow: hidden;
   background:
@@ -458,7 +458,7 @@ body.theme-web .section-hero__planet::before {
   mix-blend-mode: screen; opacity: 0.65;
 }
 
-/* Computer Science — a Saturn-style ring */
+/* Computer Science: a Saturn-style ring */
 body.theme-cs .section-hero__planet::after {
   content: ""; position: absolute; left: 50%; top: 50%;
   width: 210px; height: 66px; margin: -33px 0 0 -105px; border-radius: 50%;
@@ -513,7 +513,7 @@ body.theme-cs .section-hero__planet::after {
   --mx: 50%; --my: 50%; --rx: 0deg; --ry: 0deg;
 }
 
-/* Sheen — the glassy highlight that follows the cursor */
+/* Sheen: the glassy highlight that follows the cursor */
 .card::after, .planet-card::after, .pnav__item::after {
   content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
   border-radius: inherit;
@@ -521,7 +521,7 @@ body.theme-cs .section-hero__planet::after {
   mix-blend-mode: plus-lighter;
   opacity: 0; transition: opacity 0.3s var(--ease);
 }
-/* Spotlight border — only the stretch of edge nearest the cursor lights up */
+/* Spotlight border: only the stretch of edge nearest the cursor lights up */
 .card::before, .planet-card::before, .pnav__item::before {
   content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
   border-radius: inherit; padding: 1px;
@@ -578,19 +578,20 @@ body.theme-cs .section-hero__planet::after {
 /* Social links live inside .observatory__intro so they ride along when it tucks away */
 .intro-social {
   display: flex; justify-content: center; gap: 0.6rem; margin-top: 1.1rem;
-  pointer-events: auto;                /* the intro itself is click-through */
   transition: gap 0.85s var(--ease), margin-top 0.85s var(--ease);
 }
 .isocial {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.5rem 1rem; border-radius: 999px;
-  font-family: var(--font-ui); font-size: 0.76rem; letter-spacing: 0.02em;
+  /* Only the buttons take pointer events; the row spans the whole intro width and
+     would otherwise swallow drags meant for the 3D scene behind it. */
+  pointer-events: auto;
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px; border-radius: 50%;
   color: var(--text);
   background: color-mix(in srgb, var(--bg-2) 72%, transparent);
   backdrop-filter: blur(12px) saturate(150%);
   -webkit-backdrop-filter: blur(12px) saturate(150%);
   border: 1px solid var(--border-2);
-  transition: transform 0.25s var(--ease), color 0.2s, border-color 0.2s, background 0.2s, padding 0.85s var(--ease);
+  transition: transform 0.25s var(--ease), color 0.2s, border-color 0.2s, background 0.2s;
 }
 .isocial svg { width: 16px; height: 16px; fill: currentColor; flex: 0 0 auto; }
 .isocial:hover {
@@ -607,10 +608,9 @@ body.theme-cs .section-hero__planet::after {
 }
 .observatory__intro--tucked h1 { font-size: clamp(1rem, 3.2vw, 1.35rem); }
 .observatory__intro--tucked p { font-size: 0.72rem; margin-top: 0.15rem; opacity: 0.75; }
-/* Tucked: shrink to icon-only chips, pinned right under the title */
+/* Tucked: pinned right, just under the shrunken title */
 .observatory__intro--tucked .intro-social { justify-content: flex-end; gap: 0.35rem; margin-top: 0.5rem; }
-.observatory__intro--tucked .isocial { padding: 0.4rem; }
-.observatory__intro--tucked .isocial__lbl { display: none; }
+.observatory__intro--tucked .isocial { width: 32px; height: 32px; }
 .observatory__hint {
   position: absolute; left: 50%; bottom: 4vh; transform: translateX(-50%); z-index: 2;
   color: var(--text-dim); font-family: var(--font-ui); font-size: 0.85rem; letter-spacing: 0.08em;
@@ -774,7 +774,7 @@ body.theme-cs .section-hero__planet::after {
 .to-top:hover { color: var(--accent-2); border-color: color-mix(in srgb, var(--accent) 55%, var(--border-2)); }
 .home-observatory .to-top { display: none; }
 
-/* Reveal on scroll — the initial hidden state exists only when JS can undo it.
+/* Reveal on scroll. The initial hidden state exists only when JS can undo it.
    Uses the independent `translate` property, never `transform`: a reveal rule is more
    specific than `.card:hover`, so a transform here would permanently kill the card lift
    and the tilt below. Keeping them on separate properties lets both compose. */
@@ -831,9 +831,11 @@ body.theme-cs .section-hero__planet::after {
   .palette__panel { max-height: 74vh; }
 }
 
-/* ---------- Idle game (Space Automation) — left slide-drawer ---------- */
+/* ---------- Idle game (Space Automation): left slide-drawer ---------- */
 .idle {
-  position: fixed; left: 0; top: var(--masthead-total); bottom: 0; z-index: 90;
+  /* Flush with the bottom edge of the floating island, not below its gutter,
+     so the drawer meets the topbar instead of leaving a strip of starfield. */
+  position: fixed; left: 0; top: calc(var(--masthead-gap) + var(--masthead-h)); bottom: 0; z-index: 90;
   width: 300px; max-width: 88vw;
   transform: translateX(-100%); transition: transform 0.35s var(--ease);
   overflow: visible; pointer-events: none;
@@ -852,7 +854,7 @@ body.theme-cs .section-hero__planet::after {
   font-size: 0.82rem;
 }
 
-/* Handle tab on the drawer's right edge — always visible once started */
+/* Handle tab on the drawer's right edge, always visible once started */
 .idle__handle {
   position: absolute; right: -40px; top: 18px; pointer-events: auto;
   display: flex; flex-direction: column; align-items: center; gap: 2px;
@@ -890,7 +892,7 @@ body.theme-cs .section-hero__planet::after {
 .idle__emult.up { color: var(--web); }
 .idle__emult.down { color: #ff5d6c; }
 
-/* Tabs — segmented control with a clearly distinct active state */
+/* Tabs: segmented control with a clearly distinct active state */
 .idle__tabs { display: flex; gap: 0.35rem; padding: 0.55rem 0.6rem 0.35rem; }
 .idle__tabs button {
   flex: 1; font-family: var(--font-ui); font-weight: 500; font-size: 0.78rem;
@@ -954,7 +956,7 @@ body.theme-cs .section-hero__planet::after {
   color: #fff; text-shadow: 0 1px 2px #000; pointer-events: none; white-space: nowrap;
 }
 
-/* Research — grid of upgrade tiles (available + acquired) */
+/* Research: grid of upgrade tiles (available + acquired) */
 .idle__list--grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; align-content: start; }
 .rtile {
   display: flex; flex-direction: column; gap: 0.15rem; text-align: left;
