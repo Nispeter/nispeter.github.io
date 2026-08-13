@@ -1,11 +1,17 @@
 {%- comment -%} Teaser card for section grids. Expects `include.item` (a portfolio doc).
-  Falls back to a themed placeholder (project initial) when no image is set. {%- endcomment -%}
+  Falls back to a themed placeholder (project initial) when no image is set.
+  The data-* attributes are what the section filters in ui.js match against. {%- endcomment -%}
 {%- assign item = include.item -%}
 {%- assign teaser = item.header.teaser | default: item.header.image -%}
 {%- if teaser and teaser != '' -%}
   {%- unless teaser contains '://' -%}{%- assign teaser = teaser | prepend: '/' | replace: '//', '/' -%}{%- endunless -%}
 {%- endif -%}
-<a class="card" href="{{ item.url | relative_url }}">
+{%- assign tech_list = item.tech | join: '|' | downcase -%}
+<a class="card" href="{{ item.url | relative_url }}"
+   data-title="{{ item.title | downcase | escape }}"
+   data-tech="{{ tech_list | escape }}"
+   data-year="{{ item.year }}"
+   data-text="{{ item.excerpt | strip_html | strip_newlines | downcase | truncate: 160 | escape }}">
   {%- if teaser and teaser != '' -%}
   <div class="card__media">
     <img src="{{ teaser | relative_url }}" alt="{{ item.title }}" loading="lazy">
@@ -21,6 +27,15 @@
     {%- if item.sections.size > 1 -%}
     <div class="card__tags">
       {%- for s in item.sections -%}<span class="card__tag">{{ s }}</span>{%- endfor -%}
+    </div>
+    {%- endif -%}
+    {%- if item.year or item.tech.size > 0 -%}
+    <div class="card__meta">
+      {%- if item.year -%}<span class="card__year">{{ item.year }}</span>{%- endif -%}
+      {%- if item.tech.size > 0 -%}
+        {%- assign shown = item.tech | slice: 0, 3 -%}
+        <span class="card__tech">{{ shown | join: ' · ' }}{% if item.tech.size > 3 %} +{{ item.tech.size | minus: 3 }}{% endif %}</span>
+      {%- endif -%}
     </div>
     {%- endif -%}
   </div>
