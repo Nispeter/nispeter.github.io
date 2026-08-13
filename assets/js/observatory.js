@@ -287,6 +287,13 @@
   var tmpS = new THREE.Vector3();
   var warpTarget = new THREE.Vector3();
   var frameCbs = [], asteroidCbs = [];
+  // Extra warp targets registered by add-ons. They are Groups, so they need a recursive
+  // raycast plus a walk back up to whichever registered root was hit.
+  var clickables = [];
+  function clickableRoot(o) {
+    while (o) { if (clickables.indexOf(o) >= 0) return o; o = o.parent; }
+    return null;
+  }
 
   canvas.style.cursor = "grab";
   canvas.style.touchAction = "pan-y"; // allow vertical page scroll, capture horizontal drag
@@ -353,6 +360,10 @@
     raycaster.setFromCamera(pointer, camera);
     var hits = raycaster.intersectObjects(bodies, false);
     if (hits.length) { go(hits[0].object); return; }
+    if (clickables.length) {
+      var ch = raycaster.intersectObjects(clickables, true);
+      if (ch.length) { var hitRoot = clickableRoot(ch[0].object); if (hitRoot) { go(hitRoot); return; } }
+    }
     if (asteroidCbs.length) {
       var ah = raycaster.intersectObjects([beltZone], false);
       if (ah.length) {
@@ -461,7 +472,9 @@
     var dt = Math.min(clock.getDelta(), 0.05);
     var t = clock.elapsedTime;
 
-    if (!reduceMotion) belt.rotation.y += dt * 0.02;
+    // The belt drifts the same way the planets orbit (increasing orbital angle =
+    // decreasing rotation.y), so the whole system turns as one.
+    if (!reduceMotion) belt.rotation.y -= dt * 0.02;
     updateMeteors(dt);
     for (var fci = 0; fci < frameCbs.length; fci++) frameCbs[fci](dt);
 
@@ -495,6 +508,10 @@
       raycaster.setFromCamera(pointer, camera);
       var hits = raycaster.intersectObjects(bodies, false);
       var nh = hits.length ? hits[0].object : null;
+      if (!nh && clickables.length) {                       // registered add-on targets
+        var chh = raycaster.intersectObjects(clickables, true);
+        if (chh.length) nh = clickableRoot(chh[0].object);
+      }
       if (nh !== hovered) {
         hovered = nh;
         canvas.style.cursor = hovered ? "pointer" : "grab";
@@ -525,8 +542,17 @@
   resize();
   window.OBS = {
     THREE: THREE, scene: scene, camera: camera, canvas: canvas, planets: planets, belt: belt,
+    root: root,
     onFrame: function (fn) { frameCbs.push(fn); },
-    onAsteroidClick: function (fn) { asteroidCbs.push(fn); }
+    onAsteroidClick: function (fn) { asteroidCbs.push(fn); },
+    // Make an add-on object hoverable + clickable; it warps to its userData.url, exactly
+    // like a planet does. Re-register whenever the object itself is replaced.
+    addClickable: function (obj) { if (clickables.indexOf(obj) < 0) clickables.push(obj); },
+    removeClickable: function (obj) {
+      var i = clickables.indexOf(obj);
+      if (i >= 0) clickables.splice(i, 1);
+      if (hovered === obj) hovered = null;
+    }
   };
   loop();
 })();

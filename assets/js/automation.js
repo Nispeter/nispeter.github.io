@@ -30,7 +30,12 @@
     { id: "shipyard",    ic: "🏗️", name: "Orbital Shipyard",         desc: "Fleets that build ore.",                baseCost: 900000,   growth: 1.19, ore: 1000,  eOut: 0,    eUse: 120, per: 2,  cap: 24, motion: "ring",      radius: 10.2, color: 0xa9c3dd },
     { id: "satellite",   ic: "📡", name: "Deep Space Satellite",     desc: "Beams down ore and energy.",            baseCost: 3500000,  growth: 1.20, ore: 2600,  eOut: 120,  eUse: 0,   per: 2,  cap: 24, motion: "far",       color: 0x8ec9ff },
     { id: "dyson",       ic: "🌐", name: "Dyson Swarm Node",         desc: "Drinks the star's light.",              baseCost: 14000000, growth: 1.20, ore: 0,     eOut: 1500, eUse: 0,   per: 4,  cap: 12, motion: "dysonring", color: 0xffe3a0 },
-    { id: "exploration", ic: "🧭", name: "Space Exploration Team",   desc: "Finds rich new belts.",                 baseCost: 60000000, growth: 1.22, ore: 12000, eOut: 0,    eUse: 400, per: 2,  cap: 20, motion: "explore",   color: 0x8affd6 }
+    { id: "exploration", ic: "🧭", name: "Space Exploration Team",   desc: "Finds rich new belts.",                 baseCost: 60000000, growth: 1.22, ore: 12000, eOut: 0,    eUse: 400, per: 2,  cap: 20, motion: "explore",   color: 0x8affd6 },
+    // ---- Endgame vanity: one-of-a-kind structures that produce nothing and burn a
+    // resource every second. Each Mk level only rebuilds the model, bigger and fancier.
+    // Both cost the same, so which one you chase first is pure taste.
+    { id: "casino",  ic: "🎰", name: "Star Casino",   desc: "A one-off pleasure station. Produces nothing; burns ore every second.",   baseCost: 1e13, growth: 1, ore: 0, oreUse: 2.5e10, eOut: 0, eUse: 0,    per: 1, cap: 1, max: 1, motion: "casino",  radius: 6.2,  color: 0xffcf6a, upMul: 6, upGrow: 4, upText: "Mk adds decks, neon rings & spires" },
+    { id: "galleon", ic: "🌌", name: "Void Galleon",  desc: "A one-off starship of pure spectacle. Produces nothing; drinks energy every second.", baseCost: 1e13, growth: 1, ore: 0, oreUse: 0, eOut: 0, eUse: 1.2e7, per: 1, cap: 1, max: 1, motion: "galleon", radius: 13.6, color: 0xa9c3dd, upMul: 6, upGrow: 4, upText: "Mk adds nacelles, wings & drives" }
   ];
   var byId = {};
   BUILDINGS.forEach(function (b) { byId[b.id] = b; });
@@ -87,8 +92,9 @@
 
   function owned(id) { return S.b[id] || 0; }
   function cost(b) { return Math.floor(b.baseCost * Math.pow(b.growth, owned(b.id)) * mods.cost); }
+  function maxed(b) { return !!b.max && owned(b.id) >= b.max; }
   function upTier(id) { return S.up[id] || 0; }
-  function upCost(b) { return Math.round(b.baseCost * 15 * Math.pow(8, upTier(b.id))); }
+  function upCost(b) { return Math.round(b.baseCost * (b.upMul || 15) * Math.pow(b.upGrow || 8, upTier(b.id))); }
 
   function fmt(n) {
     n = +n || 0;
@@ -121,6 +127,7 @@
       mods.bld[b.id] = (mods.bld[b.id] || 1) * Math.pow(2, upTier(b.id));
     });
     syncCustomMiner();
+    rebuildSpecials();
   }
   recompute();
   function clickPower() { return 1 * mods.click; }
@@ -167,7 +174,7 @@
     var g;
     switch (b.id) {
       case "solar":       g = new THREE.BoxGeometry(0.42, 0.3, 0.04); break; // thin panel, faces the sun
-      case "drone":       g = new THREE.ConeGeometry(0.09, 0.26, 4); g.rotateX(Math.PI / 2); break; // pyramid, tip forward
+      case "drone":       g = new THREE.ConeGeometry(0.06, 0.17, 4); g.rotateX(Math.PI / 2); break; // pyramid, tip forward
       case "transport":   g = new THREE.BoxGeometry(0.09, 0.07, 0.18); break; // short rectangle, long axis = travel direction
       case "tether":      g = new THREE.CylinderGeometry(0.09, 0.09, 0.4, 12); g.rotateX(Math.PI / 2); break; // horizontal warp barrel
       case "station":     g = new THREE.TorusGeometry(0.17, 0.05, 6, 16); break;
@@ -190,6 +197,7 @@
     return b._mat;
   }
   function makeMesh(b) {
+    if (b.build) return b.build(upTier(b.id));   // vanity structures are built per Mk level
     var mesh = new THREE.Mesh(geoFor(b), matFor(b));
     if (b.id === "satellite") {
       var wm = new THREE.MeshStandardMaterial({ color: 0x2ec4b6, emissive: 0x2ec4b6, emissiveIntensity: 0.35, flatShading: true });
@@ -199,7 +207,207 @@
     }
     return mesh;
   }
+
+  // ---------- Endgame vanity structures ----------
+  // One model each, rebuilt from scratch at every Mk level: an upgrade buys no
+  // production, only a bigger and more ornate structure. `g.anim` lists sub-groups
+  // that spin on their own (neon rings, marquee lights…).
+  var _glowTex = {};
+  function glowSprite(rgb, scale) {
+    var tex = _glowTex[rgb];
+    if (!tex) {
+      var cv = document.createElement("canvas"); cv.width = cv.height = 96;
+      var c = cv.getContext("2d"), gr = c.createRadialGradient(48, 48, 0, 48, 48, 48);
+      gr.addColorStop(0, "rgba(" + rgb + ",0.8)");
+      gr.addColorStop(0.35, "rgba(" + rgb + ",0.3)");
+      gr.addColorStop(1, "rgba(" + rgb + ",0)");
+      c.fillStyle = gr; c.fillRect(0, 0, 96, 96);
+      tex = _glowTex[rgb] = new THREE.CanvasTexture(cv);
+    }
+    var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
+    sp.scale.set(scale, scale, 1);
+    sp.raycast = function () {};   // a halo is much wider than its structure — never let it eat a click
+    return sp;
+  }
+  function vanityMat(color, emissive, glow) {
+    return new THREE.MeshStandardMaterial({
+      color: color, emissive: emissive == null ? color : emissive,
+      emissiveIntensity: glow == null ? 0.5 : glow, flatShading: true, roughness: 0.5, metalness: 0.25
+    });
+  }
+  function part(grp, geo, mat, x, y, z) {
+    var m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); grp.add(m); return m;
+  }
+  // a group that spins inside a fixed tilt (tilt on the parent, spin on the child)
+  function tiltedSpinner(g, tiltZ, tiltX, speed) {
+    var pivot = new THREE.Group(); pivot.rotation.z = tiltZ || 0; pivot.rotation.x = tiltX || 0;
+    var spin = new THREE.Group(); pivot.add(spin); g.add(pivot);
+    g.anim.push({ o: spin, sy: speed });
+    return spin;
+  }
+  function disposeTree(o) {
+    o.traverse(function (c) {
+      if (c.geometry) c.geometry.dispose();
+      if (c.material) c.material.dispose();   // vanity parts own their materials (cached textures survive)
+    });
+  }
+
+  function buildCasino(t) {
+    var g = new THREE.Group(); g.anim = [];
+    // Scene palette: orbit-line navy hull, sun gold, CS-planet violet neon, panel blue glass.
+    var dark  = vanityMat(0x2a3358, 0x141a33, 0.35),
+        gold  = vanityMat(0xffcf6a, null, 0.55),
+        neon  = vanityMat(0x9b8cff, null, 0.9),
+        glass = vanityMat(0x8fdcff, null, 0.7);
+    var i, a;
+
+    // Mk I — a hex deck under a glass dome
+    part(g, new THREE.CylinderGeometry(0.62, 0.86, 0.3, 8), dark, 0, 0, 0);
+    part(g, new THREE.CylinderGeometry(0.68, 0.68, 0.05, 8), gold, 0, 0.17, 0);
+    part(g, new THREE.SphereGeometry(0.4, 12, 6, 0, TAU, 0, Math.PI / 2), glass, 0, 0.2, 0);
+
+    // Mk II — a neon ring sweeping around the deck, studded with pods
+    if (t >= 1) {
+      var s1 = new THREE.Group();
+      var r1 = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.035, 6, 40), neon); r1.rotation.x = Math.PI / 2;
+      s1.add(r1);
+      for (i = 0; i < 6; i++) { a = (i / 6) * TAU; part(s1, new THREE.BoxGeometry(0.11, 0.11, 0.11), gold, Math.cos(a) * 1.05, 0, Math.sin(a) * 1.05); }
+      g.add(s1); g.anim.push({ o: s1, sy: 0.5 });
+    }
+
+    // Mk III — an upper deck, spires and a tilted outer ring
+    if (t >= 2) {
+      part(g, new THREE.CylinderGeometry(0.34, 0.5, 0.36, 8), gold, 0, 0.5, 0);
+      part(g, new THREE.ConeGeometry(0.1, 0.72, 6), neon, 0, 1.04, 0);
+      for (i = 0; i < 4; i++) { a = (i / 4) * TAU + 0.4; part(g, new THREE.ConeGeometry(0.07, 0.5, 5), gold, Math.cos(a) * 0.62, 0.36, Math.sin(a) * 0.62); }
+      var s2 = tiltedSpinner(g, 0.55, 0, -0.34);
+      var r2 = new THREE.Mesh(new THREE.TorusGeometry(1.35, 0.03, 6, 44), glass); r2.rotation.x = Math.PI / 2; s2.add(r2);
+    }
+
+    // Mk IV — marquee lights, a crossed ring and a halo
+    if (t >= 3) {
+      var s3 = new THREE.Group();
+      for (i = 0; i < 14; i++) { a = (i / 14) * TAU; part(s3, new THREE.SphereGeometry(0.055, 6, 5), i % 2 ? neon : glass, Math.cos(a) * 0.8, 0.26, Math.sin(a) * 0.8); }
+      g.add(s3); g.anim.push({ o: s3, sy: -0.9 });
+      var s4 = tiltedSpinner(g, 0, 0.7, 0.26);
+      var r3 = new THREE.Mesh(new THREE.TorusGeometry(1.62, 0.028, 6, 48), neon); r3.rotation.x = Math.PI / 2; s4.add(r3);
+      g.add(glowSprite("155,140,255", 4.6));
+    }
+    g.scale.setScalar(0.5);
+    return g;
+  }
+
+  function buildGalleon(t) {
+    var g = new THREE.Group(); g.anim = [];
+    // Scene palette: shipyard grey-blue plating, sun-gold trim, exploration-teal drives.
+    var hull  = vanityMat(0xa9c3dd, 0x1b2740, 0.25),
+        trim  = vanityMat(0xffcf6a, null, 0.5),
+        drive = vanityMat(0x8affd6, null, 1),
+        plate = new THREE.MeshStandardMaterial({
+          color: 0x8fdcff, emissive: 0x2ec4b6, emissiveIntensity: t >= 3 ? 0.7 : 0.28,
+          flatShading: true, side: THREE.DoubleSide, roughness: 0.6, metalness: 0.1
+        });
+    var i;
+    // The whole ship lies along its heading (+Z is the nose): wings and nacelles reach
+    // out SIDEWAYS and the drives sit at the stern. Nothing stands up above the hull —
+    // uprights are what make a hull read as a sailing ship.
+    function nacelle(x, z, len, rad) {
+      var n = new THREE.CylinderGeometry(rad, rad * 0.9, len, 6); n.rotateX(Math.PI / 2);
+      part(g, n, hull, x, 0, z);
+      part(g, new THREE.CylinderGeometry(rad * 0.95, rad * 0.5, len * 0.28, 6), drive, x, 0, z - len * 0.6).rotation.x = Math.PI / 2;
+    }
+    function wing(x, z, w, l, sweep) {   // a flat panel lying in the ship's own plane
+      part(g, new THREE.BoxGeometry(w, 0.025, l), plate, x, 0, z).rotation.y = sweep;
+    }
+
+    // Mk I — a flattened fuselage, a sharp nose, a canopy, the main drive and stern fins
+    var hg = new THREE.CylinderGeometry(0.11, 0.19, 1.6, 6); hg.rotateX(Math.PI / 2); hg.scale(1, 0.62, 1);
+    g.add(new THREE.Mesh(hg, hull));
+    part(g, new THREE.ConeGeometry(0.11, 0.42, 6), hull, 0, 0, 0.95).rotation.x = Math.PI / 2;
+    part(g, new THREE.BoxGeometry(0.13, 0.07, 0.28), trim, 0, 0.09, 0.36);
+    part(g, new THREE.CylinderGeometry(0.13, 0.1, 0.2, 6), drive, 0, 0, -0.88).rotation.x = Math.PI / 2;
+    wing(0.24, -0.6, 0.26, 0.2, -0.3); wing(-0.24, -0.6, 0.26, 0.2, 0.3);
+
+    // Mk II — outboard pylons carrying twin nacelles, plus the main swept wings
+    if (t >= 1) {
+      part(g, new THREE.BoxGeometry(0.24, 0.03, 0.07), hull, 0.29, 0, -0.28);
+      part(g, new THREE.BoxGeometry(0.24, 0.03, 0.07), hull, -0.29, 0, -0.28);
+      nacelle(0.44, -0.28, 0.5, 0.06);
+      nacelle(-0.44, -0.28, 0.5, 0.06);
+      wing(0.4, 0.16, 0.44, 0.34, -0.34); wing(-0.4, 0.16, 0.44, 0.34, 0.34);
+    }
+
+    // Mk III — forward canards, hull radiators, a sensor disc and wingtip lights
+    if (t >= 2) {
+      wing(0.28, 0.6, 0.3, 0.18, -0.5); wing(-0.28, 0.6, 0.3, 0.18, 0.5);
+      part(g, new THREE.BoxGeometry(0.025, 0.13, 0.66), trim, 0.19, 0.01, -0.1);
+      part(g, new THREE.BoxGeometry(0.025, 0.13, 0.66), trim, -0.19, 0.01, -0.1);
+      part(g, new THREE.CylinderGeometry(0.12, 0.12, 0.02, 12), trim, 0, 0.13, 0.02).rotation.x = 0.25;
+      part(g, new THREE.SphereGeometry(0.035, 6, 5), drive, 0.6, 0, 0.16);
+      part(g, new THREE.SphereGeometry(0.035, 6, 5), drive, -0.6, 0, 0.16);
+    }
+
+    // Mk IV — a dorsal rail, glowing hull strips and a drive ring burning in the exhaust
+    if (t >= 3) {
+      part(g, new THREE.BoxGeometry(0.03, 0.03, 0.92), hull, 0, 0.15, -0.06);
+      part(g, new THREE.ConeGeometry(0.035, 0.16, 5), trim, 0, 0.15, 0.48).rotation.x = Math.PI / 2;
+      for (i = 0; i < 4; i++) {
+        part(g, new THREE.BoxGeometry(0.02, 0.02, 0.3), drive, 0.17, -0.06, -0.28 + i * 0.24);
+        part(g, new THREE.BoxGeometry(0.02, 0.02, 0.3), drive, -0.17, -0.06, -0.28 + i * 0.24);
+      }
+      var s5 = tiltedSpinner(g, 0, Math.PI / 2, 0.8);
+      var halo = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.02, 6, 30), drive); halo.rotation.x = Math.PI / 2; s5.add(halo);
+      s5.parent.position.z = -1.02;
+      var plume = glowSprite("140,255,214", 1.6); plume.position.z = -1.12; g.add(plume);
+    }
+    g.scale.setScalar(1.1);   // it rides the far orbit, so it still needs some size to read
+    return g;
+  }
+  byId.casino.build = buildCasino;
+  byId.galleon.build = buildGalleon;
+
+  // Each vanity structure is also a door: click it and the scene warps to its own
+  // easter-egg page, the same way a planet warps to its section.
+  var EGGS = {
+    casino:  { attr: "data-casino",  url: "/casino/",  blurb: "You built it — step inside" },
+    galleon: { attr: "data-galleon", url: "/galleon/", blurb: "Read the ship's log" }
+  };
+  (function eggUrls() {
+    for (var k in EGGS) {
+      var a = OBS.root && OBS.root.getAttribute(EGGS[k].attr);
+      if (a) EGGS[k].url = a;                       // Jekyll hands us the baseurl-aware path
+    }
+  })();
+  function tagVanity(mesh, b) {
+    var egg = EGGS[b.id];
+    if (!egg || !OBS.addClickable) return;
+    mesh.userData.url = egg.url;
+    mesh.userData.name = b.name;
+    mesh.userData.blurb = egg.blurb;
+    OBS.addClickable(mesh);
+  }
+
+  // Swap a vanity structure's model whenever its Mk level changes.
+  function rebuildSpecials() {
+    for (var i = 0; i < BUILDINGS.length; i++) {
+      var b = BUILDINGS[i]; if (!b.build) continue;
+      var t = upTier(b.id);
+      if (b._builtTier === t) continue;
+      b._builtTier = t;
+      var arr = models && models[b.id]; if (!arr) continue;
+      for (var k = 0; k < arr.length; k++) {
+        var old = arr[k], m = b.build(t);
+        m.userData = old.userData;                                   // keep its orbit phase
+        m.position.copy(old.position); m.quaternion.copy(old.quaternion);
+        if (OBS.removeClickable) OBS.removeClickable(old);           // the old model is gone
+        unitsGroup.remove(old); disposeTree(old);
+        unitsGroup.add(m); arr[k] = m; tagVanity(m, b);
+      }
+    }
+  }
   var TAU = Math.PI * 2, STD = 0.12, SUN_KEEP = 2.3;  // STD = shared standard rotation speed
+  var GOLDEN = Math.PI * (3 - Math.sqrt(5));          // golden angle — packs points evenly on a shell
+  var SUN_BAND = 0.62;                                // |cos φ| limit for sun-huggers: clear of the Dyson rings
   var _wp = new THREE.Vector3(), _dir = new THREE.Vector3(), _base = new THREE.Vector3();
   var _aimObj = new THREE.Object3D();   // scratch for smooth barrel aiming
   function initMotion(mesh, b, i) {
@@ -209,9 +417,10 @@
       u.mt = "transport"; u.a = i % np; u.b = (i + 1) % np;
       u.t = Math.random(); u.sp = 0.05 + Math.random() * 0.07; u.far = (b.id === "exploration"); u.station = null;
     } else if (b.motion === "sun") {
-      // orbit the sun near its equator (stays clear of the Dyson rings at the poles)
+      // hug the star on a shell that stays clear of the Dyson rings at the poles;
+      // respace() hands out the actual slot, so no two ever share a spot
       u.mt = "sun"; u.r = b.radius;
-      u.theta = Math.random() * TAU; u.phi = Math.PI / 2 + (Math.random() - 0.5) * 0.9;
+      u.theta = 0; u.phi = Math.PI / 2;
       u.sp = STD;   // synced standard speed (panels move together)
     } else if (b.motion === "asteroid") {
       // sit beside a real asteroid; miners drill into its centre
@@ -241,6 +450,13 @@
       u.rad = 0.5 + dl * 0.4;
       mesh.geometry = new THREE.TorusGeometry(u.rad, 0.02, 6, 44);   // per-ring size, uniform tube thickness
       mesh.geometry.rotateX(Math.PI / 2);
+    } else if (b.motion === "casino") {
+      // a lone pleasure station riding high above the planets' plane, so it never
+      // collides with anything, turning slowly on its own axis
+      u.mt = "casino"; u.r = b.radius; u.ang = Math.random() * TAU; u.y = 2.6;
+    } else if (b.motion === "galleon") {
+      // cruises the outer system, banked into its orbit and drifting slowly in altitude
+      u.mt = "galleon"; u.r = b.radius; u.ang = Math.random() * TAU; u.t = Math.random() * 10;
     } else if (b.motion === "explore") {
       // fly out past the belt, wait, hyper-light jump away, reappear after a few seconds
       u.mt = "explore"; u.est = "out"; u.timer = 0;
@@ -252,8 +468,30 @@
       u.mt = "orbit";
       u.r = (b.motion === "ring") ? b.radius : (b.motion === "far" ? 14 : (11.2 + (Math.random() - 0.5) * 1.6));
       u.ang = Math.random() * TAU;
-      u.y = (Math.random() - 0.5) * (b.motion === "ring" ? 1.4 : 0.7);
-      u.sp = (0.03 + Math.random() * 0.05) * (Math.random() < 0.5 ? 1 : -1);
+      // ring fleets share one clean orbital plane so the even spacing reads; everything
+      // orbits the same way the planets do (positive angle).
+      u.y = (b.motion === "ring") ? 0 : (Math.random() - 0.5) * 0.7;
+      u.sp = (b.motion === "ring") ? STD : (0.03 + Math.random() * 0.05);
+    }
+  }
+  // Station-like fleets sit evenly spaced around their shared orbit, moving as one.
+  // Sun-huggers tile a whole shell instead of a single ring, so panels never overlap.
+  function respace(b) {
+    var arr = models[b.id]; if (!arr || !arr.length) return;
+    var n = arr.length, i, u;
+    if (b.motion === "warp" || b.motion === "ring") {
+      for (i = 0; i < n; i++) { u = arr[i].userData; u.ang = (i / n) * TAU; u.sp = STD; }
+    } else if (b.motion === "sun") {
+      // Fibonacci shell: golden-angle longitudes + evenly spread latitudes across the
+      // band give near-optimal spacing for any count. Re-slot from the fleet's current
+      // phase so buying one more nudges the swarm instead of teleporting it.
+      var base = arr[0].userData.theta || 0;
+      for (i = 0; i < n; i++) {
+        u = arr[i].userData;
+        u.theta = base + i * GOLDEN;
+        u.phi = Math.acos(SUN_BAND * (n === 1 ? 0 : (2 * i / (n - 1) - 1)));
+        u.sp = STD;
+      }
     }
   }
   function reconcile(b) {
@@ -261,8 +499,12 @@
     // Always show at least one model once you own any (then scale by rarity ratio).
     var target = o > 0 ? Math.min(b.cap, Math.ceil(o / b.per)) : 0;
     var arr = models[b.id] || (models[b.id] = []);
-    while (arr.length < target) { var m = makeMesh(b); initMotion(m, b, arr.length); unitsGroup.add(m); arr.push(m); }
-    while (arr.length > target) { unitsGroup.remove(arr.pop()); }
+    while (arr.length < target) { var m = makeMesh(b); initMotion(m, b, arr.length); unitsGroup.add(m); arr.push(m); if (b.build) tagVanity(m, b); }
+    while (arr.length > target) {
+      var rm = arr.pop(); unitsGroup.remove(rm);
+      if (b.build) { if (OBS.removeClickable) OBS.removeClickable(rm); disposeTree(rm); }
+    }
+    respace(b);
   }
   // Warp flash effect (shared texture, per-flash material for independent fade)
   var _flashTex = null, fx = [];
@@ -327,6 +569,14 @@
     }
     return near.length ? near[(Math.random() * near.length) | 0] : best;  // none close → nearest (likely far → will warp)
   }
+  function nearestPlanet(pos) {
+    var ps = OBS.planets, best = null, bd = Infinity;
+    if (ps) for (var i = 0; i < ps.length; i++) {
+      var d = pos.distanceToSquared(ps[i].group.position);
+      if (d < bd) { bd = d; best = ps[i]; }
+    }
+    return best;
+  }
   // Dock point for a cargo-drone target: just behind a miner's drill, or just off a planet's near side.
   function droneDock(obj, kind, planet, fromPos, out) {
     if (kind === "planet") {
@@ -346,6 +596,12 @@
     u.dock = u.target; u.dockKind = u.tkind; u.dockPlanet = u.tplanet;
     u.fromPlanet = (u.tkind === "planet");
     u.target = null; u.st = null; u.hopT = 0;
+  }
+
+  // vanity sub-groups (neon rings, marquee lights…) turn on their own
+  function spinParts(mesh, dt) {
+    if (!mesh.anim) return;
+    for (var i = 0; i < mesh.anim.length; i++) mesh.anim[i].o.rotation.y += mesh.anim[i].sy * dt;
   }
 
   function updateModels(dt) {
@@ -426,25 +682,30 @@
               // Pick a NEW destination. Short jumps go direct; anything past SHORT_HOP must ride a warp station.
               if (!u.target || !u.target.parent) {
                 u.hopT = 0;
-                var chosen = null, planets = OBS.planets;
+                var chosen = null, dpl = null;
                 if (u.fromPlanet) {
                   u.fromPlanet = false;                                          // just left a planet → head to the nearest asteroid
                   chosen = nearestMiner(mesh.position, u.dock); u.tkind = "miner"; u.tplanet = null;
-                } else if (planets && planets.length && Math.random() < 0.22) {
-                  var dpl = planets[(Math.random() * planets.length) | 0];       // occasionally visit a planet (often far → warps there)
-                  chosen = dpl.group; u.tkind = "planet"; u.tplanet = dpl;
+                } else if (Math.random() < 0.22 && (dpl = nearestPlanet(mesh.position))) {
+                  chosen = dpl.group; u.tkind = "planet"; u.tplanet = dpl;       // only ever the CLOSEST planet, same rule as the rocks
                 } else {
                   chosen = nearbyMiner(mesh.position, u.dock, SHORT_HOP); u.tkind = "miner"; u.tplanet = null;
                 }
                 if (!chosen) { u.wait = 0.6; }                                   // nowhere else to go → idle a beat
                 else {
-                  u.target = chosen; u.dock = null;
                   var stns = models.tether;
-                  if (mesh.position.distanceTo(chosen.position) > SHORT_HOP && stns && stns.length) {
-                    var best = null, bd = Infinity;                              // too far to jump → warp across
-                    for (var w = 0; w < stns.length; w++) { var dd = mesh.position.distanceTo(stns[w].position); if (dd < bd) { bd = dd; best = stns[w]; } }
-                    u.tether = best; u.st = "toTether"; u.tt = 0;
+                  if (mesh.position.distanceTo(chosen.position) > SHORT_HOP) {
+                    if (stns && stns.length) {
+                      var best = null, bd = Infinity;                            // too far to fly → warp across
+                      for (var w = 0; w < stns.length; w++) { var dd = mesh.position.distanceTo(stns[w].position); if (dd < bd) { bd = dd; best = stns[w]; } }
+                      u.tether = best; u.st = "toTether"; u.tt = 0;
+                    } else if (u.tkind === "planet") {
+                      chosen = nearestMiner(mesh.position, u.dock) || chosen;    // no warps yet → a far planet is out of reach
+                      u.tkind = chosen === dpl.group ? "planet" : "miner";
+                      u.tplanet = u.tkind === "planet" ? dpl : null;
+                    }
                   }
+                  u.target = chosen; u.dock = null;
                 }
               }
               if (u.st !== "toTether" && u.target) {
@@ -491,34 +752,60 @@
               mesh.visible = true; outwardDest(u.dest, mesh.position); u.est = "out";
             }
           }
-        } else {
-          u.ang += u.sp * dt;
+        } else if (u.mt === "casino") {
+          u.ang += STD * 0.3 * dt;
           mesh.position.set(Math.cos(u.ang) * u.r, u.y, Math.sin(u.ang) * u.r);
-          var dir = u.sp < 0 ? -1 : 1;
-          mesh.lookAt(mesh.position.x - Math.sin(u.ang) * dir, mesh.position.y, mesh.position.z + Math.cos(u.ang) * dir);
+          mesh.rotation.y += dt * 0.25;
+          spinParts(mesh, dt);
+        } else if (u.mt === "galleon") {
+          u.ang += STD * 0.2 * dt; u.t += dt;
+          var gy = 1.1 + Math.sin(u.t * 0.55) * 0.18;      // a slow drift, not a sea swell
+          mesh.position.set(Math.cos(u.ang) * u.r, gy, Math.sin(u.ang) * u.r);
+          mesh.lookAt(mesh.position.x - Math.sin(u.ang), gy, mesh.position.z + Math.cos(u.ang));
+          mesh.rotateZ(0.2 + Math.sin(u.t * 0.5) * 0.05);  // held in a bank, like a craft in a turn
+          spinParts(mesh, dt);
+        } else {
+          u.ang += u.sp * dt;                              // always prograde, like the planets
+          mesh.position.set(Math.cos(u.ang) * u.r, u.y, Math.sin(u.ang) * u.r);
+          mesh.lookAt(mesh.position.x - Math.sin(u.ang), mesh.position.y, mesh.position.z + Math.cos(u.ang));
         }
       }
     }
   }
 
   // ---------- Economy ----------
-  var rate = { ore: 0, eOut: 0, eUse: 0, ratio: 1 };
+  // Energy is the multiplier on every powered building, so a surplus is worth chasing:
+  //   ≤15% of the demand met → ×0.15 (starved, but never fully off)
+  //   100% met               → ×1
+  //   200%+ met              → ×E_MAX_BONUS (the biggest bonus you can hold)
+  var E_MAX_BONUS = 10, E_FLOOR = 0.15, E_FULL_AT = 2;
+  function energyMult(cover) {
+    if (cover <= E_FLOOR) return E_FLOOR;
+    if (cover <= 1) return cover;
+    return 1 + Math.min(1, (cover - 1) / (E_FULL_AT - 1)) * (E_MAX_BONUS - 1);
+  }
+  var rate = { ore: 0, eOut: 0, eUse: 0, ratio: 1, cover: 1 };
   function computeRate() {
     var eOut = 0, eUse = 0, i, b, o;
-    for (i = 0; i < BUILDINGS.length; i++) { b = BUILDINGS[i]; o = owned(b.id); if (!o) continue; eOut += b.eOut * o * (mods.bld[b.id] || 1); eUse += b.eUse * o; }
+    for (i = 0; i < BUILDINGS.length; i++) {
+      b = BUILDINGS[i]; o = owned(b.id); if (!o) continue;
+      eOut += b.eOut * o * (mods.bld[b.id] || 1);      // Mk levels & research raise output…
+      eUse += b.eUse * o;                              // …demand is flat per unit
+    }
     eOut *= mods.eOut; eUse *= mods.eUse;
-    // deficit → down to 15% efficiency (never fully off); surplus → up to +50% (so energy upgrades pay off)
-    var ratio;
-    if (eUse <= 0) { ratio = 1; }
-    else { var rr = eOut / eUse; ratio = rr >= 1 ? (1 + Math.min(1, rr - 1) * 0.5) : Math.max(0.15, rr); }
+    var cover = eUse > 0 ? eOut / eUse : E_FULL_AT;    // nothing draws power → no penalty
+    var ratio = eUse > 0 ? energyMult(cover) : 1;
     var ore = 0;
     for (i = 0; i < BUILDINGS.length; i++) {
-      b = BUILDINGS[i]; o = owned(b.id); if (!o || !b.ore) continue;
-      var p = b.ore * o * (mods.bld[b.id] || 1) * mods.all;
-      if (b.eUse > 0) p *= ratio;
-      ore += p;
+      b = BUILDINGS[i]; o = owned(b.id); if (!o) continue;
+      if (b.ore) {
+        var p = b.ore * o * (mods.bld[b.id] || 1) * mods.all;
+        if (b.eUse > 0) p *= ratio;
+        ore += p;
+      }
+      if (b.oreUse) ore -= b.oreUse * o;                // vanity structures burn ore instead
     }
-    rate.ore = ore; rate.eOut = eOut; rate.eUse = eUse; rate.ratio = ratio;
+    rate.ore = ore; rate.eOut = eOut; rate.eUse = eUse; rate.ratio = ratio; rate.cover = cover;
   }
   // Wall-clock accrual so production keeps running in a backgrounded tab (that's the "idle").
   var lastAccrue = Date.now();
@@ -529,6 +816,7 @@
     if (dtSec > 3600) dtSec = 3600;                 // cap catch-up to 1 hour
     computeRate();
     S.ore += rate.ore * dtSec;
+    if (S.ore < 0) S.ore = 0;                       // an ore sink can drain you, but not into debt
     if (S.ore > S.maxOre) S.maxOre = S.ore;
   }
   OBS.onFrame(function (dt) { updateModels(dt); accrue(); });
@@ -566,7 +854,7 @@
   }
   function buy(id) {
     var b = byId[id], c = cost(b);
-    if (S.ore < c) return;
+    if (maxed(b) || S.ore < c) return;
     S.ore -= c; S.b[id] = owned(id) + 1;
     reconcile(b); recompute(); refresh(); scheduleSave();
   }
@@ -599,14 +887,21 @@
     if (!window.confirm("Reset your space empire? This cannot be undone.")) return;
     if (saveT) { clearTimeout(saveT); saveT = 0; }   // drop any pending write of the pre-reset save
     S = fresh();                                      // wipes ore, buildings, Mk upgrades (up) and research (rs)
-    for (var id in models) { models[id].forEach(function (m) { unitsGroup.remove(m); }); models[id] = []; }
+    for (var id in models) {
+      var own = byId[id] && byId[id].build;
+      models[id].forEach(function (m) {
+        unitsGroup.remove(m);
+        if (own) { if (OBS.removeClickable) OBS.removeClickable(m); disposeTree(m); }
+      });
+      models[id] = [];
+    }
     recompute(); computeRate();                      // rebuild modifiers AND the rate readout, else the header keeps the old (upgraded) numbers
     lastAccrue = Date.now();
     // scrub any lingering "done / ✓ Mk IV" state off the upgrade & research tiles
     BUILDINGS.forEach(function (b) { if (b._utile) { b._utile.hidden = true; b._utile.disabled = false; b._utile.classList.remove("done"); } });
     RESEARCH.forEach(function (r) { if (r._row) r._row.classList.remove("done"); });
     try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
-    panel.hidden = true; panel.classList.remove("idle--open"); refresh();
+    panel.hidden = true; panel.classList.remove("idle--open"); tuckIntro(false); refresh();
   }
 
   // ---------- Persistence ----------
@@ -624,7 +919,9 @@
     '<button class="idle__handle" aria-label="Toggle panel"><span class="idle__hgem">◆</span><span class="idle__hore">0</span></button>' +
     '<div class="idle__inner">' +
       '<div class="idle__bar"><span class="idle__gem">◆</span><b class="idle__ore">0</b><span class="idle__u">ore</span><span class="idle__rate">+0/s</span></div>' +
-      '<div class="idle__energy"><span class="idle__elbl">⚡ energy/s</span><span class="idle__evals">+0 / −0</span><i class="idle__ebar"><b></b></i></div>' +
+      '<div class="idle__energy" title="Spare energy powers everything that draws it: 15% of demand → ×0.15 · 100% → ×1 · 200% or more → ×' + E_MAX_BONUS + '">' +
+        '<span class="idle__elbl">⚡ energy/s</span><span class="idle__evals">+0 / −0</span>' +
+        '<i class="idle__ebar"><b></b></i><span class="idle__emult">×1</span></div>' +
       '<div class="idle__tabs"><button data-tab="build" class="on">Build</button><button data-tab="research">Research</button></div>' +
       '<div class="idle__scroll"><div class="idle__list" data-panel="build"></div><div class="idle__list idle__list--grid" data-panel="research" hidden></div></div>' +
       '<div class="idle__foot"><button class="idle__reset">reset</button></div>' +
@@ -636,14 +933,21 @@
   var rateEl = panel.querySelector(".idle__rate");
   var eValsEl = panel.querySelector(".idle__evals");
   var eBarEl = panel.querySelector(".idle__ebar b");
+  var eMultEl = panel.querySelector(".idle__emult");
   var buildList = panel.querySelector('[data-panel="build"]');
   var researchList = panel.querySelector('[data-panel="research"]');
+
+  // Once mining starts the page title slides into the top-right corner and shrinks,
+  // handing the middle of the screen over to the game.
+  var introEl = document.querySelector(".observatory__intro");
+  function tuckIntro(on) { if (introEl) introEl.classList.toggle("observatory__intro--tucked", on); }
 
   function openPanel() {
     panel.hidden = false;
     panel.classList.add("idle--reveal");
     void panel.offsetWidth;              // reflow so the closed state paints first → it slides + fades in
     panel.classList.add("idle--open");
+    tuckIntro(true);
   }
   panel.querySelector(".idle__handle").addEventListener("click", function () { panel.classList.toggle("idle--open"); });
   panel.querySelector(".idle__reset").addEventListener("click", doReset);
@@ -693,7 +997,7 @@
   // Per-building upgrade tiles — the Mk upgrades now live in Research too
   BUILDINGS.forEach(function (b) {
     var tile = el("button", "rtile rtile--up"); tile.hidden = true;
-    tile.innerHTML = '<b>' + b.ic + ' ' + b.name + '</b><span class="rtile__d">Production ×2 per level</span><span class="rtile__c"></span>';
+    tile.innerHTML = '<b>' + b.ic + ' ' + b.name + '</b><span class="rtile__d">' + (b.upText || "Production ×2 per level") + '</span><span class="rtile__c"></span>';
     tile.addEventListener("click", function () { buyUp(b.id); });
     researchList.appendChild(tile);
     b._utile = tile;
@@ -704,10 +1008,11 @@
     var o = owned(b.id); if (!o || !b.ore) return 0;
     var p = b.ore * o * (mods.bld[b.id] || 1) * mods.all; if (b.eUse > 0) p *= rate.ratio; return p;
   }
-  // "+ore/s · ±energy" for a given ore & energy rate (energy>0 produces, <0 consumes)
+  // "±ore/s · ±energy" for a given ore & energy rate (>0 produces, <0 consumes)
   function statStr(ore, e) {
     var s = [];
     if (ore > 0) s.push("+" + fmt(ore) + "/s");
+    else if (ore < 0) s.push("−" + fmt(-ore) + "/s");
     if (e > 0) s.push("+" + fmt(e) + "⚡");
     else if (e < 0) s.push("−" + fmt(-e) + "⚡");
     return s.length ? s.join(" · ") : "—";
@@ -716,11 +1021,15 @@
   function refresh() {
     oreEl.textContent = fmt(S.ore);
     hOreEl.textContent = fmt(S.ore);
-    rateEl.textContent = "+" + fmt(rate.ore) + "/s";
+    rateEl.textContent = (rate.ore < 0 ? "" : "+") + fmt(rate.ore) + "/s";
+    rateEl.classList.toggle("neg", rate.ore < 0);
     eValsEl.textContent = "+" + fmt(rate.eOut) + " / −" + fmt(rate.eUse);
-    var pct = rate.eUse > 0 ? Math.round(rate.ratio * 100) : 100;
-    eBarEl.style.width = pct + "%";
-    eBarEl.className = pct >= 100 ? "" : (pct >= 60 ? "warn" : "low");
+    // the bar fills as you close in on the 2× surplus that pays the top bonus
+    var cov = rate.eUse > 0 ? rate.cover : E_FULL_AT;
+    eBarEl.style.width = Math.min(100, Math.round((cov / E_FULL_AT) * 100)) + "%";
+    eBarEl.className = cov >= 1 ? "" : (cov >= 0.6 ? "warn" : "low");
+    eMultEl.textContent = "×" + fmt(rate.ratio);
+    eMultEl.className = "idle__emult" + (rate.ratio > 1 ? " up" : (rate.ratio < 1 ? " down" : ""));
 
     var totalOwned = 0;
     for (var bi = 0; bi < BUILDINGS.length; bi++) totalOwned += owned(BUILDINGS[bi].id);
@@ -730,16 +1039,17 @@
       var o = owned(b.id);
       var visible = o > 0 || S.maxOre >= b.baseCost * 0.5;
       b._row.hidden = !visible; if (!visible) return;
-      b._ct.textContent = "×" + o;
+      b._ct.textContent = b.max ? (o > 0 ? "built" : "") : ("×" + o);
       // per-unit and total, so "one" vs "all" is explicit
-      var mult = (mods.bld[b.id] || 1) * mods.all;
-      var perOre = b.ore > 0 ? b.ore * mult * (b.eUse > 0 ? rate.ratio : 1) : 0;
-      var perE = b.eOut > 0 ? b.eOut * mods.eOut : (b.eUse > 0 ? -b.eUse * mods.eUse : 0);
+      var bm = mods.bld[b.id] || 1, mult = bm * mods.all;
+      var perOre = b.ore > 0 ? b.ore * mult * (b.eUse > 0 ? rate.ratio : 1) : (b.oreUse ? -b.oreUse : 0);
+      // energy output rides the same Mk/research multipliers as ore, so show them here too
+      var perE = b.eOut > 0 ? b.eOut * bm * mods.eOut : (b.eUse > 0 ? -b.eUse * mods.eUse : 0);
       b._each.innerHTML = '<em>each</em>' + statStr(perOre, perE);
-      b._all.innerHTML = o > 0 ? ('<em>all</em>' + statStr(perOre * o, perE * o)) : '';
+      b._all.innerHTML = (o > 0 && !b.max) ? ('<em>all</em>' + statStr(perOre * o, perE * o)) : '';
       var c = cost(b);
-      b._buy.textContent = "Buy · " + fmt(c);
-      b._buy.disabled = S.ore < c;
+      if (maxed(b)) { b._buy.textContent = "✓ Built"; b._buy.disabled = true; }
+      else { b._buy.textContent = "Buy · " + fmt(c); b._buy.disabled = S.ore < c; }
       b._sell.hidden = o <= 0;
       // per-building upgrade tile (lives in Research) — only once you own the building
       if (o > 0) {
@@ -762,7 +1072,7 @@
 
   // ---------- Boot ----------
   BUILDINGS.forEach(reconcile);         // spawn models for saved counts
-  if (S.started) panel.hidden = false;  // start collapsed (handle only); asteroid click opens it
+  if (S.started) { panel.hidden = false; tuckIntro(true); }  // start collapsed (handle only); asteroid click opens it
   refresh();
   setInterval(refresh, 220);
 

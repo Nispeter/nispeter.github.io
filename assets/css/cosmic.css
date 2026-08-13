@@ -564,9 +564,23 @@ body.theme-cs .section-hero__planet::after {
 .observatory__intro {
   position: absolute; left: 50%; top: calc(var(--masthead-total) + 4vh); transform: translateX(-50%);
   text-align: center; z-index: 2; pointer-events: none; width: min(92vw, 720px);
+  transition: left 0.85s var(--ease), top 0.85s var(--ease), width 0.85s var(--ease), transform 0.85s var(--ease);
 }
-.observatory__intro h1 { font-size: clamp(2.2rem, 6vw, 4rem); margin: 0; text-shadow: 0 4px 40px rgba(0,0,0,0.6); }
-.observatory__intro p { color: var(--text-dim); margin-top: 0.6rem; font-size: 1.05rem; }
+.observatory__intro h1 {
+  font-size: clamp(2.2rem, 6vw, 4rem); margin: 0; text-shadow: 0 4px 40px rgba(0,0,0,0.6);
+  transition: font-size 0.85s var(--ease);
+}
+.observatory__intro p {
+  color: var(--text-dim); margin-top: 0.6rem; font-size: 1.05rem;
+  transition: font-size 0.85s var(--ease), margin-top 0.85s var(--ease), opacity 0.85s;
+}
+/* Mining started → the title gets out of the way, up in the top-right corner */
+.observatory__intro--tucked {
+  left: calc(100% - 1.2rem); top: calc(var(--masthead-h) + 0.6rem);
+  transform: translateX(-100%); width: min(60vw, 260px); text-align: right;
+}
+.observatory__intro--tucked h1 { font-size: clamp(1rem, 3.2vw, 1.35rem); }
+.observatory__intro--tucked p { font-size: 0.72rem; margin-top: 0.15rem; opacity: 0.75; }
 .observatory__hint {
   position: absolute; left: 50%; bottom: 4vh; transform: translateX(-50%); z-index: 2;
   color: var(--text-dim); font-family: var(--font-ui); font-size: 0.85rem; letter-spacing: 0.08em;
@@ -877,17 +891,22 @@ body.theme-cs .section-hero__planet::after {
 .idle__ore { color: var(--text); font-size: 1.05rem; }
 .idle__u { color: var(--text-dim); margin-right: auto; font-size: 0.72rem; }
 .idle__rate { color: var(--web-2); font-size: 0.78rem; }
+.idle__rate.neg { color: #ff5d6c; }                        /* an ore sink is outspending you */
 
 .idle__energy {
   display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem;
   border-bottom: 1px solid var(--border); font-size: 0.74rem;
 }
-.idle__elbl { color: var(--text-dim); font-family: var(--font-ui); white-space: nowrap; }
-.idle__evals { color: var(--sun); font-family: var(--font-ui); white-space: nowrap; }
-.idle__ebar { flex: 1; min-width: 40px; height: 7px; border-radius: 4px; background: var(--bg-elev); overflow: hidden; border: 1px solid var(--border); }
+.idle__elbl { color: var(--text-dim); font-family: var(--font-display); white-space: nowrap; }
+.idle__evals { color: var(--sun); font-family: var(--font-display); white-space: nowrap; }
+.idle__ebar { flex: 1; min-width: 30px; height: 7px; border-radius: 4px; background: var(--bg-elev); overflow: hidden; border: 1px solid var(--border); }
 .idle__ebar b { display: block; height: 100%; width: 100%; background: var(--web); transition: width 0.3s; }
 .idle__ebar b.warn { background: var(--game-2); }
 .idle__ebar b.low { background: #ff5d6c; }
+/* the production multiplier that spare energy is currently buying you */
+.idle__emult { font-family: var(--font-display); font-size: 0.72rem; color: var(--text-dim); white-space: nowrap; text-align: right; }
+.idle__emult.up { color: var(--web); }
+.idle__emult.down { color: #ff5d6c; }
 
 /* Tabs — segmented control with a clearly distinct active state */
 .idle__tabs { display: flex; gap: 0.35rem; padding: 0.55rem 0.6rem 0.35rem; }
