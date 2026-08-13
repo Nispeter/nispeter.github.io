@@ -26,7 +26,11 @@
     var body = doc.body;
     var toTop = $('[data-to-top]');
     var progress = $('.masthead__progress');
+    var navToggle = $('#nav-toggle');
     var ticking = false;
+    var lastY = window.pageYOffset || 0;
+    var HIDE_AFTER = 120;   // px of page scrolled before the bar is allowed to hide
+    var DELTA = 6;          // ignore scroll jitter smaller than this
 
     if (toTop) {
       toTop.removeAttribute('hidden');
@@ -41,6 +45,16 @@
 
       body.classList.toggle('is-scrolled', y > 8);
       if (toTop) toTop.classList.toggle('is-on', y > 600);
+
+      // Hide the island while scrolling down, bring it back on the way up.
+      // Never hide it out from under an open menu or an open palette.
+      var moved = y - lastY;
+      if (Math.abs(moved) > DELTA) {
+        var pinned = (navToggle && navToggle.checked) || doc.querySelector('.palette.is-open');
+        body.classList.toggle('nav-hidden', !pinned && moved > 0 && y > HIDE_AFTER);
+        lastY = y;
+      }
+      if (y <= HIDE_AFTER) body.classList.remove('nav-hidden');
 
       // Only a page with real reading length earns a progress bar.
       if (progress) {
@@ -76,18 +90,26 @@
     var active = $('a.is-active', navEl);
     var lit = null;
 
-    function moveTo(link) {
+    // `instant` skips the slide. Each nav click is a full page load, so an animated
+    // initial placement just reads as the pill flying in from the left every time —
+    // only movement *within* a page (hover, focus) should actually travel.
+    function moveTo(link, instant) {
       if (lit) lit.classList.remove('is-lit');
+      if (instant) indicator.style.transition = 'none';
       if (!link) {
         indicator.style.setProperty('--nav-o', 0);
         lit = null;
-        return;
+      } else {
+        indicator.style.setProperty('--nav-x', link.offsetLeft + 'px');
+        indicator.style.setProperty('--nav-w', link.offsetWidth + 'px');
+        indicator.style.setProperty('--nav-o', 1);
+        link.classList.add('is-lit');
+        lit = link;
       }
-      indicator.style.setProperty('--nav-x', link.offsetLeft + 'px');
-      indicator.style.setProperty('--nav-w', link.offsetWidth + 'px');
-      indicator.style.setProperty('--nav-o', 1);
-      link.classList.add('is-lit');
-      lit = link;
+      if (instant) {
+        void indicator.offsetWidth;        // flush the jump before transitions come back
+        indicator.style.transition = '';
+      }
     }
 
     links.forEach(function (link) {
@@ -99,10 +121,10 @@
       if (!navEl.contains(e.relatedTarget)) moveTo(active);
     });
 
-    // Fonts land after first paint and change link widths — remeasure then.
-    moveTo(active);
-    if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(function () { moveTo(lit || active); });
-    window.addEventListener('resize', function () { moveTo(lit || active); }, { passive: true });
+    // Fonts land after first paint and change link widths — remeasure then, also instantly.
+    moveTo(active, true);
+    if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(function () { moveTo(lit || active, true); });
+    window.addEventListener('resize', function () { moveTo(lit || active, true); }, { passive: true });
 
     // Mobile drawer: the checkbox owns the state, we only mirror it for a11y.
     var toggle = $('#nav-toggle');
@@ -210,92 +232,6 @@
   })();
 
   /* ---------------------------------------------------------
-     Section filters: tech chips + free text, mirrored in the URL.
-     --------------------------------------------------------- */
-  (function filters() {
-    var wrap = $('[data-filters]');
-    var grid = $('[data-filter-grid]');
-    if (!wrap || !grid) return;
-
-    var input = $('[data-filter-input]', wrap);
-    var countEl = $('[data-filter-count]', wrap);
-    var emptyEl = $('[data-filter-empty]');
-    var chips = $$('.fchip', wrap);
-    var cards = $$('.card', grid);
-    var tech = '*';
-
-    function matches(card, q) {
-      if (tech !== '*') {
-        var list = (card.getAttribute('data-tech') || '').split('|');
-        if (list.indexOf(tech) === -1) return false;
-      }
-      if (!q) return true;
-      var hay = (card.getAttribute('data-title') || '') + ' ' +
-                (card.getAttribute('data-tech') || '') + ' ' +
-                (card.getAttribute('data-year') || '') + ' ' +
-                (card.getAttribute('data-text') || '');
-      return hay.indexOf(q) !== -1;
-    }
-
-    function run(pushUrl) {
-      var q = (input ? input.value : '').trim().toLowerCase();
-      var shown = 0;
-
-      cards.forEach(function (card) {
-        var ok = matches(card, q);
-        card.classList.toggle('is-filtered', !ok);
-        // A card hidden at load never intersected, so it would come back invisible.
-        if (ok) { card.classList.add('is-in'); shown++; }
-      });
-
-      if (countEl) countEl.textContent = shown + ' / ' + cards.length;
-      if (emptyEl) emptyEl.hidden = shown !== 0;
-
-      if (pushUrl) {
-        var params = new URLSearchParams();
-        if (tech !== '*') params.set('tech', tech);
-        if (q) params.set('q', q);
-        var qs = params.toString();
-        history.replaceState(null, '', qs ? '?' + qs : location.pathname);
-      }
-    }
-
-    chips.forEach(function (chip) {
-      chip.addEventListener('click', function () {
-        tech = chip.getAttribute('data-tech');
-        chips.forEach(function (c) {
-          var on = c === chip;
-          c.classList.toggle('is-on', on);
-          c.setAttribute('aria-pressed', String(on));
-        });
-        run(true);
-      });
-    });
-
-    if (input) {
-      input.addEventListener('input', function () { run(true); });
-      // Esc clears rather than closing anything — the palette owns global Esc.
-      input.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && input.value) { e.stopPropagation(); input.value = ''; run(true); }
-      });
-    }
-
-    // Restore a linked/bookmarked filter state.
-    (function restore() {
-      var params = new URLSearchParams(location.search);
-      var t = (params.get('tech') || '').toLowerCase();
-      var q = params.get('q') || '';
-      // Text first: chip.click() re-runs and would otherwise drop ?q from the URL.
-      if (q && input) input.value = q;
-      if (t) {
-        var chip = chips.filter(function (c) { return c.getAttribute('data-tech') === t; })[0];
-        if (chip) chip.click();
-      }
-      run(false);
-    })();
-  })();
-
-  /* ---------------------------------------------------------
      Command palette (Ctrl/⌘+K, or "/").
      --------------------------------------------------------- */
   (function palette() {
@@ -310,15 +246,12 @@
     var input = $('#palette-input');
     var list = $('#palette-results');
     var emptyEl = $('#palette-empty');
-    var isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform || '');
     var open = false;
     var results = [];
     var sel = 0;
     var lastFocus = null;
 
     el.removeAttribute('hidden');
-
-    $$('[data-shortcut-hint]').forEach(function (n) { n.textContent = isMac ? '⌘K' : 'Ctrl K'; });
 
     function score(item, q) {
       var title = item.t.toLowerCase();
