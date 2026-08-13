@@ -75,7 +75,7 @@ layout: default
   </div>
 
   {%- if prevp or has_next -%}
-  <nav class="project__nav" aria-label="Otros proyectos">
+  <nav class="project__nav" aria-label="More projects">
     {%- if prevp -%}
     {%- assign pt = prevp.header.teaser | default: prevp.header.image -%}
     <a class="pnav__item pnav__item--prev" href="{{ prevp.url | relative_url }}" rel="prev">
@@ -84,7 +84,7 @@ layout: default
       <span class="pnav__thumb"><img src="{{ pt | relative_url }}" alt="" loading="lazy"></span>
       {%- endif -%}
       <span class="pnav__txt">
-        <span class="pnav__lbl">← Anterior</span>
+        <span class="pnav__lbl">← Previous</span>
         <span class="pnav__t">{{ prevp.title }}</span>
       </span>
     </a>
@@ -97,7 +97,7 @@ layout: default
       <span class="pnav__thumb"><img src="{{ nt | relative_url }}" alt="" loading="lazy"></span>
       {%- endif -%}
       <span class="pnav__txt">
-        <span class="pnav__lbl">Siguiente →</span>
+        <span class="pnav__lbl">Next →</span>
         <span class="pnav__t">{{ nextp.title }}</span>
       </span>
     </a>
@@ -106,6 +106,6 @@ layout: default
   {%- endif -%}
 
   {%- if secname -%}
-  <p class="project__back"><a href="{{ securl | relative_url }}">↑ Volver a {{ secname }}</a></p>
+  <p class="project__back"><a href="{{ securl | relative_url }}">↑ Back to {{ secname }}</a></p>
   {%- endif -%}
 </article>

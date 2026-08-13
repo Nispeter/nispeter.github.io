@@ -16,7 +16,7 @@
   {"t":{{ item.title | jsonify }},"u":{{ item.url | relative_url | jsonify }},"s":{{ sub | strip | jsonify }},"k":{{ keys | strip | downcase | jsonify }},"y":{{ item.year | default: '' | jsonify }},"c":{{ sec | default: '' | jsonify }}},
 {%- endfor -%}
 {%- for nav in site.data.navigation.main -%}
-  {"t":{{ nav.title | jsonify }},"u":{{ nav.url | relative_url | jsonify }},"s":"Sección","k":{{ nav.title | downcase | jsonify }},"y":"","c":"nav"}{%- unless forloop.last -%},{%- endunless -%}
+  {"t":{{ nav.title | jsonify }},"u":{{ nav.url | relative_url | jsonify }},"s":"Section","k":{{ nav.title | downcase | jsonify }},"y":"","c":"nav"}{%- unless forloop.last -%},{%- endunless -%}
 {%- endfor -%}
 ]
 </script>
