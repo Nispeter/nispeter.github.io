@@ -833,11 +833,14 @@ body.theme-cs .section-hero__planet::after {
 
 /* ---------- Idle game (Space Automation): left slide-drawer ---------- */
 .idle {
-  /* Flush with the bottom edge of the floating island, not below its gutter,
-     so the drawer meets the topbar instead of leaving a strip of starfield. */
-  position: fixed; left: 0; top: calc(var(--masthead-gap) + var(--masthead-h)); bottom: 0; z-index: 90;
+  /* The masthead is a centred island, so nothing sits above the screen's left edge to
+     butt against. Float the drawer on the same gutter instead: rounded on all four
+     corners it reads as a deliberate panel rather than one clipped by a missing bar. */
+  position: fixed; left: var(--masthead-gap); top: var(--masthead-total);
+  bottom: var(--masthead-gap); z-index: 90;
   width: 300px; max-width: 88vw;
-  transform: translateX(-100%); transition: transform 0.35s var(--ease);
+  transform: translateX(calc(-100% - var(--masthead-gap)));
+  transition: transform 0.35s var(--ease);
   overflow: visible; pointer-events: none;
 }
 .idle--open { transform: none; }
@@ -850,17 +853,20 @@ body.theme-cs .section-hero__planet::after {
   height: 100%; display: flex; flex-direction: column; pointer-events: auto;
   background: rgba(10, 14, 39, 0.86); backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
-  border-right: 1px solid var(--border-2); box-shadow: 8px 0 40px rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--border-2); border-radius: 16px;
+  overflow: hidden;                  /* clip the header/list rows to the rounded corners */
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
   font-size: 0.82rem;
 }
 
 /* Handle tab on the drawer's right edge, always visible once started */
 .idle__handle {
-  position: absolute; right: -40px; top: 18px; pointer-events: auto;
+  position: absolute; right: -39px; top: 18px; pointer-events: auto;
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   width: 40px; padding: 0.5rem 0; cursor: pointer;
   background: rgba(10, 14, 39, 0.86); backdrop-filter: blur(12px);
   border: 1px solid var(--border-2); border-left: 0; border-radius: 0 12px 12px 0;
+  box-shadow: 6px 0 20px rgba(0, 0, 0, 0.35);
   color: var(--text); font-family: var(--font-ui);
 }
 .idle__hgem { color: var(--sun); font-size: 1rem; }
