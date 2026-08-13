@@ -1,5 +1,5 @@
 /* ============================================================
-   Space Automation — an idle/incremental game layered onto the
+   Space Automation: an idle/incremental game layered onto the
    observatory scene. Click the asteroids to start mining; a compact
    sidebar lets you buy fleets with incremental cost & production,
    an energy economy (producers need energy), per-unit upgrades and a
@@ -226,7 +226,7 @@
     }
     var sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true }));
     sp.scale.set(scale, scale, 1);
-    sp.raycast = function () {};   // a halo is much wider than its structure — never let it eat a click
+    sp.raycast = function () {};   // a halo is much wider than its structure, so never let it eat a click
     return sp;
   }
   function vanityMat(color, emissive, glow) {
@@ -261,12 +261,12 @@
         glass = vanityMat(0x8fdcff, null, 0.7);
     var i, a;
 
-    // Mk I — a hex deck under a glass dome
+    // Mk I, a hex deck under a glass dome
     part(g, new THREE.CylinderGeometry(0.62, 0.86, 0.3, 8), dark, 0, 0, 0);
     part(g, new THREE.CylinderGeometry(0.68, 0.68, 0.05, 8), gold, 0, 0.17, 0);
     part(g, new THREE.SphereGeometry(0.4, 12, 6, 0, TAU, 0, Math.PI / 2), glass, 0, 0.2, 0);
 
-    // Mk II — a neon ring sweeping around the deck, studded with pods
+    // Mk II, a neon ring sweeping around the deck, studded with pods
     if (t >= 1) {
       var s1 = new THREE.Group();
       var r1 = new THREE.Mesh(new THREE.TorusGeometry(1.05, 0.035, 6, 40), neon); r1.rotation.x = Math.PI / 2;
@@ -275,7 +275,7 @@
       g.add(s1); g.anim.push({ o: s1, sy: 0.5 });
     }
 
-    // Mk III — an upper deck, spires and a tilted outer ring
+    // Mk III, an upper deck, spires and a tilted outer ring
     if (t >= 2) {
       part(g, new THREE.CylinderGeometry(0.34, 0.5, 0.36, 8), gold, 0, 0.5, 0);
       part(g, new THREE.ConeGeometry(0.1, 0.72, 6), neon, 0, 1.04, 0);
@@ -284,7 +284,7 @@
       var r2 = new THREE.Mesh(new THREE.TorusGeometry(1.35, 0.03, 6, 44), glass); r2.rotation.x = Math.PI / 2; s2.add(r2);
     }
 
-    // Mk IV — marquee lights, a crossed ring and a halo
+    // Mk IV, marquee lights, a crossed ring and a halo
     if (t >= 3) {
       var s3 = new THREE.Group();
       for (i = 0; i < 14; i++) { a = (i / 14) * TAU; part(s3, new THREE.SphereGeometry(0.055, 6, 5), i % 2 ? neon : glass, Math.cos(a) * 0.8, 0.26, Math.sin(a) * 0.8); }
@@ -309,7 +309,7 @@
         });
     var i;
     // The whole ship lies along its heading (+Z is the nose): wings and nacelles reach
-    // out SIDEWAYS and the drives sit at the stern. Nothing stands up above the hull —
+    // out SIDEWAYS and the drives sit at the stern. Nothing stands up above the hull ,
     // uprights are what make a hull read as a sailing ship.
     function nacelle(x, z, len, rad) {
       var n = new THREE.CylinderGeometry(rad, rad * 0.9, len, 6); n.rotateX(Math.PI / 2);
@@ -320,7 +320,7 @@
       part(g, new THREE.BoxGeometry(w, 0.025, l), plate, x, 0, z).rotation.y = sweep;
     }
 
-    // Mk I — a flattened fuselage, a sharp nose, a canopy, the main drive and stern fins
+    // Mk I, a flattened fuselage, a sharp nose, a canopy, the main drive and stern fins
     var hg = new THREE.CylinderGeometry(0.11, 0.19, 1.6, 6); hg.rotateX(Math.PI / 2); hg.scale(1, 0.62, 1);
     g.add(new THREE.Mesh(hg, hull));
     part(g, new THREE.ConeGeometry(0.11, 0.42, 6), hull, 0, 0, 0.95).rotation.x = Math.PI / 2;
@@ -328,7 +328,7 @@
     part(g, new THREE.CylinderGeometry(0.13, 0.1, 0.2, 6), drive, 0, 0, -0.88).rotation.x = Math.PI / 2;
     wing(0.24, -0.6, 0.26, 0.2, -0.3); wing(-0.24, -0.6, 0.26, 0.2, 0.3);
 
-    // Mk II — outboard pylons carrying twin nacelles, plus the main swept wings
+    // Mk II, outboard pylons carrying twin nacelles, plus the main swept wings
     if (t >= 1) {
       part(g, new THREE.BoxGeometry(0.24, 0.03, 0.07), hull, 0.29, 0, -0.28);
       part(g, new THREE.BoxGeometry(0.24, 0.03, 0.07), hull, -0.29, 0, -0.28);
@@ -337,7 +337,7 @@
       wing(0.4, 0.16, 0.44, 0.34, -0.34); wing(-0.4, 0.16, 0.44, 0.34, 0.34);
     }
 
-    // Mk III — forward canards, hull radiators, a sensor disc and wingtip lights
+    // Mk III, forward canards, hull radiators, a sensor disc and wingtip lights
     if (t >= 2) {
       wing(0.28, 0.6, 0.3, 0.18, -0.5); wing(-0.28, 0.6, 0.3, 0.18, 0.5);
       part(g, new THREE.BoxGeometry(0.025, 0.13, 0.66), trim, 0.19, 0.01, -0.1);
@@ -347,7 +347,7 @@
       part(g, new THREE.SphereGeometry(0.035, 6, 5), drive, -0.6, 0, 0.16);
     }
 
-    // Mk IV — a dorsal rail, glowing hull strips and a drive ring burning in the exhaust
+    // Mk IV, a dorsal rail, glowing hull strips and a drive ring burning in the exhaust
     if (t >= 3) {
       part(g, new THREE.BoxGeometry(0.03, 0.03, 0.92), hull, 0, 0.15, -0.06);
       part(g, new THREE.ConeGeometry(0.035, 0.16, 5), trim, 0, 0.15, 0.48).rotation.x = Math.PI / 2;
@@ -369,7 +369,7 @@
   // Each vanity structure is also a door: click it and the scene warps to its own
   // easter-egg page, the same way a planet warps to its section.
   var EGGS = {
-    casino:  { attr: "data-casino",  url: "/casino/",  blurb: "You built it — step inside" },
+    casino:  { attr: "data-casino",  url: "/casino/",  blurb: "You built it, step inside" },
     galleon: { attr: "data-galleon", url: "/galleon/", blurb: "Read the ship's log" }
   };
   (function eggUrls() {
@@ -406,7 +406,7 @@
     }
   }
   var TAU = Math.PI * 2, STD = 0.12, SUN_KEEP = 2.3;  // STD = shared standard rotation speed
-  var GOLDEN = Math.PI * (3 - Math.sqrt(5));          // golden angle — packs points evenly on a shell
+  var GOLDEN = Math.PI * (3 - Math.sqrt(5));          // golden angle, packs points evenly on a shell
   var SUN_BAND = 0.62;                                // |cos φ| limit for sun-huggers: clear of the Dyson rings
   var _wp = new THREE.Vector3(), _dir = new THREE.Vector3(), _base = new THREE.Vector3();
   var _aimObj = new THREE.Object3D();   // scratch for smooth barrel aiming
@@ -647,7 +647,7 @@
                 mesh.lookAt(u.dock.position.x, u.dock.position.y, u.dock.position.z);
               }
             } else if (u.st === "toTether") {
-              // fly to the warp station (which is orbiting) — catch it, with a timeout so it never sticks
+              // fly to the warp station (which is orbiting), catch it, with a timeout so it never sticks
               var wt = (u.tether && u.tether.parent) ? u.tether.position : null;
               var dv = (u.target && u.target.parent) ? u.target.position : null;
               if (!wt || !dv) { u.st = null; u.target = null; }
@@ -744,7 +744,7 @@
             mesh.lookAt(mesh.position.x + u.jdir.x, mesh.position.y + u.jdir.y, mesh.position.z + u.jdir.z);
             mesh.scale.set(1, 1, 2 + (0.35 - u.timer) * 30);   // stretch into a light streak
             if (u.timer <= 0) { mesh.visible = false; mesh.scale.set(1, 1, 1); u.est = "gone"; u.timer = 3 + Math.random() * 2.5; }
-          } else { // gone — reappear after a few seconds
+          } else { // gone, reappears after a few seconds
             u.timer -= dt;
             if (u.timer <= 0) {
               var ra = Math.random() * TAU, rr2 = 12 + Math.random() * 2;
@@ -962,7 +962,7 @@
 
   // How-to-play tooltip, shown while you own nothing
   var helpEl = el("div", "idle-help",
-    "⛏ <b>Mine the asteroid belt</b> to earn ore, then buy your first <b>Miner</b> below — it mines on its own. Grow a fleet, watch your ⚡ energy, and research upgrades.");
+    "⛏ <b>Mine the asteroid belt</b> to earn ore, then buy your first <b>Miner</b> below, and it mines on its own. Grow a fleet, watch your ⚡ energy, and research upgrades.");
   buildList.appendChild(helpEl);
 
   // Build rows
@@ -984,7 +984,7 @@
     b._sell = row.querySelector(".irow__sell");
   });
 
-  // Research tiles — a grid of available + already-acquired upgrades
+  // Research tiles, a grid of available + already-acquired upgrades
   RESEARCH.forEach(function (r) {
     var tile = el("button", "rtile"); tile.hidden = true;
     tile.innerHTML = '<b>' + r.name + '</b><span class="rtile__d">' + r.desc + '</span><span class="rtile__c"></span>';
@@ -994,7 +994,7 @@
     r._cost = tile.querySelector(".rtile__c");
   });
 
-  // Per-building upgrade tiles — the Mk upgrades now live in Research too
+  // Per-building upgrade tiles, the Mk upgrades now live in Research too
   BUILDINGS.forEach(function (b) {
     var tile = el("button", "rtile rtile--up"); tile.hidden = true;
     tile.innerHTML = '<b>' + b.ic + ' ' + b.name + '</b><span class="rtile__d">' + (b.upText || "Production ×2 per level") + '</span><span class="rtile__c"></span>';
@@ -1051,7 +1051,7 @@
       if (maxed(b)) { b._buy.textContent = "✓ Built"; b._buy.disabled = true; }
       else { b._buy.textContent = "Buy · " + fmt(c); b._buy.disabled = S.ore < c; }
       b._sell.hidden = o <= 0;
-      // per-building upgrade tile (lives in Research) — only once you own the building
+      // per-building upgrade tile (lives in Research), only once you own the building
       if (o > 0) {
         var t = upTier(b.id);
         b._utile.hidden = false;

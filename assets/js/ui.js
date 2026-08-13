@@ -1,5 +1,5 @@
 /* ============================================================
-   ui.js — site-wide interaction layer for the Cosmic Observatory.
+   ui.js: site-wide interaction layer for the Cosmic Observatory.
    Vanilla, no deps, loaded with `defer` on every page.
 
    Everything here is progressive enhancement: the markup it drives is either
@@ -91,8 +91,8 @@
     var lit = null;
 
     // `instant` skips the slide. Each nav click is a full page load, so an animated
-    // initial placement just reads as the pill flying in from the left every time —
-    // only movement *within* a page (hover, focus) should actually travel.
+    // initial placement just reads as the pill flying in from the left every time.
+    // Only movement *within* a page (hover, focus) should actually travel.
     function moveTo(link, instant) {
       if (lit) lit.classList.remove('is-lit');
       if (instant) indicator.style.transition = 'none';
@@ -121,7 +121,7 @@
       if (!navEl.contains(e.relatedTarget)) moveTo(active);
     });
 
-    // Fonts land after first paint and change link widths — remeasure then, also instantly.
+    // Fonts land after first paint and change link widths, so remeasure then, also instantly.
     moveTo(active, true);
     if (doc.fonts && doc.fonts.ready) doc.fonts.ready.then(function () { moveTo(lit || active, true); });
     window.addEventListener('resize', function () { moveTo(lit || active, true); }, { passive: true });
@@ -206,7 +206,7 @@
   })();
 
   /* ---------------------------------------------------------
-     Reveal on scroll — staggered per grid position.
+     Reveal on scroll, staggered per grid position.
      --------------------------------------------------------- */
   (function reveal() {
     if (reduceMotion || !('IntersectionObserver' in window)) return;

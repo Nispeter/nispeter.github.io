@@ -1,5 +1,5 @@
 /* ============================================================
-   Cosmic Observatory — the 3D home scene.
+   Cosmic Observatory: the 3D home scene.
    Vanilla Three.js (global THREE, r149). No modules, no bundler.
    - Drag with the mouse/finger to orbit the camera.
    - Hover a planet for its label; click/tap to warp into its section.
@@ -50,14 +50,14 @@
   var camera = new THREE.PerspectiveCamera(52, 1, 0.1, 200);
   var CAM_BASE = new THREE.Vector3(0, 4.2, 13);
 
-  // Camera orbit (spherical) — driven by drag + slow auto-rotate
+  // Camera orbit (spherical), driven by drag + slow auto-rotate
   var radius = CAM_BASE.length();
   var yaw = Math.atan2(CAM_BASE.x, CAM_BASE.z);
   var pitch = Math.atan2(CAM_BASE.y, Math.sqrt(CAM_BASE.x * CAM_BASE.x + CAM_BASE.z * CAM_BASE.z));
   var targetYaw = yaw, targetPitch = pitch;
   var AUTO_SPIN = 0.05; // rad/sec when idle
 
-  // Zoom (a little): wheel on desktop, two-finger pinch on touch — clamped near the base distance
+  // Zoom (a little): wheel on desktop, two-finger pinch on touch, clamped near the base distance
   var RADIUS_BASE = radius;
   var RADIUS_MIN = RADIUS_BASE * 0.6;    // closest (zoom in)
   var RADIUS_MAX = RADIUS_BASE * 1.12;   // farthest (slight zoom out)
@@ -200,8 +200,8 @@
     bodies.push(body);
   });
 
-  // The sun is the author — clicking it opens the About page
-  sun.userData = { name: "About", blurb: "Who I am — bio & CV", url: aboutUrl };
+  // The sun is the author, so clicking it opens the About page
+  sun.userData = { name: "About", blurb: "Who I am: bio & CV", url: aboutUrl };
   bodies.push(sun);
 
   // --- Starfield -----------------------------------------------------------
