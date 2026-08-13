@@ -13,38 +13,9 @@ layout: default
 {% if content != '' %}<div class="section-intro">{{ content }}</div>{% endif %}
 
 {% if items.size > 0 %}
-  {%- comment -%}
-    Liquid on GitHub Pages has no `flatten`, so the tech list is accumulated into a
-    delimited string and split back out.
-  {%- endcomment -%}
-  {%- assign techs = "" -%}
-  {%- for it in items -%}{%- for t in it.tech -%}
-    {%- assign techs = techs | append: t | append: "|" -%}
-  {%- endfor -%}{%- endfor -%}
-  {%- assign techlist = techs | split: "|" | uniq | sort -%}
-
-  {%- comment -%} Hidden without JS (.has-ui gate in cosmic.css) so no dead controls ship. {%- endcomment -%}
-  <div class="filters" data-filters>
-    <div class="filters__search">
-      <svg class="ico-search" viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M12.7 12.7 17 17"/></svg>
-      <input type="search" id="filter-q" data-filter-input autocomplete="off"
-             placeholder="Filtrar proyectos…" aria-label="Filtrar proyectos por nombre o tecnología">
-    </div>
-    {%- if techlist.size > 1 -%}
-    <div class="filters__chips" role="group" aria-label="Filtrar por tecnología">
-      <button type="button" class="fchip is-on" data-tech="*" aria-pressed="true">Todos</button>
-      {%- for t in techlist -%}
-      <button type="button" class="fchip" data-tech="{{ t | downcase | escape }}" aria-pressed="false">{{ t }}</button>
-      {%- endfor -%}
-    </div>
-    {%- endif -%}
-    <p class="filters__count" data-filter-count aria-live="polite">{{ items.size }} / {{ items.size }}</p>
-  </div>
-
-<div class="card-grid" data-filter-grid>
+<div class="card-grid">
   {% for item in items %}{% include project-card.html item=item %}{% endfor %}
 </div>
-<p class="filters__empty" data-filter-empty hidden>Ningún proyecto coincide con ese filtro. ✦</p>
 {% else %}
 <p style="text-align:center;color:var(--text-dim)">Nothing in orbit here yet — check back soon. ✦</p>
 {% endif %}
