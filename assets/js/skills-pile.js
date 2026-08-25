@@ -1,6 +1,8 @@
 /* ============================================================
-   skills-pile.js: the About page skill chips, dropped into a heap you can
-   shove around. Vanilla, no deps, loaded only by /about/.
+   skills-pile.js: the About page skill chips. They sit in their ordinary
+   wrapped rows and stay there, looking like plain markup, until someone drags
+   one. That first grab turns gravity on and the whole lot collapses into a
+   heap you can shove around. Vanilla, no deps, loaded only by /about/.
 
    Each chip is a capsule (a segment with a radius), which is exactly what a
    pill-shaped chip already is. Rotation is real, so the heap settles into
@@ -14,8 +16,9 @@
    out of its neighbour, and the pile never stops churning.
 
    Progressive enhancement: the markup is an ordinary wrapped chip cloud and
-   stays that way with scripting off or reduced motion on. This file measures
-   the chips in that layout first, then takes over positioning.
+   stays that way with scripting off or reduced motion on. Even with the
+   script running, the chips are first measured in that layout and then put
+   back at exactly the same coordinates, so nothing moves until it is touched.
    ============================================================ */
 (function () {
   'use strict';
@@ -37,8 +40,8 @@
   var PARALLEL = 0.3;      // |sin| between two chips below which they count as parallel
   var DRAG_STIFF = 0.4;
   // Reading velocity back off the movement means a body shoved out of a deep
-  // overlap leaves at whatever speed the shove implied, which for a chip
-  // buried on spawn is a launch. Cap how fast overlap is allowed to close.
+  // overlap leaves at whatever speed the shove implied, which for a badly
+  // buried chip is a launch. Cap how fast overlap is allowed to close.
   var RECOVERY = 140;      // px/s
   // A settled heap never quite reaches zero on its own: two iterations a
   // substep leave every chip nudging its neighbours forever. Bleed off what
@@ -56,35 +59,58 @@
   var W = 0, H = 0;
   var held = null;
   var pointer = { x: 0, y: 0, vx: 0, vy: 0, t: 0 };
-  var raf = 0, acc = 0, last = 0, stillFor = 0, started = false;
+  var raf = 0, acc = 0, last = 0, stillFor = 0, started = false, falling = false;
   var linDamp = 1, angDamp = 1, maxPen = 1;
 
   function clamp(v, lo, hi) { return v < lo ? lo : v > hi ? hi : v; }
   function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
-  function rand(lo, hi) { return lo + Math.random() * (hi - lo); }
 
   /* ---------------------------------------------------------
-     Setup: measure in flow, then take the chips out of it.
+     Setup: measure the chips where the browser already put them, then take
+     them out of flow and pin them to those same coordinates. The page looks
+     untouched; every chip is simply now a body that has not been let go yet.
      --------------------------------------------------------- */
+  function measureNatural() {
+    host.classList.remove('is-pile');
+    host.style.height = '';
+    // getBoundingClientRect reports the transformed box, so a leftover
+    // transform from an earlier layout would be measured as the chip's
+    // natural spot. Clear them before asking where the browser puts things.
+    chips.forEach(function (el) { el.style.transform = ''; });
+
+    var box = host.getBoundingClientRect();
+    var out = chips.map(function (el) {
+      var r = el.getBoundingClientRect();
+      return {
+        el: el, w: r.width, h: r.height,
+        x: r.left - box.left + r.width / 2,
+        y: r.top - box.top + r.height / 2
+      };
+    });
+    out.rows = box.height;
+    return out;
+  }
+
+  // Pin the chips at their measured spots and give the box a floor. The rows
+  // stay at the top where they already were; the room below is where the heap
+  // will end up, and with no frame drawn around it nobody can tell it is there.
+  function place(dims) {
+    var area = 0;
+    dims.forEach(function (d) { area += d.w * d.h; });
+    var needed = Math.round(area * 1.65 / W) + 30;
+    H = clamp(Math.max(dims.rows, needed), 120, 1000);
+
+    host.style.height = H + 'px';
+    host.classList.add('is-pile');
+  }
+
   function build() {
     W = host.clientWidth;
     if (!W) return false;
 
-    // Measured while the chips are still laid out as a normal wrapped cloud.
-    var dims = chips.map(function (el) {
-      var r = el.getBoundingClientRect();
-      return { el: el, w: r.width, h: r.height };
-    });
+    var dims = measureNatural();
     if (!dims[0].w) return false;
-
-    // Height the heap needs: total chip area over the width, plus room for the
-    // fact that a pile of tilted pills never tessellates.
-    var area = 0;
-    dims.forEach(function (d) { area += d.w * d.h; });
-    H = clamp(Math.round(area * 1.65 / W) + 30, 200, 900);
-
-    host.style.height = H + 'px';
-    host.classList.add('is-pile');
+    place(dims);
 
     bodies = dims.map(function (d) {
       var m = d.w * d.h * 0.0015;
@@ -93,7 +119,7 @@
         w: d.w, h: d.h,
         r: d.h / 2,
         len: Math.max(d.w - d.h, 0.01),   // capsule segment; the caps are the ends
-        x: 0, y: 0, a: 0,
+        x: d.x, y: d.y, a: 0,
         px: 0, py: 0, pa: 0,              // where it was when this substep began
         vx: 0, vy: 0, va: 0,
         im: 1 / m,
@@ -101,7 +127,7 @@
         lax: 0, lay: 0,
         minx: 0, maxx: 0, miny: 0, maxy: 0,
         touched: false,                   // met a contact during this substep
-        lx: 0, ly: 0, la: 0,              // where it was on the previous frame
+        lx: d.x, ly: d.y, la: 0,          // where it was on the previous frame
         tx: '', ty: '', ta: ''            // last values written to the transform
       };
     });
@@ -109,35 +135,32 @@
     linDamp = Math.pow(LINEAR_DAMP, 1 / SUBSTEPS);
     angDamp = Math.pow(ANGULAR_DAMP, 1 / SUBSTEPS);
 
-    spawn();
     render();
     return true;
   }
 
-  // Shelf-pack the chips into rows above the box so they rain in without
-  // starting inside each other, which a random scatter would.
-  function spawn() {
-    var x = 0, rowH = 0;
-    var rows = [[]];
-    bodies.forEach(function (b) {
-      if (x + b.w > W && rows[rows.length - 1].length) { rows.push([]); x = 0; }
-      rows[rows.length - 1].push(b);
-      b.x = x + b.w / 2;
-      x += b.w + 6;
-      rowH = Math.max(rowH, b.h);
-    });
+  // Still in its rows and never touched: re-measure rather than stretch, so a
+  // window resize just re-wraps the way the markup would have.
+  function relayout() {
+    var w = host.clientWidth;
+    if (!w) return;
+    W = w;
 
-    rowH += 12;
-    rows.reverse().forEach(function (row, i) {
-      var top = -(30 + i * rowH);
-      row.forEach(function (b) {
-        b.y = top + rand(-5, 5);
-        b.a = rand(-0.4, 0.4);
-        b.vx = rand(-25, 25);
-        b.vy = rand(0, 50);
-        b.va = rand(-1, 1);
-      });
+    var dims = measureNatural();
+    if (!dims[0].w) return;
+    place(dims);
+
+    bodies.forEach(function (b, i) {
+      b.w = dims[i].w; b.h = dims[i].h;
+      b.r = b.h / 2;
+      b.len = Math.max(b.w - b.h, 0.01);
+      b.x = b.lx = dims[i].x;
+      b.y = b.ly = dims[i].y;
+      b.a = b.la = 0;
+      b.vx = b.vy = b.va = 0;
+      b.tx = b.ty = b.ta = '';   // transforms were just cleared, so redraw them
     });
+    render();
   }
 
   /* ---------------------------------------------------------
@@ -345,11 +368,12 @@
     }
   }
 
-  // Floor and side walls only. There is deliberately no ceiling: if the box
-  // ends up shorter than the heap needs, the overflow rests out of sight
-  // instead of being crushed against a lid.
+  // The box is sized to be at least as tall as the settled heap needs, so a
+  // lid can never crush anything: it is only there to stop a hard throw from
+  // sailing up into the CV above.
   function collideWalls(b) {
     collideWall(b, 0, -1, 0, H);   // floor
+    collideWall(b, 0, 1, 0, 0);    // ceiling
     collideWall(b, 1, 0, 0, 0);    // left
     collideWall(b, -1, 0, W, 0);   // right
   }
@@ -411,7 +435,7 @@
     for (s = 0; s < SUBSTEPS; s++) {
       for (i = 0; i < bodies.length; i++) {
         b = bodies[i];
-        b.vy += GRAVITY * h;
+        if (falling) b.vy += GRAVITY * h;
         b.px = b.x; b.py = b.y; b.pa = b.a;
         b.touched = false;
         b.x += b.vx * h;
@@ -527,6 +551,7 @@
     b.lax = dx * c - dy * s;   // the grab point, in the chip's own frame
     b.lay = dx * s + dy * c;
 
+    falling = true;   // the first grab is what lets go of the whole lot
     held = b;
     b.el.classList.add('is-held');
     try { b.el.setPointerCapture(e.pointerId); } catch (err) { /* not fatal */ }
@@ -560,16 +585,29 @@
   }
 
   /* ---------------------------------------------------------
-     Width changes: keep the heap inside the new box and let it resettle.
+     Width changes. Untouched chips re-wrap like the markup would; a heap that
+     has already fallen just gets squeezed into the new width and resettles.
      --------------------------------------------------------- */
   function onResize() {
     var w = host.clientWidth;
     if (!w || w === W) return;
+    if (!falling) { relayout(); return; }
+
     var scale = w / W;
     W = w;
     bodies.forEach(function (b) {
       b.x = clamp(b.x * scale, b.w / 2, W - b.w / 2);
     });
+
+    // A narrower box needs a taller one to hold the same heap, and there is a
+    // ceiling now, so grow it rather than crush what is already in there.
+    var area = 0;
+    bodies.forEach(function (b) { area += b.w * b.h; });
+    var needed = clamp(Math.round(area * 1.65 / W) + 30, 120, 1000);
+    if (needed > H) {
+      H = needed;
+      host.style.height = H + 'px';
+    }
     wake();
   }
 
@@ -579,31 +617,14 @@
     started = true;
     bindInput();
 
-    var note = document.querySelector('.skills-note');
-    if (note) {
-      var hint = document.createElement('span');
-      hint.className = 'skills-note__hint';
-      hint.textContent = ' Grab one and throw it.';
-      note.appendChild(hint);
-    }
-
     var resizeTimer = 0;
     window.addEventListener('resize', function () {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(onResize, 180);
     });
 
-    // Drop them in when the heap scrolls into view, not while it is off screen.
-    if ('IntersectionObserver' in window) {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) { wake(); io.disconnect(); }
-        });
-      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.02 });
-      io.observe(host);
-    } else {
-      wake();
-    }
+    // Nothing runs from here. The chips are sitting exactly where the browser
+    // laid them out, and the first grab is what starts the clock.
   }
 
   // Chip widths depend on the webfont, so measure only once it has landed.

@@ -341,20 +341,17 @@ body.has-progress .masthead__progress { opacity: 0.9; }
 }
 .chip:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 55%, var(--border-2)); }
 .chip em { color: var(--accent-2); font-style: normal; font-size: 0.78em; margin-left: 2px; }
-.skills-note { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 0.6rem; }
 .skills-cloud { margin-top: 0.4rem; }
 
 /* Skills heap: skills-pile.js measures the chips in the ordinary wrapped
-   layout above, then adds .is-pile and drives every transform itself. With
-   scripting off or reduced motion on, none of this applies and the cloud
-   stays a plain wrapped list. */
+   layout, then adds .is-pile and pins them to the very same spots, so this
+   changes nothing you can see until someone drags one. No frame and no
+   backdrop on purpose: the chips should read as ordinary page content, and
+   the empty room under them is where the heap lands once it falls. With
+   scripting off or reduced motion on, none of this applies at all. */
 .skills-cloud.is-pile {
   display: block; position: relative; overflow: hidden;
-  margin-top: 0.7rem; padding: 0;
-  border: 1px solid var(--border); border-radius: var(--radius);
-  background:
-    radial-gradient(120% 80% at 50% 120%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 70%),
-    var(--bg-2);
+  margin-top: 0.4rem; padding: 0;
 }
 .skills-cloud.is-pile .chip {
   position: absolute; top: 0; left: 0; margin: 0;
@@ -369,7 +366,6 @@ body.has-progress .masthead__progress { opacity: 0.9; }
   border-color: var(--accent);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
 }
-.skills-note__hint { color: var(--accent-2); }
 
 @media (max-width: 560px) {
   /* Applies in both states: the pile measures the chips before it takes over. */
