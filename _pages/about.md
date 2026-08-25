@@ -48,8 +48,6 @@ I have a strong interest in good coding practices and optimization, always striv
 
 ## Skills
 
-<p class="skills-note">Pulled automatically from every project's tech stack — a living map of what I've actually shipped with.</p>
-
 <div class="chips skills-cloud" data-skills-pile>
 {%- assign tech_str = "" -%}
 {%- for p in site.portfolio -%}{%- for t in p.tech -%}{%- assign tech_str = tech_str | append: t | append: "||" -%}{%- endfor -%}{%- endfor -%}
