@@ -1,8 +1,14 @@
 /* ============================================================
    skills-pile.js: the About page skill chips. They sit in their ordinary
    wrapped rows and stay there, looking like plain markup, until someone drags
-   one. That first grab turns gravity on and the whole lot collapses into a
-   heap you can shove around. Vanilla, no deps, loaded only by /about/.
+   one. That first grab turns gravity on and the whole lot comes loose into a
+   heap you can shove around the page. Vanilla, no deps, loaded only by
+   /about/.
+
+   The arena is the whole main column, from the top of the content down to
+   just above the footer, so a chip can be flung right up past the CV. The
+   chips move into a layer over that column, and the block they came from is
+   left behind holding its old height so nothing on the page shifts.
 
    Each chip is a capsule (a segment with a radius), which is exactly what a
    pill-shaped chip already is. Rotation is real, so the heap settles into
@@ -30,6 +36,14 @@
   var chips = Array.prototype.slice.call(host.querySelectorAll('.chip'));
   if (chips.length < 4) return;
 
+  // The play area is the page column that holds the chips, minus the footer.
+  var arena = host.closest ? host.closest('main') : null;
+  if (!arena) arena = host.parentNode;
+
+  var layer = document.createElement('div');
+  layer.className = 'skills-layer';
+  layer.setAttribute('aria-hidden', 'false');
+
   var GRAVITY = 2200;      // px/s^2; a chip crosses the box in about a second
   var FRICTION = 0.55;     // chip on chip
   var WALL_FRICTION = 0.7; // chip on floor, so the heap does not slump flat
@@ -56,7 +70,7 @@
   var SLEEP_FRAMES = 40;   // frames of a still picture before we stop
 
   var bodies = [];
-  var W = 0, H = 0;
+  var W = 0, H = 0, ceiling = true;
   var held = null;
   var pointer = { x: 0, y: 0, vx: 0, vy: 0, t: 0 };
   var raf = 0, acc = 0, last = 0, stillFor = 0, started = false, falling = false;
@@ -71,46 +85,59 @@
      untouched; every chip is simply now a body that has not been let go yet.
      --------------------------------------------------------- */
   function measureNatural() {
+    // Put the chips back in their own block so the browser wraps them again.
+    // getBoundingClientRect reports the transformed box, so a leftover
+    // transform would otherwise be measured as a chip's natural spot.
     host.classList.remove('is-pile');
     host.style.height = '';
-    // getBoundingClientRect reports the transformed box, so a leftover
-    // transform from an earlier layout would be measured as the chip's
-    // natural spot. Clear them before asking where the browser puts things.
-    chips.forEach(function (el) { el.style.transform = ''; });
+    chips.forEach(function (el) {
+      el.style.transform = '';
+      if (el.parentNode !== host) host.appendChild(el);
+    });
 
-    var box = host.getBoundingClientRect();
+    var hostBox = host.getBoundingClientRect();
+    var box = arena.getBoundingClientRect();
     var out = chips.map(function (el) {
       var r = el.getBoundingClientRect();
       return {
         el: el, w: r.width, h: r.height,
-        x: r.left - box.left + r.width / 2,
+        x: r.left - box.left + r.width / 2,   // arena coordinates from here on
         y: r.top - box.top + r.height / 2
       };
     });
-    out.rows = box.height;
+    out.rows = hostBox.height;
     return out;
   }
 
-  // Pin the chips at their measured spots and give the box a floor. The rows
-  // stay at the top where they already were; the room below is where the heap
-  // will end up, and with no frame drawn around it nobody can tell it is there.
+  // Hand the chips over to the layer. The block they came from keeps the
+  // height it had, so the page holds its shape once they are no longer in it.
   function place(dims) {
+    host.style.height = dims.rows + 'px';
+    host.classList.add('is-pile');
+    arena.classList.add('has-skills-layer');
+    if (layer.parentNode !== arena) arena.appendChild(layer);
+    chips.forEach(function (el) { layer.appendChild(el); });
+
+    var box = layer.getBoundingClientRect();
+    W = box.width;
+    H = box.height;
+
+    // A lid is only safe where the column is comfortably taller than the heap
+    // will be. On this page it always is, but a short one would be crushed.
     var area = 0;
     dims.forEach(function (d) { area += d.w * d.h; });
-    var needed = Math.round(area * 1.65 / W) + 30;
-    H = clamp(Math.max(dims.rows, needed), 120, 1000);
-
-    host.style.height = H + 'px';
-    host.classList.add('is-pile');
+    ceiling = H > (area * 1.65 / W + 30) * 1.5;
   }
 
   function build() {
-    W = host.clientWidth;
-    if (!W) return false;
+    // Width and height come from the column, not the block the chips started
+    // in, so check the column is actually laid out before touching anything.
+    if (!arena.getBoundingClientRect().width) return false;
 
     var dims = measureNatural();
     if (!dims[0].w) return false;
     place(dims);
+    if (!W || !H) return false;
 
     bodies = dims.map(function (d) {
       var m = d.w * d.h * 0.0015;
@@ -142,10 +169,6 @@
   // Still in its rows and never touched: re-measure rather than stretch, so a
   // window resize just re-wraps the way the markup would have.
   function relayout() {
-    var w = host.clientWidth;
-    if (!w) return;
-    W = w;
-
     var dims = measureNatural();
     if (!dims[0].w) return;
     place(dims);
@@ -368,14 +391,13 @@
     }
   }
 
-  // The box is sized to be at least as tall as the settled heap needs, so a
-  // lid can never crush anything: it is only there to stop a hard throw from
-  // sailing up into the CV above.
+  // The lid only stops a hard throw from leaving the column entirely; it is
+  // skipped where the arena is too short for one to be safe.
   function collideWalls(b) {
-    collideWall(b, 0, -1, 0, H);   // floor
-    collideWall(b, 0, 1, 0, 0);    // ceiling
+    collideWall(b, 0, -1, 0, H);   // floor, which is the top of the footer
     collideWall(b, 1, 0, 0, 0);    // left
     collideWall(b, -1, 0, W, 0);   // right
+    if (ceiling) collideWall(b, 0, 1, 0, 0);
   }
 
   // Drag is just another constraint: pull the grabbed point towards the
@@ -522,7 +544,7 @@
      Input.
      --------------------------------------------------------- */
   function localPoint(e) {
-    var box = host.getBoundingClientRect();
+    var box = layer.getBoundingClientRect();
     var nx = e.clientX - box.left;
     var ny = e.clientY - box.top;
     var now = performance.now();
@@ -585,29 +607,24 @@
   }
 
   /* ---------------------------------------------------------
-     Width changes. Untouched chips re-wrap like the markup would; a heap that
-     has already fallen just gets squeezed into the new width and resettles.
+     The column changed shape. Untouched chips re-wrap the way the markup
+     would; a heap that has already come loose is squeezed into the new
+     column and left to resettle.
      --------------------------------------------------------- */
   function onResize() {
-    var w = host.clientWidth;
-    if (!w || w === W) return;
+    var box = layer.getBoundingClientRect();
+    if (!box.width) return;
+    if (Math.abs(box.width - W) < 0.5 && Math.abs(box.height - H) < 0.5) return;
+
     if (!falling) { relayout(); return; }
 
-    var scale = w / W;
-    W = w;
+    var scale = box.width / W;
+    W = box.width;
+    H = box.height;
     bodies.forEach(function (b) {
       b.x = clamp(b.x * scale, b.w / 2, W - b.w / 2);
+      b.y = Math.min(b.y, H - b.h / 2);
     });
-
-    // A narrower box needs a taller one to hold the same heap, and there is a
-    // ceiling now, so grow it rather than crush what is already in there.
-    var area = 0;
-    bodies.forEach(function (b) { area += b.w * b.h; });
-    var needed = clamp(Math.round(area * 1.65 / W) + 30, 120, 1000);
-    if (needed > H) {
-      H = needed;
-      host.style.height = H + 'px';
-    }
     wake();
   }
 
@@ -618,10 +635,16 @@
     bindInput();
 
     var resizeTimer = 0;
-    window.addEventListener('resize', function () {
+    function later() {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(onResize, 180);
-    });
+    }
+    window.addEventListener('resize', later);
+
+    // The column can also change height on its own, when a webfont lands or
+    // the CV switches language. The layer is out of flow, so watching the
+    // arena cannot feed back into itself.
+    if (window.ResizeObserver) new ResizeObserver(later).observe(arena);
 
     // Nothing runs from here. The chips are sitting exactly where the browser
     // laid them out, and the first grab is what starts the clock.

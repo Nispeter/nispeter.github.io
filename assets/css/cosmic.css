@@ -344,32 +344,39 @@ body.has-progress .masthead__progress { opacity: 0.9; }
 .skills-cloud { margin-top: 0.4rem; }
 
 /* Skills heap: skills-pile.js measures the chips in the ordinary wrapped
-   layout, then adds .is-pile and pins them to the very same spots, so this
-   changes nothing you can see until someone drags one. No frame and no
-   backdrop on purpose: the chips should read as ordinary page content, and
-   the empty room under them is where the heap lands once it falls. With
-   scripting off or reduced motion on, none of this applies at all. */
-.skills-cloud.is-pile {
-  display: block; position: relative; overflow: hidden;
-  margin-top: 0.4rem; padding: 0;
+   layout, hands them to a layer over the whole page column, and pins them to
+   the very same spots, so this changes nothing you can see until someone
+   drags one. No frame and no backdrop on purpose: the chips should read as
+   ordinary page content. With scripting off or reduced motion on, none of
+   this applies at all. */
+.site-main.has-skills-layer { position: relative; }
+.skills-layer {
+  position: absolute; inset: 0;
+  overflow: hidden; pointer-events: none; z-index: 1;
 }
-.skills-cloud.is-pile .chip {
+.skills-layer .chip { pointer-events: auto; }
+
+/* All that is left in the flow is the space the rows used to take, so the
+   page keeps its shape once the chips are no longer in it. */
+.skills-cloud.is-pile { display: block; padding: 0; margin-top: 0.4rem; }
+
+.skills-layer .chip {
   position: absolute; top: 0; left: 0; margin: 0;
   white-space: nowrap; will-change: transform;
   transition: border-color 0.2s, box-shadow 0.2s;
   cursor: grab; touch-action: pan-y;
   user-select: none; -webkit-user-select: none;
 }
-.skills-cloud.is-pile .chip:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border-2)); }
-.skills-cloud.is-pile .chip.is-held {
+.skills-layer .chip:hover { border-color: color-mix(in srgb, var(--accent) 55%, var(--border-2)); }
+.skills-layer .chip.is-held {
   cursor: grabbing; z-index: 2;
   border-color: var(--accent);
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
 @media (max-width: 560px) {
-  /* Applies in both states: the pile measures the chips before it takes over. */
-  .skills-cloud .chip { font-size: 0.78rem; padding: 0.28rem 0.62rem; }
+  /* Both states: the chips are measured before the layer takes them over. */
+  .skills-cloud .chip, .skills-layer .chip { font-size: 0.78rem; padding: 0.28rem 0.62rem; }
 }
 .project__tech { margin-top: 1rem; }
 
