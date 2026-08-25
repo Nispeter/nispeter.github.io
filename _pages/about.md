@@ -48,12 +48,25 @@ I have a strong interest in good coding practices and optimization, always striv
 
 ## Skills
 
+{%- comment -%}
+  Every chip is the union of every `tech:` list in _portfolio, so adding a
+  project adds its tools here on its own and there is no second list to keep
+  in step. `uniq` drops exact repeats; the `seen` guard also folds together
+  spellings that differ only in case, spacing or punctuation, keeping the
+  first alphabetically. Nothing is hand written below.
+{%- endcomment -%}
 <div class="chips skills-cloud" data-skills-pile>
 {%- assign tech_str = "" -%}
 {%- for p in site.portfolio -%}{%- for t in p.tech -%}{%- assign tech_str = tech_str | append: t | append: "||" -%}{%- endfor -%}{%- endfor -%}
-{%- assign tech_full = tech_str | split: "||" -%}
-{%- assign tech_uniq = tech_full | uniq | sort_natural -%}
-{%- for t in tech_uniq -%}{%- unless t == "" -%}<span class="chip">{{ t }}</span>{%- endunless -%}{%- endfor -%}
+{%- assign tech_uniq = tech_str | split: "||" | uniq | sort_natural -%}
+{%- assign seen = "" -%}
+{%- for t in tech_uniq -%}
+  {%- assign key = t | downcase | replace: " ", "" | replace: ".", "" | replace: "-", "" | append: "|" | prepend: "|" -%}
+  {%- unless t == "" or seen contains key -%}
+    {%- assign seen = seen | append: key -%}
+    <span class="chip">{{ t }}</span>
+  {%- endunless -%}
+{%- endfor -%}
 </div>
 
 <script src="{{ '/assets/js/skills-pile.js' | relative_url }}" defer></script>
