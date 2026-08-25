@@ -1,9 +1,10 @@
 {%- comment -%} Lightweight replacement for minimal-mistakes' gallery include.
-  Usage: {% include gallery %}  or  {% include gallery id="gallery1" %} {%- endcomment -%}
+  Usage: {% include gallery %}, {% include gallery id="gallery1" %}
+  or {% include gallery class="gallery--phone" %} for portrait screenshots. {%- endcomment -%}
 {%- if include.id -%}{%- assign gallery = page[include.id] -%}{%- else -%}{%- assign gallery = page.gallery -%}{%- endif -%}
 {%- assign guid = include.id | default: 'g' -%}
 {%- if gallery -%}
-<figure class="gallery gallery--{{ gallery.size }}">
+<figure class="gallery gallery--{{ gallery.size }}{% if include.class %} {{ include.class }}{% endif %}">
   {%- for img in gallery -%}
   {%- assign ip = img.image_path -%}
   {%- unless ip contains '://' -%}{%- assign ip = ip | prepend: '/' | replace: '//', '/' -%}{%- endunless -%}

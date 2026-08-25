@@ -407,6 +407,10 @@ body.has-progress .masthead__progress { opacity: 0.9; }
   transition: transform 0.4s var(--ease); display: block;
 }
 .gallery__item:hover img { transform: scale(1.06); }
+
+/* Phone screenshots: keep them tall instead of cropping to a horizontal band */
+.gallery--phone { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.gallery--phone .gallery__item img { aspect-ratio: 9 / 19.5; object-fit: contain; background: var(--bg-elev); }
 .gallery figcaption { color: var(--text-dim); font-size: 0.85rem; text-align: center; margin-top: 0.5rem; }
 
 .lightbox {
