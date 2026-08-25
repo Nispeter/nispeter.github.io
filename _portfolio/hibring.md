@@ -3,7 +3,7 @@ title: "Hibring"
 excerpt: "Pre-professional internship focused on front-end and mobile software development for geotechnical and mining applications."
 sections: [web]
 year: 2023
-tech: [React, React Native, TypeScript]
+tech: [React, React Native, TypeScript, JavaScript, Expo, Node, AWS CodeCommit, Figma, Notion, Clockify]
 header:
   teaser: /assets/images/terra.png
 sidebar:
@@ -12,7 +12,6 @@ sidebar:
     image_alt: "Hibring"
   - text: "Company: Hibring"
   - text: "Period: Jun 2023 – Dec 2023"
-  - text: "Technologies: React, React Native, TypeScript"
 ---
 
 ## Internship Overview
