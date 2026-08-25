@@ -5,10 +5,11 @@
    heap you can shove around the page. Vanilla, no deps, loaded only by
    /about/.
 
-   The arena is the whole main column, from the top of the content down to
-   just above the footer, so a chip can be flung right up past the CV. The
-   chips move into a layer over that column, and the block they came from is
-   left behind holding its old height so nothing on the page shifts.
+   The arena is the whole window: full width, from the top of the document
+   down to the top of the footer, so a chip can be flung anywhere on the page
+   rather than being penned into the text column. The chips move into a layer
+   over all of that, and the block they came from is left behind holding its
+   old height so nothing on the page shifts.
 
    Each chip is a capsule (a segment with a radius), which is exactly what a
    pill-shaped chip already is. Rotation is real, so the heap settles into
@@ -36,13 +37,21 @@
   var chips = Array.prototype.slice.call(host.querySelectorAll('.chip'));
   if (chips.length < 4) return;
 
-  // The play area is the page column that holds the chips, minus the footer.
-  var arena = host.closest ? host.closest('main') : null;
-  if (!arena) arena = host.parentNode;
-
+  // The play area is the whole page, stopping at the footer.
+  var footer = document.querySelector('.site-footer');
   var layer = document.createElement('div');
   layer.className = 'skills-layer';
-  layer.setAttribute('aria-hidden', 'false');
+
+  // Full width comes from the stylesheet; only the floor has to be worked out,
+  // and it moves whenever the page above it changes height.
+  function positionLayer() {
+    if (layer.parentNode !== document.body) document.body.appendChild(layer);
+    var sy = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var bottom = footer
+      ? footer.getBoundingClientRect().top + sy
+      : document.documentElement.scrollHeight;
+    layer.style.height = Math.max(Math.round(bottom), 240) + 'px';
+  }
 
   var GRAVITY = 2200;      // px/s^2; a chip crosses the box in about a second
   var FRICTION = 0.55;     // chip on chip
@@ -95,13 +104,14 @@
       if (el.parentNode !== host) host.appendChild(el);
     });
 
+    positionLayer();
     var hostBox = host.getBoundingClientRect();
-    var box = arena.getBoundingClientRect();
+    var box = layer.getBoundingClientRect();
     var out = chips.map(function (el) {
       var r = el.getBoundingClientRect();
       return {
         el: el, w: r.width, h: r.height,
-        x: r.left - box.left + r.width / 2,   // arena coordinates from here on
+        x: r.left - box.left + r.width / 2,   // layer coordinates from here on
         y: r.top - box.top + r.height / 2
       };
     });
@@ -114,9 +124,8 @@
   function place(dims) {
     host.style.height = dims.rows + 'px';
     host.classList.add('is-pile');
-    arena.classList.add('has-skills-layer');
-    if (layer.parentNode !== arena) arena.appendChild(layer);
     chips.forEach(function (el) { layer.appendChild(el); });
+    positionLayer();
 
     var box = layer.getBoundingClientRect();
     W = box.width;
@@ -130,9 +139,10 @@
   }
 
   function build() {
-    // Width and height come from the column, not the block the chips started
-    // in, so check the column is actually laid out before touching anything.
-    if (!arena.getBoundingClientRect().width) return false;
+    // Geometry comes from the layer, not the block the chips started in, so
+    // check the page is actually laid out before touching anything.
+    positionLayer();
+    if (!layer.getBoundingClientRect().width) return false;
 
     var dims = measureNatural();
     if (!dims[0].w) return false;
@@ -612,6 +622,7 @@
      column and left to resettle.
      --------------------------------------------------------- */
   function onResize() {
+    positionLayer();
     var box = layer.getBoundingClientRect();
     if (!box.width) return;
     if (Math.abs(box.width - W) < 0.5 && Math.abs(box.height - H) < 0.5) return;
@@ -641,10 +652,11 @@
     }
     window.addEventListener('resize', later);
 
-    // The column can also change height on its own, when a webfont lands or
-    // the CV switches language. The layer is out of flow, so watching the
-    // arena cannot feed back into itself.
-    if (window.ResizeObserver) new ResizeObserver(later).observe(arena);
+    // The page can also change height on its own, when a webfont lands or the
+    // CV switches language, which moves the floor. The layer is out of flow
+    // and never taller than the footer is far down, so watching the body
+    // cannot feed back into itself.
+    if (window.ResizeObserver) new ResizeObserver(later).observe(document.body);
 
     // Nothing runs from here. The chips are sitting exactly where the browser
     // laid them out, and the first grab is what starts the clock.

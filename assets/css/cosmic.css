@@ -337,21 +337,26 @@ body.has-progress .masthead__progress { opacity: 0.9; }
 .chip {
   font-family: var(--font-ui); font-size: 0.85rem; color: var(--text);
   background: var(--bg-elev); border: 1px solid var(--border-2);
-  padding: 0.32rem 0.75rem; border-radius: 999px; transition: transform 0.15s var(--ease), border-color 0.2s;
+  padding: 0.32rem 0.75rem; border-radius: 999px; white-space: nowrap;
+  transition: transform 0.15s var(--ease), border-color 0.2s;
 }
 .chip:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 55%, var(--border-2)); }
 .chip em { color: var(--accent-2); font-style: normal; font-size: 0.78em; margin-left: 2px; }
 .skills-cloud { margin-top: 0.4rem; }
 
 /* Skills heap: skills-pile.js measures the chips in the ordinary wrapped
-   layout, hands them to a layer over the whole page column, and pins them to
-   the very same spots, so this changes nothing you can see until someone
-   drags one. No frame and no backdrop on purpose: the chips should read as
-   ordinary page content. With scripting off or reduced motion on, none of
-   this applies at all. */
-.site-main.has-skills-layer { position: relative; }
+   layout, hands them to a layer over the whole page, and pins them to the
+   very same spots, so this changes nothing you can see until someone drags
+   one. No frame and no backdrop on purpose: the chips should read as ordinary
+   page content. With scripting off or reduced motion on, none of this applies
+   at all.
+
+   The layer spans the full window rather than the text column, so a chip can
+   be thrown right across the page. It sits above the content but below the
+   masthead, and takes no clicks of its own; the height, which is the drop to
+   the top of the footer, is set on it by the script. */
 .skills-layer {
-  position: absolute; inset: 0;
+  position: absolute; left: 0; right: 0; top: 0;
   overflow: hidden; pointer-events: none; z-index: 1;
 }
 .skills-layer .chip { pointer-events: auto; }
@@ -362,7 +367,7 @@ body.has-progress .masthead__progress { opacity: 0.9; }
 
 .skills-layer .chip {
   position: absolute; top: 0; left: 0; margin: 0;
-  white-space: nowrap; will-change: transform;
+  will-change: transform;
   transition: border-color 0.2s, box-shadow 0.2s;
   cursor: grab; touch-action: pan-y;
   user-select: none; -webkit-user-select: none;
