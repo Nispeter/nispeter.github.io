@@ -25,18 +25,6 @@ I have a strong interest in good coding practices and optimization, always striv
   {%- endfor -%}
 </div>
 
-## Skills
-
-<p class="skills-note">Pulled automatically from every project's tech stack — a living map of what I've actually shipped with.</p>
-
-<div class="chips skills-cloud">
-{%- assign tech_str = "" -%}
-{%- for p in site.portfolio -%}{%- for t in p.tech -%}{%- assign tech_str = tech_str | append: t | append: "||" -%}{%- endfor -%}{%- endfor -%}
-{%- assign tech_full = tech_str | split: "||" -%}
-{%- assign tech_uniq = tech_full | uniq | sort_natural -%}
-{%- for t in tech_uniq -%}{%- unless t == "" -%}<span class="chip">{{ t }}</span>{%- endunless -%}{%- endfor -%}
-</div>
-
 ## Curriculum
 
 <div class="cv">
@@ -57,3 +45,17 @@ I have a strong interest in good coding practices and optimization, always striv
     </div>
   </div>
 </div>
+
+## Skills
+
+<p class="skills-note">Pulled automatically from every project's tech stack — a living map of what I've actually shipped with.</p>
+
+<div class="chips skills-cloud" data-skills-pile>
+{%- assign tech_str = "" -%}
+{%- for p in site.portfolio -%}{%- for t in p.tech -%}{%- assign tech_str = tech_str | append: t | append: "||" -%}{%- endfor -%}{%- endfor -%}
+{%- assign tech_full = tech_str | split: "||" -%}
+{%- assign tech_uniq = tech_full | uniq | sort_natural -%}
+{%- for t in tech_uniq -%}{%- unless t == "" -%}<span class="chip">{{ t }}</span>{%- endunless -%}{%- endfor -%}
+</div>
+
+<script src="{{ '/assets/js/skills-pile.js' | relative_url }}" defer></script>
