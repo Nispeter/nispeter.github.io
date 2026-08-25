@@ -48,13 +48,18 @@ I have a strong interest in good coding practices and optimization, always striv
 
 ## Skills
 
-{%- comment -%}
+{% comment %}
   Every chip is the union of every `tech:` list in _portfolio, so adding a
   project adds its tools here on its own and there is no second list to keep
   in step. `uniq` drops exact repeats; the `seen` guard also folds together
   spellings that differ only in case, spacing or punctuation, keeping the
   first alphabetically. Nothing is hand written below.
-{%- endcomment -%}
+
+  Do not put whitespace control on the two tags above: stripping the blank
+  line after the heading joins this block onto it, and Kramdown then renders
+  the markup as text instead of HTML.
+{% endcomment %}
+
 <div class="chips skills-cloud" data-skills-pile>
 {%- assign tech_str = "" -%}
 {%- for p in site.portfolio -%}{%- for t in p.tech -%}{%- assign tech_str = tech_str | append: t | append: "||" -%}{%- endfor -%}{%- endfor -%}
